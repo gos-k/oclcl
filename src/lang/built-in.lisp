@@ -156,25 +156,16 @@
          ((float4 float4) float nil "float4_dot")
          ((double3 double3) double nil "double3_dot")
          ((double4 double4) double nil "double4_dot"))
-    ;; CURAND operations
-    ;; It's :UNSIGNED-LONG-LONG, but this wrapper function only
-    ;; supports INT.
-    curand-init-xorwow (((int int int curand-state-xorwow*) void nil
-                         "curand_init_xorwow"))
-    curand-uniform-float-xorwow (((curand-state-xorwow*) float nil
-                                  "curand_uniform_float_xorwow"))
-    curand-uniform-double-xorwow (((curand-state-xorwow*) double nil
-                                   "curand_uniform_double_xorwow"))
-    curand-normal-float-xorwow (((curand-state-xorwow*) float nil
-                                 "curand_normal_float_xorwow"))
-    curand-normal-double-xorwow (((curand-state-xorwow*) double nil
-                                  "curand_normal_double_xorwow"))
 
-    ;; OpenCL v1.2 dr19: 6.12 Built-in Functions
-    get-global-size (((int) int nil "get_global_size"))
-    get-global-id (((int) int nil "get_global_id"))
-    get-local-size (((int) int nil "get_local_size"))
-    get-local-id (((int) int nil "get_local_id"))))
+    ;; OpenCL v1.2 dr19: 6.12.1 Work-Item Functions
+    get-work-dim ((() uint nil "get_work_dim"))
+    get-global-size (((uint) size-t nil "get_global_size"))
+    get-global-id (((uint) size-t nil "get_global_id"))
+    get-local-size (((int) size-t nil "get_local_size"))
+    get-local-id (((int) size-t nil "get_local_id"))
+    get-num-groups (((uint) size-t nil "get_num_groups"))
+    get-group-id (((uint) size-t nil "get_group_id"))
+    get-global-offset (((uint) size-t nil "get_global_offset"))))
 
 (defun inferred-function-candidates (name)
   (or (getf +built-in-functions+ name)
