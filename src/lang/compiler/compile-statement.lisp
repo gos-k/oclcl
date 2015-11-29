@@ -223,7 +223,8 @@
                    (type1 (compile-type type))
                    (dims1 (compile-with-shared-memory-spec-dimensions
                             dims var-env func-env)))
-               (format nil "__shared__ ~A ~A~{[~A]~};~%" type1 var1 dims1)))))
+               ;; OpenCL v1.2 dr19: 6.5 Address Spece Qualifiers
+               (format nil "__local ~A ~A~{[~A]~};~%" type1 var1 dims1)))))
     (format nil "~{~A~}" (mapcar #'aux specs))))
 
 (defun compile-with-shared-memory-statements (statements var-env func-env)
