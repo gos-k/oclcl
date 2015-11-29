@@ -26,7 +26,6 @@
     ((%symbol-macro-p form var-env)
      (compile-symbol-macro form var-env func-env))
     ((literal-p form) (compile-literal form))
-    ((cuda-dimension-p form) (compile-cuda-dimension form))
     ((reference-p form) (compile-reference form var-env func-env))
     ((inline-if-p form) (compile-inline-if form var-env func-env))
     ((arithmetic-p form) (compile-arithmetic form var-env func-env))
@@ -84,26 +83,6 @@
 
 (defun compile-double-literal (form)
   (compile-double form))
-
-
-;;;
-;;; CUDA dimension
-;;;
-
-(defun compile-cuda-dimension (form)
-  (ecase form
-    (grid-dim-x "gridDim.x")
-    (grid-dim-y "gridDim.y")
-    (grid-dim-z "gridDim.z")
-    (block-idx-x "blockIdx.x")
-    (block-idx-y "blockIdx.y")
-    (block-idx-z "blockIdx.z")
-    (block-dim-x "blockDim.x")
-    (block-dim-y "blockDim.y")
-    (block-dim-z "blockDim.z")
-    (thread-idx-x "threadIdx.x")
-    (thread-idx-y "threadIdx.y")
-    (thread-idx-z "threadIdx.z")))
 
 
 ;;;
