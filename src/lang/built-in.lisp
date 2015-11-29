@@ -27,6 +27,10 @@
            :built-in-function-c-name))
 (in-package :cl-cuda.lang.built-in)
 
+(defun same-type-binary-operator (operator type)
+  (loop for n in '("" "2" "3" "4" "8" "16")
+        for type-symbol = (intern (concatenate 'string (symbol-name type) n))
+        collecting (list (list type-symbol type-symbol) type-symbol t operator)))
 
 ;;;
 ;;; Built-in functions
