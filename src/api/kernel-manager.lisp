@@ -20,6 +20,7 @@
            :kernel-manager-define-macro
            :kernel-manager-define-symbol-macro
            :kernel-manager-compile-module
+           :kernel-manager-translate
            :kernel-manager-load-module
            :kernel-manager-load-function
            :kernel-manager-unload
@@ -113,6 +114,12 @@
 (defun symbol-macro-modified-p (kernel name expansion)
     (not (and (kernel-symbol-macro-exists-p kernel name)
               (equal expansion (kernel-symbol-macro-expansion kernel name)))))
+
+(defun kernel-manager-translate (manager)
+  (unless (not (kernel-manager-compiled-p manager))
+    (error "The kernel manager has already been compiled."))
+  (let ((kernel (kernel-manager-kernel manager)))
+    (compile-kernel kernel)))
 
 (defun kernel-manager-compile-module (manager)
   (unless (not (kernel-manager-compiled-p manager))
