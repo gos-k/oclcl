@@ -168,7 +168,13 @@
     curand-normal-float-xorwow (((curand-state-xorwow*) float nil
                                  "curand_normal_float_xorwow"))
     curand-normal-double-xorwow (((curand-state-xorwow*) double nil
-                                  "curand_normal_double_xorwow"))))
+                                  "curand_normal_double_xorwow"))
+
+    ;; OpenCL v1.2 dr19: 6.12 Built-in Functions
+    get-global-size (((int) int nil "get_global_size"))
+    get-global-id (((int) int nil "get_global_id"))
+    get-local-size (((int) int nil "get_local_size"))
+    get-local-id (((int) int nil "get_local_id"))))
 
 (defun inferred-function-candidates (name)
   (or (getf +built-in-functions+ name)
