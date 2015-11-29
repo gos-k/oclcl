@@ -27,13 +27,17 @@
            :built-in-function-c-name))
 (in-package :cl-cuda.lang.built-in)
 
+(defparameter +integer-types+ '(char uchar short ushort int uint long ulong))
+(defparameter +float-types+ '(float double))
+(defparameter +gentypes+ (append +integer-types+ +float-types+))
+
 (defun same-type-binary-operator (operator type)
   (loop for n in '("" "2" "3" "4" "8" "16")
         for type-symbol = (intern (concatenate 'string (symbol-name type) n))
         collecting (list (list type-symbol type-symbol) type-symbol t operator)))
 
-(defun same-types-binary-operator (operator)
-  (loop for type in '(char uchar short ushort int uint long ulong float double)
+(defun same-types-binary-operator (operator types)
+  (loop for type in types
         appending (same-type-binary-operator operator type)))
 
 ;;;
@@ -42,11 +46,11 @@
 
 (defparameter +built-in-functions+
   `(;; arithmetic operators
-    + ,(same-types-binary-operator "+")
-    - ,(same-types-binary-operator "-")
-    * ,(same-types-binary-operator "+")
-    / ,(same-types-binary-operator "/")
-    mod (((int    int)    int    t   "%"))
+    + ,(same-types-binary-operator "+" +gentypes+)
+    - ,(same-types-binary-operator "-" +gentypes+)
+    * ,(same-types-binary-operator "+" +gentypes+)
+    / ,(same-types-binary-operator "/" +gentypes+)
+    mod ,(same-types-binary-operator "%" +integer-types+)
     ;; relational operators
     =    (((int   int)   bool t "==")
           ((float float) bool t "==")
