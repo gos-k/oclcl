@@ -16,7 +16,6 @@
                 :compile-macro
                 :compile-symbol-macro
                 :compile-literal
-                :compile-cuda-dimension
                 :compile-reference
                 :compile-inline-if
                 :compile-arithmetic
@@ -83,16 +82,6 @@
 
 (is (compile-literal 1.0d0) "(double)1.0"
     "basic case 5")
-
-
-;;;
-;;; test COMPILE-CUDA-DIMENSION function
-;;;
-
-(diag "COMPILE-CUDA-DIMENSION")
-
-(is (compile-cuda-dimension 'grid-dim-x) "gridDim.x"
-    "basic case 1")
 
 
 ;;;

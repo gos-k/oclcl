@@ -6,10 +6,8 @@
 (in-package :cl-user)
 (defpackage cl-cuda.api.kernel-manager
   (:use :cl
-        :cl-cuda.driver-api
         :cl-cuda.lang.kernel
-        :cl-cuda.lang.compiler.compile-kernel
-        :cl-cuda.api.nvcc)
+        :cl-cuda.lang.compiler.compile-kernel)
   (:export :kernel-manager
            :make-kernel-manager
            :kernel-manager-compiled-p
@@ -19,10 +17,7 @@
            :kernel-manager-define-function
            :kernel-manager-define-macro
            :kernel-manager-define-symbol-macro
-           :kernel-manager-compile-module
            :kernel-manager-translate
-           :kernel-manager-load-module
-           :kernel-manager-load-function
            :kernel-manager-unload
            :ensure-kernel-module-compiled
            :ensure-kernel-module-loaded
@@ -120,52 +115,6 @@
     (error "The kernel manager has already been compiled."))
   (let ((kernel (kernel-manager-kernel manager)))
     (compile-kernel kernel)))
-
-(defun kernel-manager-compile-module (manager)
-  (unless (not (kernel-manager-compiled-p manager))
-    (error "The kernel manager has already been compiled."))
-  (let ((kernel (kernel-manager-kernel manager)))
-    (let ((module-path (nvcc-compile (compile-kernel kernel))))
-      (setf (kernel-manager-module-path manager) module-path)))
-  t)
-
-(defun kernel-manager-load-module (manager)
-  (unless (kernel-manager-compiled-p manager)
-    (error "The kernel manager has not been compiled yet."))
-  (unless (not (kernel-manager-module-handle manager))
-    (error "The kernel manager has already loaded the kernel module."))
-  (cffi:with-foreign-object (hmodule 'cu-module)
-    (let ((module-path (kernel-manager-module-path manager)))
-      (cu-module-load hmodule module-path)
-      (setf (kernel-manager-module-handle manager)
-            (cffi:mem-ref hmodule 'cu-module)))))
-
-(defun kernel-manager-load-function (manager name)
-  (unless (kernel-manager-compiled-p manager)
-    (error "The kernel manager has not been compiled yet."))
-  (unless (kernel-manager-module-handle manager)
-    (error "The kernel manager has not loaded the kernel module yet."))
-  (unless (not (kernel-manager-function-handle manager name))
-    (error "The kernel function ~S has already been loaded." name))
-  (symbol-macrolet
-      ((module-handle (kernel-manager-module-handle manager))
-       (kernel (kernel-manager-kernel manager)))
-    (let ((c-name (kernel-function-c-name kernel name)))
-      (cffi:with-foreign-object (hfunc 'cu-function)
-        (cu-module-get-function hfunc module-handle c-name)
-        (setf (kernel-manager-%function-handle manager name)
-              (cffi:mem-ref hfunc 'cu-function))))))
-
-(defun kernel-manager-unload (manager)
-  ;; clear function handles
-  (let ((function-handles (kernel-manager-%function-handles manager)))
-    (clrhash function-handles))
-  ;; unload module
-  (symbol-macrolet ((module-handle (kernel-manager-module-handle manager)))
-    (when module-handle
-      (cu-module-unload module-handle)
-      (setf module-handle nil)))
-  t)
 
 (defun ensure-kernel-module-compiled (manager)
   (or (kernel-manager-compiled-p manager)

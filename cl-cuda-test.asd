@@ -1,6 +1,7 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
+  Copyright (c) 2015 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
@@ -16,11 +17,7 @@
   :components ((:module "t"
                 :serial t
                 :components
-                ((:module "driver-api"
-                  :serial t
-                  :components
-                  ((:file "driver-api")))
-                 (:module "lang"
+                ((:module "lang"
                   :serial t
                   :components
                   ((:file "util")
@@ -39,8 +36,5 @@
                  (:module "api"
                   :serial t
                   :components
-                  ((:file "kernel-manager")
-                   (:file "memory")
-                   (:file "defkernel")
-                   (:file "timer"))))))
+                  ((:file "kernel-manager"))))))
   :perform (load-op :after (op c) (asdf:clear-system c)))

@@ -6,7 +6,6 @@
 (in-package :cl-user)
 (defpackage cl-cuda-test.lang.type
   (:use :cl :cl-test-more
-        :cl-cuda.driver-api
         :cl-cuda.lang.data
         :cl-cuda.lang.type))
 (in-package :cl-cuda-test.lang.type)
@@ -34,7 +33,6 @@
 
 (is (cffi-type 'int) :int "basic case 1")
 (is (cffi-type 'float3) '(:struct float3) "basic case 2")
-(is (cffi-type 'float3*) 'cu-device-ptr "basic case 3")
 
 
 ;;;
@@ -45,8 +43,6 @@
 
 (is (cffi-type-size 'int) 4 "basic case 1")
 (is (cffi-type-size 'float3) 12 "basic case 2")
-(is (cffi-type-size 'float3*) (cffi:foreign-type-size 'cu-device-ptr)
-    "basic case 3")
 
 
 ;;;

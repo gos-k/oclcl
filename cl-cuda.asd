@@ -13,31 +13,6 @@
 
 
 ;;;
-;;; Cuda-grovel-file ASDF component
-;;;
-
-(defclass cuda-grovel-file (cffi-grovel:grovel-file) ())
-
-(defmethod asdf:perform :around ((op cffi-grovel::process-op) (c cuda-grovel-file))
-  ;; Process a grovel file only when CUDA SDK is found.
-  (let ((sdk-not-found (symbol-value (intern "*SDK-NOT-FOUND*" "CL-CUDA.DRIVER-API"))))
-    (unless sdk-not-found
-      (call-next-method))))
-
-(defmethod asdf:perform :around ((op asdf:compile-op) (c cuda-grovel-file))
-  ;; Compile a grovel file only when CUDA SDK is found.
-  (let ((sdk-not-found (symbol-value (intern "*SDK-NOT-FOUND*" "CL-CUDA.DRIVER-API"))))
-    (unless sdk-not-found
-      (call-next-method))))
-
-(defmethod asdf:perform :around ((op asdf:load-op) (c cuda-grovel-file))
-  ;; Load a grovel file only when CUDA SDK is found.
-  (let ((sdk-not-found (symbol-value (intern "*SDK-NOT-FOUND*" "CL-CUDA.DRIVER-API"))))
-    (unless sdk-not-found
-      (call-next-method))))
-
-
-;;;
 ;;; Cl-cuda system definition
 ;;;
 
@@ -50,19 +25,7 @@
   :components ((:module "src"
                 :serial t
                 :components
-                ((:module "driver-api"
-                  :serial t
-                  :components
-                  ((:file "package")
-                   (:file "get-error-string")
-                   (:file "cffi-grovel")
-                   (:file "sdk-not-found")
-                   (:file "library")
-                   (:file "type")
-                   (cuda-grovel-file "type-grovel")
-                   (:file "enum")
-                   (:file "function")))
-                 (:module "lang"
+                ((:module "lang"
                   :serial t
                   :components
                   ((:file "util")
@@ -82,13 +45,9 @@
                  (:module "api"
                   :serial t
                   :components
-                  ((:file "nvcc")
-                   (:file "kernel-manager")
-                   (:file "memory")
-                   (:file "context")
+                  ((:file "kernel-manager")
                    (:file "defkernel")
                    (:file "macro")
-                   (:file "timer")
                    (:file "api")))
                  (:file "cl-cuda"))))
   :description "Cl-cuda is a library to use NVIDIA CUDA in Common Lisp programs."

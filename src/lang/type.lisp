@@ -6,7 +6,6 @@
 (in-package :cl-user)
 (defpackage cl-cuda.lang.type
   (:use :cl
-        :cl-cuda.driver-api
         :cl-cuda.lang.data)
   (:export ;; Cl-cuda types
            :void

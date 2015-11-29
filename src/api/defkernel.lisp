@@ -6,11 +6,9 @@
 (in-package :cl-user)
 (defpackage :cl-cuda.api.defkernel
   (:use :cl
-        :cl-cuda.driver-api
         :cl-cuda.lang.syntax
         :cl-cuda.lang.type
-        :cl-cuda.api.kernel-manager
-        :cl-cuda.api.memory)
+        :cl-cuda.api.kernel-manager)
   (:export :defkernel
            :defkernelmacro
            :expand-macro-1
@@ -104,20 +102,20 @@
               collect (setf-to-argument-array-form var argument i))
          ,@body))))
 
-(defmacro defkernel (name (return-type arguments) &body body)
-  (with-gensyms (hfunc kargs)
-    `(progn
-       (kernel-manager-define-function *kernel-manager* ',name ',return-type ',arguments ',body)
-       (defun ,name (,@(argument-vars arguments) &key (grid-dim '(1 1 1)) (block-dim '(1 1 1)))
-         (let ((,hfunc (ensure-kernel-function-loaded *kernel-manager* ',name)))
-           (with-launching-arguments (,kargs ,arguments)
-             (destructuring-bind (grid-dim-x grid-dim-y grid-dim-z) grid-dim
-             (destructuring-bind (block-dim-x block-dim-y block-dim-z) block-dim
-               (cu-launch-kernel ,hfunc
-                                 grid-dim-x  grid-dim-y  grid-dim-z
-                                 block-dim-x block-dim-y block-dim-z
-                                 0 cl-cuda.api.context:*cuda-stream*
-                                 ,kargs (cffi:null-pointer))))))))))
+;(defmacro defkernel (name (return-type arguments) &body body)
+;  (with-gensyms (hfunc kargs)
+;    `(progn
+;       (kernel-manager-define-function *kernel-manager* ',name ',return-type ',arguments ',body)
+;       (defun ,name (,@(argument-vars arguments) &key (grid-dim '(1 1 1)) (block-dim '(1 1 1)))
+;         (let ((,hfunc (ensure-kernel-function-loaded *kernel-manager* ',name)))
+;           (with-launching-arguments (,kargs ,arguments)
+;             (destructuring-bind (grid-dim-x grid-dim-y grid-dim-z) grid-dim
+;             (destructuring-bind (block-dim-x block-dim-y block-dim-z) block-dim
+;               (cu-launch-kernel ,hfunc
+;                                 grid-dim-x  grid-dim-y  grid-dim-z
+;                                 block-dim-x block-dim-y block-dim-z
+;                                 0 cl-cuda.api.context:*cuda-stream*
+;                                 ,kargs (cffi:null-pointer))))))))))
 
 
 ;;;
