@@ -51,25 +51,15 @@
     * ,(same-types-binary-operator "+" +gentypes+)
     / ,(same-types-binary-operator "/" +gentypes+)
     mod ,(same-types-binary-operator "%" +integer-types+)
+
     ;; relational operators
-    =    (((int   int)   bool t "==")
-          ((float float) bool t "==")
-          ((double double) bool t "=="))
-    /=   (((int   int)   bool t "!=")
-          ((float float) bool t "!=")
-          ((double double) bool t "!="))
-    <    (((int   int)   bool t "<")
-          ((float float) bool t "<")
-          ((double double) bool t "<"))
-    >    (((int   int)   bool t ">")
-          ((float float) bool t ">")
-          ((double double) bool t ">"))
-    <=   (((int   int)   bool t "<=")
-          ((float float) bool t "<=")
-          ((double double) bool t "<="))
-    >=   (((int   int)   bool t ">=")
-          ((float float) bool t ">=")
-          ((double double) bool t ">="))
+    = ,(same-types-binary-operator "==" +gentypes+)
+    /= ,(same-types-binary-operator "!=" +gentypes+)
+    < ,(same-types-binary-operator "<" +gentypes+)
+    > ,(same-types-binary-operator ">" +gentypes+)
+    <= ,(same-types-binary-operator "<=" +gentypes+)
+    >= ,(same-types-binary-operator ">=" +gentypes+)
+
     ;; logical operators
     not  (((bool) bool nil "!"))
     ;; mathematical functions
