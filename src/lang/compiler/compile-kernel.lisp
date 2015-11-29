@@ -85,9 +85,10 @@
 (defun compile-specifier (return-type)
   (unless (cl-cuda-type-p return-type)
     (error 'type-error :datum return-type :expected 'cl-cuda-type))
+  ;; OpenCL v1.2 dr19: 6.7 Function Qualifiers
   (if (eq return-type 'void)
-      "__global__"
-      "__device__"))
+      "__kernel"
+      ""))
 
 (defun compile-argument (argument)
   (let ((var (argument-var argument))
@@ -113,7 +114,7 @@
 
 (defun compile-prototype (kernel name)
   (let ((declaration (compile-declaration kernel name)))
-    (format nil "extern \"C\" ~A;~%" declaration)))
+    (format nil "~A;~%" declaration)))
 
 (defun compile-prototypes (kernel)
   (flet ((aux (name)
