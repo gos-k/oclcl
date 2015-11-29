@@ -1,0 +1,20 @@
+machine:
+    environment:
+        LISP: sbcl-bin
+        PATH: ~/.roswell/bin:$PATH
+
+checkout:
+    pre:
+        - curl -L https://raw.githubusercontent.com/snmsts/roswell/master/scripts/install-for-ci.sh | sh
+
+dependencies:
+    pre:
+        - ros install prove
+
+    cache_directories:
+        - ~/.roswell/
+
+test:
+    override:
+        - ros run -- --version
+        - run-prove *-test.asd

@@ -1,4 +1,6 @@
-# Cl-Cuda
+# oclcl
+
+[![Build Status](https://circleci.com/gh/gos-k/oclcl.svg?style=shield)](https://circleci.com/gh/gos-k/oclcl)
 
 Cl-cuda is a library to use NVIDIA CUDA in Common Lisp programs. It provides not only FFI binding to CUDA driver API but the kernel description language with which users can define CUDA kernel functions in S-expression. The kernel description language also provides facilities to define kernel macros and kernel symbol macros in addition to kernel functions. Cl-cuda's kernel macro and kernel symbol macro offer powerful abstraction that CUDA C itself does not have and provide enormous advantage in resource-limited GPU programming.
 
