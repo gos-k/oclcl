@@ -38,6 +38,44 @@
     (is (kernel-manager-function-handles-empty-p mgr) t
         "basic case 18"))
 
+(diag "KERNEL-MANAGER-TRANSLATE")
+
+(let* ((mgr (make-kernel-manager))
+       (*kernel-manager* mgr))
+  (kernel-manager-define-function mgr
+                                  'one
+                                  'float
+                                  '()
+                                  '((return (+ 1 2 3 4 5 6 7))))
+  (is (kernel-manager-translate mgr)
+"#include \"int.h\"
+#include \"float.h\"
+#include \"float3.h\"
+#include \"float4.h\"
+#include \"double.h\"
+#include \"double3.h\"
+#include \"double4.h\"
+#include \"curand.h\"
+
+
+/**
+ *  Kernel function prototypes
+ */
+
+ float cl_cuda_test_api_kernel_manager_one();
+
+
+/**
+ *  Kernel function definitions
+ */
+
+ float cl_cuda_test_api_kernel_manager_one()
+{
+  return (1 + (2 + (3 + (4 + (5 + (6 + 7))))));
+}
+"
+      ))
+
 ;;;
 ;;; test KERNEL-MANAGER-DEFINE-FUNCTION function
 ;;;
