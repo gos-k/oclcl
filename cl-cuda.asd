@@ -3,9 +3,6 @@
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
-(eval-when (:load-toplevel :execute)
-  (asdf:operate 'asdf:load-op 'cffi-grovel))
-
 (in-package :cl-user)
 (defpackage cl-cuda-asd
   (:use :cl :asdf))
