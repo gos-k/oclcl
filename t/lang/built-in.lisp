@@ -19,17 +19,14 @@
 
 (diag "BUILT-IN-FUNCTION-RETURN-TYPE")
 
-(is (built-in-function-return-type '+ '(int int)) 'int
-    "basic case 1")
-
-(is (built-in-function-return-type '+ '(float3 float3)) 'float3
-    "basic case 2")
-
-(is (built-in-function-return-type '- '(int int)) 'int
-    "basic case 3")
-
-(is (built-in-function-return-type 'mod '(int int)) 'int
-    "basic case 4")
+(dolist (operator '(+ * - / mod))
+  (is (built-in-function-return-type operator '(int int)) 'int))
+(dolist (operator '(+ * - /))
+  (is (built-in-function-return-type operator '(float float)) 'float))
+(dolist (operator '(+ * - / mod))
+  (is (built-in-function-return-type operator '(int4 int4)) 'int4))
+(dolist (operator '(+ * - /))
+  (is (built-in-function-return-type operator '(float4 float4)) 'float4))
 
 ;;;
 ;;; test BUILT-IN-FUNCTION-INFIX-P function
