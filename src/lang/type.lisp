@@ -10,10 +10,16 @@
   (:export ;; Cl-cuda types
            :void
            :bool
+           :char
+           :uchar
+           :short
+           :ushort
            :int
+           :uint
+           :long
+           :ulong
            :float
            :double
-           :curand-state-xorwow
            :float3
            :float4
            :double3
@@ -93,11 +99,16 @@
 (defparameter +scalar-types+
   '((void :void "void")
     (bool (:boolean :int8) "bool")
+    (char :char "char")
+    (uchar :uchar "uchar")
+    (short :short "short")
+    (ushort :ushort "ushort")
     (int :int "int")
+    (uint :uint "uint")
+    (long :long "long")
+    (ulong :ulong "ulong")
     (float :float "float")
-    (double :double "double")
-    (curand-state-xorwow (:struct curand-state-xorwow)
-                         "curandStateXORWOW_t")))
+    (double :double "double")))
 
 (defun scalar-type-p (object)
   (and (assoc object +scalar-types+)
