@@ -27,6 +27,12 @@
   (is (built-in-function-return-type operator '(int4 int4)) 'int4))
 (dolist (operator '(+ * - /))
   (is (built-in-function-return-type operator '(float4 float4)) 'float4))
+(dolist (operator '(< > <= >=))
+  (is (built-in-function-return-type operator '(int int)) 'int))
+(dolist (operator '(< > <= >=))
+  (is (built-in-function-return-type operator '(float4 float4)) 'int4))
+(dolist (operator '(< > <= >=))
+  (is (built-in-function-return-type operator '(double4 double4)) 'long4))
 
 ;;;
 ;;; test BUILT-IN-FUNCTION-INFIX-P function
