@@ -31,6 +31,10 @@
 (defparameter +float-types+ '(float double))
 (defparameter +gentypes+ (append +integer-types+ +float-types+))
 
+(defparameter +integer-result-types+ '(char char short short int int long long))
+(defparameter +float-result-types+ '(int long))
+(defparameter +result-gentypes+ (append +integer-result-types+ +float-result-types+))
+
 (defun same-type-binary-operator (operator type)
   (loop for n in '("" "2" "3" "4" "8" "16")
         for type-symbol = (intern (concatenate 'string (symbol-name type) n))
@@ -51,6 +55,20 @@
         appending (same-type-binary-operator operator type)
         appending (scalar-vector-binary-operator operator type)))
 
+(defun vector-relational-operator (operator argument-type result-type)
+  (loop for n in '("2" "3" "4" "8" "16")
+        for argument-vector-type = (intern (concatenate 'string (symbol-name argument-type) n))
+        for result-vector-type = (intern (concatenate 'string (symbol-name result-type) n))
+        collecting (list (list argument-type argument-vector-type) result-vector-type t operator)
+        collecting (list (list argument-vector-type argument-type) result-vector-type t operator)
+        collecting (list (list argument-vector-type argument-vector-type) result-vector-type t operator)))
+
+(defun relational-operator (operator)
+  (loop for argument-type in +gentypes+
+        for result-type in +result-gentypes+
+        collecting (list (list argument-type argument-type) 'int t operator)
+        appending (vector-relational-operator operator argument-type result-type)))
+
 ;;;
 ;;; Built-in functions
 ;;;
@@ -66,10 +84,10 @@
     ;; relational operators
     = ,(same-types-binary-operator "==" +gentypes+)
     /= ,(same-types-binary-operator "!=" +gentypes+)
-    < ,(same-types-binary-operator "<" +gentypes+)
-    > ,(same-types-binary-operator ">" +gentypes+)
-    <= ,(same-types-binary-operator "<=" +gentypes+)
-    >= ,(same-types-binary-operator ">=" +gentypes+)
+    < ,(relational-operator "<")
+    > ,(relational-operator ">")
+    <= ,(relational-operator "<=")
+    >= ,(relational-operator ">=")
 
     ;; logical operators
     not  (((bool) bool nil "!"))
