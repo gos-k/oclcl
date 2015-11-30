@@ -40,17 +40,28 @@
   (loop for type in types
         appending (same-type-binary-operator operator type)))
 
+(defun scalar-vector-binary-operator (operator scalar-type)
+  (loop for n in '("2" "3" "4" "8" "16")
+        for vector-type = (intern (concatenate 'string (symbol-name scalar-type) n))
+        collecting (list (list scalar-type vector-type) vector-type t operator)
+        collecting (list (list vector-type scalar-type) vector-type t operator)))
+
+(defun arithmetic-binary-operator (operator types)
+  (loop for type in types
+        appending (same-type-binary-operator operator type)
+        appending (scalar-vector-binary-operator operator type)))
+
 ;;;
 ;;; Built-in functions
 ;;;
 
 (defparameter +built-in-functions+
   `(;; arithmetic operators
-    + ,(same-types-binary-operator "+" +gentypes+)
-    - ,(same-types-binary-operator "-" +gentypes+)
-    * ,(same-types-binary-operator "+" +gentypes+)
-    / ,(same-types-binary-operator "/" +gentypes+)
-    mod ,(same-types-binary-operator "%" +integer-types+)
+    + ,(arithmetic-binary-operator "+" +gentypes+)
+    - ,(arithmetic-binary-operator "-" +gentypes+)
+    * ,(arithmetic-binary-operator "+" +gentypes+)
+    / ,(arithmetic-binary-operator "/" +gentypes+)
+    mod ,(arithmetic-binary-operator "%" +integer-types+)
 
     ;; relational operators
     = ,(same-types-binary-operator "==" +gentypes+)
