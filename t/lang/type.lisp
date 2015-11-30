@@ -19,6 +19,11 @@
 
 (diag "CL-CUDA-TYPE-P")
 
+(dolist (type '(char uchar short ushort int uint long ulong))
+  (is (cl-cuda-type-p type) t (format nil "integer type : ~a" type)))
+(dolist (type '(float double))
+  (is (cl-cuda-type-p type) t (format nil "float type : ~a" type)))
+
 (is (cl-cuda-type-p 'int) t "basic case 1")
 (is (cl-cuda-type-p 'float3) t "basic case 2")
 (is (cl-cuda-type-p 'float3*) t "basic case 3")
