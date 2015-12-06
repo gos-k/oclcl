@@ -43,7 +43,7 @@
 (is (built-in-function-infix-p '+ '(int int)) t
     "basic case 1")
 
-(is (built-in-function-infix-p '+ '(float3 float3)) nil
+(is (built-in-function-infix-p '+ '(float3 float3)) t
     "basic case 2")
 
 (is (built-in-function-infix-p '- '(int int)) t
@@ -61,7 +61,7 @@
 (is (built-in-function-c-name '+ '(int int)) "+"
     "basic case 1")
 
-(is (built-in-function-c-name '+ '(float3 float3)) "float3_add"
+(is (built-in-function-c-name '+ '(float3 float3)) "+"
     "basic case 2")
 
 (is (built-in-function-c-name '- '(int int)) "-"
