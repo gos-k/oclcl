@@ -29,7 +29,7 @@
            ;; vector uchar
            :uchar2
            :uchar3
-           :UCHAR4
+           :uchar4
            :uchar8
            :uchar16
            ;; vector short
