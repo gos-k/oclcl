@@ -20,61 +20,61 @@
            :ulong
            :float
            :double
-
+           ;; vector char
            :char2
            :char3
            :char4
            :char8
            :char16
-
+           ;; vector uchar
            :uchar2
            :uchar3
            :UCHAR4
            :uchar8
            :uchar16
-
+           ;; vector short
            :short2
            :short3
            :short4
            :short8
            :short16
-
+           ;; vector ushort
            :ushort2
            :ushort3
            :ushort4
            :ushort8
            :ushort16
-
+           ;; vector int
            :int2
            :int3
            :int4
            :int8
            :int16
-
+           ;; vector uint
            :uint2
            :uint3
            :uint4
            :uint8
            :uint16
-
+           ;; vector long
            :long2
            :long3
            :long4
            :long8
            :long16
-
+           ;; vector ulong
            :ulong2
            :ulong3
            :ulong4
            :ulong8
            :ulong16
-
+           ;; vector float
            :float2
            :float3
            :float4
            :float8
            :float16
-
+           ;; vector double
            :double2
            :double3
            :double4
