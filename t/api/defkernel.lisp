@@ -8,38 +8,10 @@
   (:use :cl :cl-test-more
         :cl-cuda.api.defkernel
         :cl-cuda.lang)
-  (:import-from :cl-cuda.api.defkernel
-                :with-launching-arguments))
+  (:import-from :cl-cuda.api.defkernel))
 (in-package :cl-cuda-test.api.defkernel)
 
 (plan nil)
-
-
-;;;
-;;; test WITH-LAUNCHING-ARGUMENTS macro
-;;;
-
-(diag "WITH-LAUNCHING-ARGUMENTS")
-
-(is-expand
-  (with-launching-arguments (kargs ((x int) (y float3) (a float3*)))
-    (do-something))
-  (cffi:with-foreign-objects ((x-ptr ':int)
-                              (y-ptr '(:struct float3))
-                              (a-ptr 'cu-device-ptr))
-    (setf (cffi:mem-ref x-ptr ':int) x)
-    (setf (cffi:mem-ref y-ptr '(:struct float3)) y)
-    (setf (cffi:mem-ref a-ptr 'cu-device-ptr)
-          (if (memory-block-p a)
-              (memory-block-device-ptr a)
-              a))
-    (cffi:with-foreign-object (kargs :pointer 3)
-      (setf (cffi:mem-aref kargs :pointer 0) x-ptr)
-      (setf (cffi:mem-aref kargs :pointer 1) y-ptr)
-      (setf (cffi:mem-aref kargs :pointer 2) a-ptr)
-      (do-something)))
-  "basic case 1")
-
 
 ;;;
 ;;; test DEFKERNEL macro
