@@ -102,6 +102,23 @@
               collect (setf-to-argument-array-form var argument i))
          ,@body))))
 
+(defmacro defkernel (name (return-type arguments) &body body)
+  (with-gensyms (local-manager opencl-c-code)
+    `(progn
+       (let ((,local-manager (make-kernel-manager)))
+         (kernel-manager-define-function ,local-manager
+                                         ',name
+                                         ',return-type
+                                         ',arguments
+                                         ',body)
+         (kernel-manager-define-function *kernel-manager*
+                                         ',name
+                                         ',return-type
+                                         ',arguments
+                                         ',body)
+         (let ((,opencl-c-code (kernel-manager-translate ,local-manager)))
+         (defun ,name () ,opencl-c-code))))))
+
 ;(defmacro defkernel (name (return-type arguments) &body body)
 ;  (with-gensyms (hfunc kargs)
 ;    `(progn

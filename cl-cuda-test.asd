@@ -36,5 +36,6 @@
                  (:module "api"
                   :serial t
                   :components
-                  ((:file "kernel-manager"))))))
+                  ((:file "defkernel")
+                   (:file "kernel-manager"))))))
   :perform (load-op :after (op c) (asdf:clear-system c)))
