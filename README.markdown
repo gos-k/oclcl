@@ -80,7 +80,7 @@ oclcl is verified to work in following environments:
 * Ubuntu 15.04 x86_64
 * Intel Core i5-4210U
 * POCL 0.10
-* SBCL 1.3.11 64-bit
+* SBCL 1.3.1 64-bit
 * Roswell 0.0.3.50
 
 <!--
@@ -416,7 +416,7 @@ then, call a kernel function with binding a stream to `*cuda-stream*`:
 
 * gos-k (mag4.elan@gmail.com)
 
-C source generator is forked from [[https://github.com/takagi/cl-cuda][cl-cuda]].
+C source generator is forked from [cl-cuda](https://github.com/takagi/cl-cuda).
 
 ## Copyright
 
