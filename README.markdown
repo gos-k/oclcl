@@ -71,6 +71,16 @@ oclcl requires following:
 
 * OpenCL 1.2
 
+## Test
+
+    (ql:quickload :prove)
+    (prove:run :oclcl-test)
+
+or
+
+    $ ros install prove
+    $ prove-run oclcl/oclcl-test.asd
+
 ## Verification environments
 
 oclcl is verified to work in following environments:
