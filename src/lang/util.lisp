@@ -1,16 +1,16 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda.lang.util
+(defpackage oclcl.lang.util
   (:use :cl)
   (:export :c-identifier
            :lines
            :unlines
            :indent))
-(in-package cl-cuda.lang.util)
+(in-package oclcl.lang.util)
 
 
 (defun %c-identifier (object)

@@ -1,14 +1,14 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda.lang.compiler.compile-type
+(defpackage oclcl.lang.compiler.compile-type
   (:use :cl
-        :cl-cuda.lang.type)
+        :oclcl.lang.type)
   (:export :compile-type))
-(in-package :cl-cuda.lang.compiler.compile-type)
+(in-package :oclcl.lang.compiler.compile-type)
 
 
 ;;;
@@ -16,6 +16,6 @@
 ;;;
 
 (defun compile-type (type)
-  (unless (cl-cuda-type-p type)
-    (error "The value ~S is an invalid cl-cuda type." type))
+  (unless (oclcl-type-p type)
+    (error "The value ~S is an invalid oclcl type." type))
   (cuda-type type))

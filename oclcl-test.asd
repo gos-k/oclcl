@@ -1,18 +1,17 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
-  Copyright (c) 2015 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda-test-asd
+(defpackage oclcl-test-asd
   (:use :cl :asdf))
-(in-package :cl-cuda-test-asd)
+(in-package :oclcl-test-asd)
 
-(defsystem cl-cuda-test
+(defsystem oclcl-test
   :author "Masayuki Takagi"
   :license "LLGPL"
-  :depends-on (:cl-cuda
+  :depends-on (:oclcl
                :cl-test-more)
   :components ((:module "t"
                 :serial t

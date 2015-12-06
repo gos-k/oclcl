@@ -1,15 +1,15 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda-examples.diffuse1
-  (:use :cl :cl-cuda)
+(defpackage oclcl-examples.diffuse1
+  (:use :cl :oclcl)
   (:export :main))
-(in-package :cl-cuda-examples.diffuse1)
+(in-package :oclcl-examples.diffuse1)
 
-(setf cl-cuda:*show-messages* nil)
+(setf oclcl:*show-messages* nil)
 
 
 ;;; image output functions

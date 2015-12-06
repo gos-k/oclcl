@@ -1,33 +1,33 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda-test.lang.type
+(defpackage oclcl-test.lang.type
   (:use :cl :cl-test-more
-        :cl-cuda.lang.data
-        :cl-cuda.lang.type))
-(in-package :cl-cuda-test.lang.type)
+        :oclcl.lang.data
+        :oclcl.lang.type))
+(in-package :oclcl-test.lang.type)
 
 (plan nil)
 
 
 ;;;
-;;; test CL-CUDA-TYPE-P function
+;;; test OCLCL-TYPE-P function
 ;;;
 
-(diag "CL-CUDA-TYPE-P")
+(diag "OCLCL-TYPE-P")
 
 (dolist (type '(char uchar short ushort int uint long ulong))
-  (is (cl-cuda-type-p type) t (format nil "integer type : ~a" type)))
+  (is (oclcl-type-p type) t (format nil "integer type : ~a" type)))
 (dolist (type '(float double))
-  (is (cl-cuda-type-p type) t (format nil "float type : ~a" type)))
+  (is (oclcl-type-p type) t (format nil "float type : ~a" type)))
 
-(is (cl-cuda-type-p 'int) t "basic case 1")
-(is (cl-cuda-type-p 'float3) t "basic case 2")
-(is (cl-cuda-type-p 'float3*) t "basic case 3")
-(is (cl-cuda-type-p '*float*) nil "basic case 4")
+(is (oclcl-type-p 'int) t "basic case 1")
+(is (oclcl-type-p 'float3) t "basic case 2")
+(is (oclcl-type-p 'float3*) t "basic case 3")
+(is (oclcl-type-p '*float*) nil "basic case 4")
 
 
 ;;;

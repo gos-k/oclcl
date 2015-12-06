@@ -1,17 +1,17 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda-test.lang.compiler.type-of-expression
+(defpackage oclcl-test.lang.compiler.type-of-expression
   (:use :cl :cl-test-more
-        :cl-cuda.lang.compiler.type-of-expression
-        :cl-cuda.lang.data
-        :cl-cuda.lang.type
-        :cl-cuda.lang.syntax
-        :cl-cuda.lang.environment)
-  (:import-from :cl-cuda.lang.compiler.type-of-expression
+        :oclcl.lang.compiler.type-of-expression
+        :oclcl.lang.data
+        :oclcl.lang.type
+        :oclcl.lang.syntax
+        :oclcl.lang.environment)
+  (:import-from :oclcl.lang.compiler.type-of-expression
                 :type-of-macro
                 :type-of-symbol-macro
                 :type-of-literal
@@ -20,7 +20,7 @@
                 :type-of-inline-if
                 :type-of-arithmetic
                 :type-of-function))
-(in-package :cl-cuda-test.lang.compiler.type-of-expression)
+(in-package :oclcl-test.lang.compiler.type-of-expression)
 
 (plan nil)
 

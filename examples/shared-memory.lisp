@@ -1,17 +1,17 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda-examples.shared-memory
+(defpackage oclcl-examples.shared-memory
   (:use :cl
-        :cl-cuda
+        :oclcl
         :alexandria)
   (:export :main-shared-memory :main-global-memory))
-(in-package :cl-cuda-examples.shared-memory)
+(in-package :oclcl-examples.shared-memory)
 
-(setf cl-cuda:*show-messages* nil)
+(setf oclcl:*show-messages* nil)
 
 (defmacro def-global-memory (n)
   (let ((name (symbolicate "GLOBAL-MEMORY-" (princ-to-string n))))

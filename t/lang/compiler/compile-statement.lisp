@@ -1,18 +1,18 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda-test.lang.compiler.compile-statement
+(defpackage oclcl-test.lang.compiler.compile-statement
   (:use :cl :cl-test-more
-        :cl-cuda.lang.util
-        :cl-cuda.lang.data
-        :cl-cuda.lang.type
-        :cl-cuda.lang.syntax
-        :cl-cuda.lang.environment
-        :cl-cuda.lang.compiler.compile-statement)
-  (:import-from :cl-cuda.lang.compiler.compile-statement
+        :oclcl.lang.util
+        :oclcl.lang.data
+        :oclcl.lang.type
+        :oclcl.lang.syntax
+        :oclcl.lang.environment
+        :oclcl.lang.compiler.compile-statement)
+  (:import-from :oclcl.lang.compiler.compile-statement
                 :compile-macro
                 :compile-if
                 :compile-let
@@ -23,7 +23,7 @@
                 :compile-progn
                 :compile-return
                 :compile-function))
-(in-package :cl-cuda-test.lang.compiler.compile-statement)
+(in-package :oclcl-test.lang.compiler.compile-statement)
 
 (plan nil)
 

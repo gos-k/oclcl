@@ -1,14 +1,14 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2013 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda-examples.sph2
+(defpackage oclcl-examples.sph2
   (:use :cl
-        :cl-cuda)
+        :oclcl)
   (:export :main))
-(in-package :cl-cuda-examples.sph2)
+(in-package :oclcl-examples.sph2)
 
 
 ;;;

@@ -1,21 +1,21 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda.lang.compiler.compile-kernel
+(defpackage oclcl.lang.compiler.compile-kernel
   (:use :cl
-        :cl-cuda.lang.util
-        :cl-cuda.lang.type
-        :cl-cuda.lang.syntax
-        :cl-cuda.lang.environment
-        :cl-cuda.lang.kernel
-        :cl-cuda.lang.compiler.compile-data
-        :cl-cuda.lang.compiler.compile-type
-        :cl-cuda.lang.compiler.compile-statement)
+        :oclcl.lang.util
+        :oclcl.lang.type
+        :oclcl.lang.syntax
+        :oclcl.lang.environment
+        :oclcl.lang.kernel
+        :oclcl.lang.compiler.compile-data
+        :oclcl.lang.compiler.compile-type
+        :oclcl.lang.compiler.compile-statement)
   (:export :compile-kernel))
-(in-package :cl-cuda.lang.compiler.compile-kernel)
+(in-package :oclcl.lang.compiler.compile-kernel)
 
 
 ;;;
@@ -83,8 +83,8 @@
 ")
 
 (defun compile-specifier (return-type)
-  (unless (cl-cuda-type-p return-type)
-    (error 'type-error :datum return-type :expected 'cl-cuda-type))
+  (unless (oclcl-type-p return-type)
+    (error 'type-error :datum return-type :expected 'oclcl-type))
   ;; OpenCL v1.2 dr19: 6.7 Function Qualifiers
   (if (eq return-type 'void)
       "__kernel"

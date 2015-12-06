@@ -1,16 +1,16 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage :cl-cuda.api.macro
+(defpackage :oclcl.api.macro
   (:use :cl
-        :cl-cuda.api.defkernel)
+        :oclcl.api.defkernel)
   (:export :let*
            :when
            :unless))
-(in-package :cl-cuda.api.macro)
+(in-package :oclcl.api.macro)
 
 
 (defkernelmacro let* (bindings &body body)

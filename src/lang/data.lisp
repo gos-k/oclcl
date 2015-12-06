@@ -1,22 +1,22 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda.lang.data
+(defpackage oclcl.lang.data
   (:use :cl)
   (:export ;; Symbol
-           :cl-cuda-symbol
-           :cl-cuda-symbol-p
+           :oclcl-symbol
+           :oclcl-symbol-p
            ;; Bool
-           :cl-cuda-bool-p
+           :oclcl-bool-p
            ;; Int
-           :cl-cuda-int-p
+           :oclcl-int-p
            ;; Float
-           :cl-cuda-float-p
+           :oclcl-float-p
            ;; Double
-           :cl-cuda-double-p
+           :oclcl-double-p
            ;; Float3
            :float3
            :make-float3
@@ -51,17 +51,17 @@
            :double4-w
            :double4-p
            :double4-=))
-(in-package :cl-cuda.lang.data)
+(in-package :oclcl.lang.data)
 
 
 ;;;
 ;;; Symbol
 ;;;
 
-(deftype cl-cuda-symbol ()
-  `(satisfies cl-cuda-symbol-p))
+(deftype oclcl-symbol ()
+  `(satisfies oclcl-symbol-p))
 
-(defun cl-cuda-symbol-p (object)
+(defun oclcl-symbol-p (object)
   (symbolp object))
 
 
@@ -69,7 +69,7 @@
 ;;; Bool
 ;;;
 
-(defun cl-cuda-bool-p (object)
+(defun oclcl-bool-p (object)
   (typep object 'boolean))
 
 
@@ -77,7 +77,7 @@
 ;;; Int
 ;;;
 
-(defun cl-cuda-int-p (object)
+(defun oclcl-int-p (object)
   (integerp object))
 
 
@@ -85,7 +85,7 @@
 ;;; Float
 ;;;
 
-(defun cl-cuda-float-p (object)
+(defun oclcl-float-p (object)
   (typep object 'single-float))
 
 
@@ -93,7 +93,7 @@
 ;;; Double
 ;;;
 
-(defun cl-cuda-double-p (object)
+(defun oclcl-double-p (object)
   (typep object 'double-float))
 
 

@@ -1,21 +1,21 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda.lang.compiler.compile-statement
+(defpackage oclcl.lang.compiler.compile-statement
   (:use :cl
-        :cl-cuda.lang.util
-        :cl-cuda.lang.type
-        :cl-cuda.lang.syntax
-        :cl-cuda.lang.environment
-        :cl-cuda.lang.compiler.compile-data
-        :cl-cuda.lang.compiler.compile-type
-        :cl-cuda.lang.compiler.type-of-expression
-        :cl-cuda.lang.compiler.compile-expression)
+        :oclcl.lang.util
+        :oclcl.lang.type
+        :oclcl.lang.syntax
+        :oclcl.lang.environment
+        :oclcl.lang.compiler.compile-data
+        :oclcl.lang.compiler.compile-type
+        :oclcl.lang.compiler.type-of-expression
+        :oclcl.lang.compiler.compile-expression)
   (:export :compile-statement))
-(in-package :cl-cuda.lang.compiler.compile-statement)
+(in-package :oclcl.lang.compiler.compile-statement)
 
 
 ;;;
@@ -43,7 +43,7 @@
 ;;;
 
 (defun %macro-p (form func-env)
-  (cl-cuda.lang.compiler.compile-expression::%macro-p form func-env))
+  (oclcl.lang.compiler.compile-expression::%macro-p form func-env))
 
 (defun compile-macro (form var-env func-env)
   (let ((operator (macro-operator form))
@@ -290,6 +290,6 @@
 ;;;
 
 (defun compile-function (form var-env func-env)
-  (let ((code (cl-cuda.lang.compiler.compile-expression::compile-function
+  (let ((code (oclcl.lang.compiler.compile-expression::compile-function
                 form var-env func-env)))
     (format nil "~A;~%" code)))

@@ -1,16 +1,16 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage :cl-cuda.lang
+(defpackage :oclcl.lang
   (:use :cl
         :cl-reexport))
-(in-package :cl-cuda.lang)
+(in-package :oclcl.lang)
 
-;; reexport symbols of data structures cl-cuda provides
-(reexport-from :cl-cuda.lang.data
+;; reexport symbols of data structures oclcl provides
+(reexport-from :oclcl.lang.data
                :include '(;; Float3
                           :float3
                           :make-float3
@@ -46,9 +46,9 @@
                           :double4-p
                           :double4-=))
 
-;; reexport symbols of cl-cuda types
+;; reexport symbols of oclcl types
 ;; OpenCL v1.2 dr19: 6.1 Supported Data Type
-(reexport-from :cl-cuda.lang.type
+(reexport-from :oclcl.lang.type
                :include '(:bool
                           :char :char2 :char3 :char4 :char8 :char16
                           :unsigned-char :uchar :uchar2 :uchar3 :uchar4 :uchar8 :uchar16
@@ -67,9 +67,9 @@
                           :uintptr-t
                           :void))
 
-;; reexport symbols of cl-cuda syntax except the ones exported
+;; reexport symbols of oclcl syntax except the ones exported
 ;; from COMMON-LISP package
-(reexport-from :cl-cuda.lang.syntax
+(reexport-from :oclcl.lang.syntax
                :include '(:grid-dim-x :grid-dim-y :grid-dim-z
                           :block-dim-x :block-dim-y :block-dim-z
                           :block-idx-x :block-idx-y :block-idx-z
@@ -77,9 +77,9 @@
                           :with-shared-memory
                           :set))
 
-;; reexport symbols of cl-cuda built-in functions except the ones
+;; reexport symbols of oclcl built-in functions except the ones
 ;; exported from COMMON-LISP package
-(reexport-from :cl-cuda.lang.built-in
+(reexport-from :oclcl.lang.built-in
                :include '(:rsqrt
                           :__exp
                           :__divide

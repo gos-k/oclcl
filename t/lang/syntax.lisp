@@ -1,14 +1,14 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda-test.lang.syntax
+(defpackage oclcl-test.lang.syntax
   (:use :cl :cl-test-more
-        :cl-cuda.lang.data
-        :cl-cuda.lang.syntax))
-(in-package :cl-cuda-test.lang.syntax)
+        :oclcl.lang.data
+        :oclcl.lang.syntax))
+(in-package :oclcl-test.lang.syntax)
 
 (plan nil)
 

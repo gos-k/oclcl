@@ -1,19 +1,19 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda.lang.compiler.compile-data
+(defpackage oclcl.lang.compiler.compile-data
   (:use :cl
-        :cl-cuda.lang.data
-        :cl-cuda.lang.util)
+        :oclcl.lang.data
+        :oclcl.lang.util)
   (:export :compile-symbol
            :compile-bool
            :compile-int
            :compile-float
            :compile-double))
-(in-package :cl-cuda.lang.compiler.compile-data)
+(in-package :oclcl.lang.compiler.compile-data)
 
 
 ;;;
@@ -21,7 +21,7 @@
 ;;;
 
 (defun compile-symbol (expr)
-  (unless (cl-cuda-symbol-p expr)
+  (unless (oclcl-symbol-p expr)
     (error "The value ~S is an invalid expression." expr))
   (c-identifier expr))
 
@@ -31,7 +31,7 @@
 ;;;
 
 (defun compile-bool (expr)
-  (unless (cl-cuda-bool-p expr)
+  (unless (oclcl-bool-p expr)
     (error "The value ~S is an invalid expression." expr))
   (if expr "true" "false"))
 
@@ -41,7 +41,7 @@
 ;;;
 
 (defun compile-int (expr)
-  (unless (cl-cuda-int-p expr)
+  (unless (oclcl-int-p expr)
     (error "The value ~S is an invalid expression." expr))
   (princ-to-string expr))
 
@@ -51,7 +51,7 @@
 ;;;
 
 (defun compile-float (expr)
-  (unless (cl-cuda-float-p expr)
+  (unless (oclcl-float-p expr)
     (error "The value ~S is an invalid expression." expr))
   (princ-to-string expr))
 
@@ -61,6 +61,6 @@
 ;;;
 
 (defun compile-double (expr)
-  (unless (cl-cuda-double-p expr)
+  (unless (oclcl-double-p expr)
     (error "The value ~S is an invalid expression." expr))
   (format nil "(double)~S" (float expr 0.0)))

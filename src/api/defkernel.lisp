@@ -1,14 +1,14 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage :cl-cuda.api.defkernel
+(defpackage :oclcl.api.defkernel
   (:use :cl
-        :cl-cuda.lang.syntax
-        :cl-cuda.lang.type
-        :cl-cuda.api.kernel-manager)
+        :oclcl.lang.syntax
+        :oclcl.lang.type
+        :oclcl.api.kernel-manager)
   (:export :defkernel
            :defkernelmacro
            :expand-macro-1
@@ -19,7 +19,7 @@
   (:import-from :alexandria
                 :format-symbol
                 :with-gensyms))
-(in-package :cl-cuda.api.defkernel)
+(in-package :oclcl.api.defkernel)
 
 
 ;;;
@@ -52,10 +52,10 @@
   `(kernel-manager-define-macro *kernel-manager* ',name ',arguments ',body))
 
 (defun expand-macro-1 (form)
-  (cl-cuda.api.kernel-manager:expand-macro-1 form *kernel-manager*))
+  (oclcl.api.kernel-manager:expand-macro-1 form *kernel-manager*))
 
 (defun expand-macro (form)
-  (cl-cuda.api.kernel-manager:expand-macro form *kernel-manager*))
+  (oclcl.api.kernel-manager:expand-macro form *kernel-manager*))
 
 
 ;;;

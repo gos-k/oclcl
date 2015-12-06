@@ -1,19 +1,19 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda.lang.compiler.compile-expression
+(defpackage oclcl.lang.compiler.compile-expression
   (:use :cl
-        :cl-cuda.lang.type
-        :cl-cuda.lang.syntax
-        :cl-cuda.lang.environment
-        :cl-cuda.lang.built-in
-        :cl-cuda.lang.compiler.compile-data
-        :cl-cuda.lang.compiler.type-of-expression)
+        :oclcl.lang.type
+        :oclcl.lang.syntax
+        :oclcl.lang.environment
+        :oclcl.lang.built-in
+        :oclcl.lang.compiler.compile-data
+        :oclcl.lang.compiler.type-of-expression)
   (:export :compile-expression))
-(in-package :cl-cuda.lang.compiler.compile-expression)
+(in-package :oclcl.lang.compiler.compile-expression)
 
 
 ;;;
@@ -38,7 +38,7 @@
 ;;;
 
 (defun %macro-p (form func-env)
-  (cl-cuda.lang.compiler.type-of-expression::%macro-p form func-env))
+  (oclcl.lang.compiler.type-of-expression::%macro-p form func-env))
 
 (defun compile-macro (form var-env func-env)
   (let ((operator (macro-operator form))
@@ -53,7 +53,7 @@
 ;;;
 
 (defun %symbol-macro-p (form var-env)
-  (cl-cuda.lang.compiler.type-of-expression::%symbol-macro-p form var-env))
+  (oclcl.lang.compiler.type-of-expression::%symbol-macro-p form var-env))
 
 (defun compile-symbol-macro (form var-env func-env)
   (let ((form1 (variable-environment-symbol-macro-expansion var-env form)))
@@ -195,7 +195,7 @@
 ;;;
 
 (defun type-of-operands (operands var-env func-env)
-  (cl-cuda.lang.compiler.type-of-expression::type-of-operands operands var-env
+  (oclcl.lang.compiler.type-of-expression::type-of-operands operands var-env
                                                               func-env))
 
 (defun compile-operands (operands var-env func-env)

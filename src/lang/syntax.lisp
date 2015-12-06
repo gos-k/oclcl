@@ -1,13 +1,13 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda.lang.syntax
+(defpackage oclcl.lang.syntax
   (:use :cl
-        :cl-cuda.lang.data
-        :cl-cuda.lang.type)
+        :oclcl.lang.data
+        :oclcl.lang.type)
   (:export ;; Symbol macro
            :symbol-macro-p
            ;; Macro
@@ -112,7 +112,7 @@
            :argument-p
            :argument-var
            :argument-type))
-(in-package :cl-cuda.lang.syntax)
+(in-package :oclcl.lang.syntax)
 
 
 ;;;
@@ -120,7 +120,7 @@
 ;;;
 
 (defun symbol-macro-p (form)
-  (cl-cuda-symbol-p form))
+  (oclcl-symbol-p form))
 
 
 ;;;
@@ -129,7 +129,7 @@
 
 (defun macro-p (form)
   (cl-pattern:match form
-    ((name . _) (cl-cuda-symbol-p name))
+    ((name . _) (oclcl-symbol-p name))
     (_ nil)))
 
 (defun macro-operator (form)
@@ -154,16 +154,16 @@
       (double-literal-p form)))
 
 (defun bool-literal-p (form)
-  (cl-cuda-bool-p form))
+  (oclcl-bool-p form))
 
 (defun int-literal-p (form)
-  (cl-cuda-int-p form))
+  (oclcl-int-p form))
 
 (defun float-literal-p (form)
-  (cl-cuda-float-p form))
+  (oclcl-float-p form))
 
 (defun double-literal-p (form)
-  (cl-cuda-double-p form))
+  (oclcl-double-p form))
 
 
 ;;;
@@ -208,7 +208,7 @@
 ;;;
 
 (defun variable-reference-p (form)
-  (cl-cuda-symbol-p form))
+  (oclcl-symbol-p form))
 
 
 ;;;
@@ -312,7 +312,7 @@
 
 (defun function-p (form)
   (cl-pattern:match form
-    ((name . _) (cl-cuda-symbol-p name))
+    ((name . _) (oclcl-symbol-p name))
     (_ nil)))
 
 (defun function-operator (form)
@@ -387,7 +387,7 @@
 
 (defun let-binding-p (object)
   (cl-pattern:match object
-    ((var _) (cl-cuda-symbol-p var))
+    ((var _) (oclcl-symbol-p var))
     (_ nil)))
 
 (defun let-binding-var (binding)
@@ -477,8 +477,8 @@
 
 (defun do-binding-p (object)
   (cl-pattern:match object
-    ((var _) (cl-cuda-symbol-p var))
-    ((var _ _) (cl-cuda-symbol-p var))
+    ((var _) (oclcl-symbol-p var))
+    ((var _ _) (oclcl-symbol-p var))
     (_ nil)))
 
 (defun do-binding-var (binding)
@@ -530,8 +530,8 @@
 
 (defun with-shared-memory-spec-p (object)
   (cl-pattern:match object
-    ((var type . _) (and (cl-cuda-symbol-p var)
-                         (cl-cuda-type-p type)))
+    ((var type . _) (and (oclcl-symbol-p var)
+                         (oclcl-type-p type)))
     (_ nil)))
 
 (defun with-shared-memory-spec-var (spec)
@@ -616,8 +616,8 @@
 
 (defun argument-p (object)
   (cl-pattern:match object
-    ((var type) (and (cl-cuda-symbol-p var)
-                     (cl-cuda-type-p type)))
+    ((var type) (and (oclcl-symbol-p var)
+                     (oclcl-type-p type)))
     (_ nil)))
 
 (defun argument-var (argument)

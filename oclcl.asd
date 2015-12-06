@@ -1,19 +1,19 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda-asd
+(defpackage oclcl-asd
   (:use :cl :asdf))
-(in-package :cl-cuda-asd)
+(in-package :oclcl-asd)
 
 
 ;;;
-;;; Cl-cuda system definition
+;;; oclcl system definition
 ;;;
 
-(defsystem cl-cuda
+(defsystem oclcl
   :version "0.1"
   :author "Masayuki Takagi"
   :license "LLGPL"
@@ -46,8 +46,8 @@
                    (:file "defkernel")
                    (:file "macro")
                    (:file "api")))
-                 (:file "cl-cuda"))))
-  :description "Cl-cuda is a library to use NVIDIA CUDA in Common Lisp programs."
+                 (:file "oclcl"))))
+  :description "oclcl is a library S-expression to OpenCL C."
   :long-description
   #.(with-open-file (stream (merge-pathnames
                              #p"README.markdown"
@@ -60,4 +60,4 @@
                                :fill-pointer t)))
           (setf (fill-pointer seq) (read-sequence seq stream))
           seq)))
-  :in-order-to ((test-op (load-op cl-cuda-test))))
+  :in-order-to ((test-op (load-op oclcl-test))))

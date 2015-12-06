@@ -1,14 +1,14 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda-test.lang.kernel
+(defpackage oclcl-test.lang.kernel
   (:use :cl :cl-test-more
-        :cl-cuda.lang.kernel
-        :cl-cuda.lang.type))
-(in-package :cl-cuda-test.lang.kernel)
+        :oclcl.lang.kernel
+        :oclcl.lang.type))
+(in-package :oclcl-test.lang.kernel)
 
 (plan nil)
 
@@ -78,12 +78,12 @@
   (is-error (kernel-define-function kernel
                                     1 'int '((x int)) '((return x)))
             type-error
-            "NAME which is not a cl-cuda symbol."))
+            "NAME which is not a oclcl symbol."))
 
 (let ((kernel (make-kernel)))
   (is-error (kernel-define-function kernel 'foo 1 '((x int)) '((return x)))
             type-error
-            "RETURN-TYPE which is not a cl-cuda type."))
+            "RETURN-TYPE which is not a oclcl type."))
 
 (let ((kernel (make-kernel)))
   (is-error (kernel-define-function kernel 'foo 1 'bar '((return x)))
@@ -164,7 +164,7 @@
 (let ((kernel (make-kernel)))
   (is-error (kernel-define-macro kernel 1 '(x) '(`(return ,x)))
             type-error
-            "NAME which is not a cl-cuda symbol."))
+            "NAME which is not a oclcl symbol."))
 
 
 ;;;
@@ -264,7 +264,7 @@
 
 (let ((kernel (make-kernel)))
   (is-error (kernel-define-symbol-macro kernel 1 1.0) type-error
-            "NAME which is not a cl-cuda symbol."))
+            "NAME which is not a oclcl symbol."))
 
 
 ;;;

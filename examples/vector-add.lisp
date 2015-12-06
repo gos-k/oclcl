@@ -1,5 +1,5 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
@@ -8,11 +8,11 @@
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda-examples.vector-add
+(defpackage oclcl-examples.vector-add
   (:use :cl
-        :cl-cuda)
+        :oclcl)
   (:export :main))
-(in-package :cl-cuda-examples.vector-add)
+(in-package :oclcl-examples.vector-add)
 
 (defun random-init (data n)
   (dotimes (i n)

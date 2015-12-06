@@ -1,13 +1,13 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda.api.kernel-manager
+(defpackage oclcl.api.kernel-manager
   (:use :cl
-        :cl-cuda.lang.kernel
-        :cl-cuda.lang.compiler.compile-kernel)
+        :oclcl.lang.kernel
+        :oclcl.lang.compiler.compile-kernel)
   (:export :kernel-manager
            :make-kernel-manager
            :kernel-manager-compiled-p
@@ -27,7 +27,7 @@
            :*kernel-manager*)
   (:shadow :expand-macro-1
            :expand-macro))
-(in-package :cl-cuda.api.kernel-manager)
+(in-package :oclcl.api.kernel-manager)
 
 
 ;;;
@@ -132,10 +132,10 @@
 
 (defun expand-macro-1 (form manager)
   (let ((kernel (kernel-manager-kernel manager)))
-    (cl-cuda.lang.kernel:expand-macro-1 form kernel)))
+    (oclcl.lang.kernel:expand-macro-1 form kernel)))
 
 (defun expand-macro (form manager)
   (let ((kernel (kernel-manager-kernel manager)))
-    (cl-cuda.lang.kernel:expand-macro form kernel)))
+    (oclcl.lang.kernel:expand-macro form kernel)))
 
 (defvar *kernel-manager* (make-kernel-manager))

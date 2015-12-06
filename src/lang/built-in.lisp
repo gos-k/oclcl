@@ -1,12 +1,12 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda.lang.built-in
+(defpackage oclcl.lang.built-in
   (:use :cl
-        :cl-cuda.lang.type)
+        :oclcl.lang.type)
   (:export ;; Built-in functions
            :rsqrt
            :__exp
@@ -25,7 +25,7 @@
            :built-in-function-return-type
            :built-in-function-infix-p
            :built-in-function-c-name))
-(in-package :cl-cuda.lang.built-in)
+(in-package :oclcl.lang.built-in)
 
 (defparameter +integer-types+ '(char uchar short ushort int uint long ulong))
 (defparameter +float-types+ '(float double))

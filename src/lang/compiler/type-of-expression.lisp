@@ -1,17 +1,17 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda.lang.compiler.type-of-expression
+(defpackage oclcl.lang.compiler.type-of-expression
   (:use :cl
-        :cl-cuda.lang.type
-        :cl-cuda.lang.syntax
-        :cl-cuda.lang.environment
-        :cl-cuda.lang.built-in)
+        :oclcl.lang.type
+        :oclcl.lang.syntax
+        :oclcl.lang.environment
+        :oclcl.lang.built-in)
   (:export :type-of-expression))
-(in-package :cl-cuda.lang.compiler.type-of-expression)
+(in-package :oclcl.lang.compiler.type-of-expression)
 
 
 ;;;

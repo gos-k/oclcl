@@ -1,14 +1,14 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda.api
+(defpackage oclcl.api
   (:use :cl :cl-reexport))
-(in-package :cl-cuda.api)
+(in-package :oclcl.api)
 
-(reexport-from :cl-cuda.api.defkernel)
-(reexport-from :cl-cuda.api.macro)
+(reexport-from :oclcl.api.defkernel)
+(reexport-from :oclcl.api.macro)
 
-;; reexport no symbols from cl-cuda.api.kernel-manager package
+;; reexport no symbols from oclcl.api.kernel-manager package

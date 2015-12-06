@@ -1,15 +1,15 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda-test.lang.compiler.compile-kernel
+(defpackage oclcl-test.lang.compiler.compile-kernel
   (:use :cl :cl-test-more
-        :cl-cuda.lang.type
-        :cl-cuda.lang.kernel
-        :cl-cuda.lang.compiler.compile-kernel))
-(in-package :cl-cuda-test.lang.compiler.compile-kernel)
+        :oclcl.lang.type
+        :oclcl.lang.kernel
+        :oclcl.lang.compiler.compile-kernel))
+(in-package :oclcl-test.lang.compiler.compile-kernel)
 
 (plan nil)
 

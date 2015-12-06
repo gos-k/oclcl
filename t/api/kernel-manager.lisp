@@ -1,14 +1,14 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda-test.api.kernel-manager
+(defpackage oclcl-test.api.kernel-manager
   (:use :cl :cl-test-more
-        :cl-cuda.lang
-        :cl-cuda.api.kernel-manager))
-(in-package :cl-cuda-test.api.kernel-manager)
+        :oclcl.lang
+        :oclcl.api.kernel-manager))
+(in-package :oclcl-test.api.kernel-manager)
 
 (plan nil)
 

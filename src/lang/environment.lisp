@@ -1,14 +1,14 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda.lang.environment
+(defpackage oclcl.lang.environment
   (:use :cl
-        :cl-cuda.lang.util
-        :cl-cuda.lang.data
-        :cl-cuda.lang.type)
+        :oclcl.lang.util
+        :oclcl.lang.data
+        :oclcl.lang.type)
   (:export ;; Variable environment
            :empty-variable-environment
            ;; Variable environment - Variable
@@ -37,7 +37,7 @@
            :function-environment-macro-expander)
   (:import-from :alexandria
                 :with-gensyms))
-(in-package :cl-cuda.lang.environment)
+(in-package :oclcl.lang.environment)
 
 
 ;;;
@@ -167,10 +167,10 @@
   (type :type :read-only t))
 
 (defun make-variable (name type)
-  (unless (cl-cuda-symbol-p name)
-    (error 'type-error :datum name :expected-type 'cl-cuda-symbol))
-  (unless (cl-cuda-type-p type)
-    (error 'type-error :datum type :expected-type 'cl-cuda-type))
+  (unless (oclcl-symbol-p name)
+    (error 'type-error :datum name :expected-type 'oclcl-symbol))
+  (unless (oclcl-type-p type)
+    (error 'type-error :datum type :expected-type 'oclcl-type))
   (%make-variable :name name :type type))
 
 
@@ -183,8 +183,8 @@
   (expansion :expansion :read-only t))
 
 (defun make-symbol-macro (name expansion)
-  (unless (cl-cuda-symbol-p name)
-    (error 'type-error :datum name :expected-type 'cl-cuda-symbol))
+  (unless (oclcl-symbol-p name)
+    (error 'type-error :datum name :expected-type 'oclcl-symbol))
   (%make-symbol-macro :name name :expansion expansion))
 
 
@@ -201,14 +201,14 @@
   (argument-types :argument-types :read-only t))
 
 (defun make-function (name return-type argument-types)
-  (unless (cl-cuda-symbol-p name)
-    (error 'type-error :datum name :expected-type 'cl-cuda-symbol))
-  (unless (cl-cuda-type-p return-type)
-    (error 'type-error :datum return-type :expected-type 'cl-cuda-type))
+  (unless (oclcl-symbol-p name)
+    (error 'type-error :datum name :expected-type 'oclcl-symbol))
+  (unless (oclcl-type-p return-type)
+    (error 'type-error :datum return-type :expected-type 'oclcl-type))
   (dolist (argument-type argument-types)
-    (unless (cl-cuda-type-p argument-type)
+    (unless (oclcl-type-p argument-type)
       (error 'type-error :datum argument-type
-                         :expected-type 'cl-cuda-type)))
+                         :expected-type 'oclcl-type)))
   (%make-function :name name
                   :return-type return-type
                   :argument-types argument-types))
@@ -227,8 +227,8 @@
   (body :body :read-only t))
 
 (defun make-macro (name arguments body)
-  (unless (cl-cuda-symbol-p name)
-    (error 'type-error :datum name :expected-type 'cl-cuda-symbol))
+  (unless (oclcl-symbol-p name)
+    (error 'type-error :datum name :expected-type 'oclcl-symbol))
   (unless (listp arguments)
     (error 'type-error :datum arguments :expected-type 'list))
   (unless (listp body)

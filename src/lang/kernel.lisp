@@ -1,15 +1,15 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda.lang.kernel
+(defpackage oclcl.lang.kernel
   (:use :cl
-        :cl-cuda.lang.util
-        :cl-cuda.lang.data
-        :cl-cuda.lang.type
-        :cl-cuda.lang.syntax)
+        :oclcl.lang.util
+        :oclcl.lang.data
+        :oclcl.lang.type
+        :oclcl.lang.syntax)
   (:export ;; Kernel
            :make-kernel
            :kernel-function-names
@@ -44,7 +44,7 @@
            :function-p)
   (:import-from :alexandria
                 :with-gensyms))
-(in-package :cl-cuda.lang.kernel)
+(in-package :oclcl.lang.kernel)
 
 
 ;;;
@@ -155,14 +155,14 @@
 
 (defun expand-macro-1 (form kernel)
   (cond
-    ((cl-cuda.lang.syntax:macro-p form)
+    ((oclcl.lang.syntax:macro-p form)
      (let ((operator (macro-operator form))
            (operands (macro-operands form)))
        (if (kernel-macro-exists-p kernel operator)
            (let ((expander (kernel-macro-expander kernel operator)))
              (values (funcall expander operands) t))
            (values form nil))))
-    ((cl-cuda.lang.syntax:symbol-macro-p form)
+    ((oclcl.lang.syntax:symbol-macro-p form)
      (if (kernel-symbol-macro-exists-p kernel form)
          (let ((expansion (kernel-symbol-macro-expansion kernel form)))
            (values expansion t))
@@ -220,10 +220,10 @@
   (body :body :read-only t))
 
 (defun make-function (name return-type arguments body)
-  (unless (cl-cuda-symbol-p name)
-    (error 'type-error :datum name :expected-type 'cl-cuda-symbol))
-  (unless (cl-cuda-type-p return-type)
-    (error 'type-error :datum return-type :expected-type 'cl-cuda-type))
+  (unless (oclcl-symbol-p name)
+    (error 'type-error :datum name :expected-type 'oclcl-symbol))
+  (unless (oclcl-type-p return-type)
+    (error 'type-error :datum return-type :expected-type 'oclcl-type))
   (dolist (argument arguments)
     (unless (argument-p argument)
       (error 'type-error :datum argument :expected-type 'argument)))
@@ -256,8 +256,8 @@
   (body :body :read-only t))
 
 (defun make-macro (name arguments body)
-  (unless (cl-cuda-symbol-p name)
-    (error 'type-error :datum name :expected-type 'cl-cuda-symbol))
+  (unless (oclcl-symbol-p name)
+    (error 'type-error :datum name :expected-type 'oclcl-symbol))
   (unless (listp arguments)
     (error 'type-error :datum arguments :expected-type 'list))
   (unless (listp body)
@@ -284,7 +284,7 @@
   (expansion :expansion :read-only t))
 
 (defun make-symbol-macro (name expansion)
-  (unless (cl-cuda-symbol-p name)
-    (error 'type-error :datum name :expected-type 'cl-cuda-symbol))
+  (unless (oclcl-symbol-p name)
+    (error 'type-error :datum name :expected-type 'oclcl-symbol))
   (%make-symbol-macro :name name
                       :expansion expansion))

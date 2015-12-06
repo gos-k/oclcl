@@ -1,17 +1,17 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda-examples-asd
+(defpackage oclcl-examples-asd
   (:use :cl :asdf))
-(in-package :cl-cuda-examples-asd)
+(in-package :oclcl-examples-asd)
 
-(defsystem cl-cuda-examples
+(defsystem oclcl-examples
   :author "Masayuki Takagi"
   :license "LLGPL"
-  :depends-on (:cl-cuda
+  :depends-on (:oclcl
                :cl-test-more
                :imago)
   :components ((:module "examples"
