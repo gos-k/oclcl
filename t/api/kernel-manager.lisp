@@ -5,7 +5,7 @@
 
 (in-package :cl-user)
 (defpackage oclcl-test.api.kernel-manager
-  (:use :cl :cl-test-more
+  (:use :cl :prove
         :oclcl.lang
         :oclcl.api.kernel-manager))
 (in-package :oclcl-test.api.kernel-manager)

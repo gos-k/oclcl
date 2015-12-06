@@ -12,7 +12,7 @@
   :author "gos-k"
   :license "LLGPL"
   :depends-on (:oclcl
-               :cl-test-more
+               :prove
                :imago)
   :components ((:module "examples"
                 :components
@@ -21,4 +21,7 @@
                  ; (:file "shared-memory")
                  (:file "vector-add")
                  (:file "sph"))))
-  :perform (load-op :after (op c) (asdf:clear-system c)))
+  :defsystem-depends-on (:prove-asdf)
+  :perform (test-op :after (op c)
+                    (funcall (intern #.(string :run-test-system) :prove.asdf) c)
+                    (asdf:clear-system c)))

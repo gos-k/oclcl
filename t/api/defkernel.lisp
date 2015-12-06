@@ -5,7 +5,7 @@
 
 (in-package :cl-user)
 (defpackage oclcl-test.api.defkernel
-  (:use :cl :cl-test-more
+  (:use :cl :prove
         :oclcl.api.defkernel
         :oclcl.lang)
   (:import-from :oclcl.api.defkernel))

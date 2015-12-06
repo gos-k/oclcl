@@ -5,7 +5,7 @@
 
 (in-package :cl-user)
 (defpackage oclcl-test.lang.built-in
-  (:use :cl :cl-test-more
+  (:use :cl :prove
         :oclcl.lang.type
         :oclcl.lang.built-in))
 (in-package :oclcl-test.lang.built-in)

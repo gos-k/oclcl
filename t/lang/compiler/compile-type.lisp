@@ -5,7 +5,7 @@
 
 (in-package :cl-user)
 (defpackage oclcl-test.lang.compiler.compile-type
-  (:use :cl :cl-test-more
+  (:use :cl :prove
         :oclcl.lang.type
         :oclcl.lang.compiler.compile-type))
 (in-package :oclcl-test.lang.compiler.compile-type)

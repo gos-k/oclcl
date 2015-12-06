@@ -5,7 +5,7 @@
 
 (in-package :cl-user)
 (defpackage oclcl-test.lang.compiler.compile-kernel
-  (:use :cl :cl-test-more
+  (:use :cl :prove
         :oclcl.lang.type
         :oclcl.lang.kernel
         :oclcl.lang.compiler.compile-kernel))

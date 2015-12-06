@@ -12,29 +12,32 @@
   :author "gos-k"
   :license "LLGPL"
   :depends-on (:oclcl
-               :cl-test-more)
+               :prove)
   :components ((:module "t"
                 :serial t
                 :components
                 ((:module "lang"
                   :serial t
                   :components
-                  ((:file "util")
-                   (:file "data")
-                   (:file "type")
-                   (:file "syntax")
-                   (:file "environment")
-                   (:file "built-in")
-                   (:file "kernel")
-                   (:file "compiler/compile-data")
-                   (:file "compiler/compile-type")
-                   (:file "compiler/type-of-expression")
-                   (:file "compiler/compile-expression")
-                   (:file "compiler/compile-statement")
-                   (:file "compiler/compile-kernel")))
+                  ((:test-file "util")
+                   (:test-file "data")
+                   (:test-file "type")
+                   (:test-file "syntax")
+                   (:test-file "environment")
+                   (:test-file "built-in")
+                   (:test-file "kernel")
+                   (:test-file "compiler/compile-data")
+                   (:test-file "compiler/compile-type")
+                   (:test-file "compiler/type-of-expression")
+                   (:test-file "compiler/compile-expression")
+                   (:test-file "compiler/compile-statement")
+                   (:test-file "compiler/compile-kernel")))
                  (:module "api"
                   :serial t
                   :components
-                  ((:file "defkernel")
-                   (:file "kernel-manager"))))))
-  :perform (load-op :after (op c) (asdf:clear-system c)))
+                  ((:test-file "defkernel")
+                   (:test-file "kernel-manager"))))))
+  :defsystem-depends-on (:prove-asdf)
+  :perform (test-op :after (op c)
+                    (funcall (intern #.(string :run-test-system) :prove.asdf) c)
+                    (asdf:clear-system c)))

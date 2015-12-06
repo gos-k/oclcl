@@ -5,7 +5,7 @@
 
 (in-package :cl-user)
 (defpackage oclcl-test.lang.compiler.type-of-expression
-  (:use :cl :cl-test-more
+  (:use :cl :prove
         :oclcl.lang.compiler.type-of-expression
         :oclcl.lang.data
         :oclcl.lang.type

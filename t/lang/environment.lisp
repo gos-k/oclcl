@@ -5,7 +5,7 @@
 
 (in-package :cl-user)
 (defpackage oclcl-test.lang.environment
-  (:use :cl :cl-test-more
+  (:use :cl :prove
         :oclcl.lang.type
         :oclcl.lang.environment))
 (in-package :oclcl-test.lang.environment)
