@@ -148,8 +148,8 @@
                                          (b float 16 16))
                       (return)))
         (c-code (unlines "{"
-                         "  __shared__ int a[16];"
-                         "  __shared__ float b[16][16];"
+                         "  __local int a[16];"
+                         "  __local float b[16][16];"
                          "  return;"
                          "}")))
     (is (compile-with-shared-memory lisp-code var-env func-env) c-code
@@ -177,7 +177,7 @@
   (let ((lisp-code '(with-shared-memory ((a float))
                       (return a)))
         (c-code (unlines "{"
-                         "  __shared__ float a;"
+                         "  __local float a;"
                          "  return a;"
                          "}")))
     (is (compile-with-shared-memory lisp-code var-env func-env) c-code
@@ -188,7 +188,7 @@
   (let ((lisp-code '(with-shared-memory ((a float 16 16))
                       (set (aref a 0 0) 1.0)))
         (c-code (unlines "{"
-                         "  __shared__ float a[16][16];"
+                         "  __local float a[16][16];"
                          "  a[0][0] = 1.0;"
                          "}")))
     (is (compile-with-shared-memory lisp-code var-env func-env) c-code
@@ -199,7 +199,7 @@
   (let ((lisp-code '(with-shared-memory ((a float (+ 16 2)))
                       (set (aref a 0) 1.0)))
         (c-code (unlines "{"
-                         "  __shared__ float a[(16 + 2)];"
+                         "  __local float a[(16 + 2)];"
                          "  a[0] = 1.0;"
                          "}")))
     (is (compile-with-shared-memory lisp-code var-env func-env) c-code
