@@ -2,13 +2,22 @@
 
 [![Build Status](https://circleci.com/gh/gos-k/oclcl.svg?style=shield)](https://circleci.com/gh/gos-k/oclcl)
 
-Cl-cuda is a library to use NVIDIA CUDA in Common Lisp programs. It provides not only FFI binding to CUDA driver API but the kernel description language with which users can define CUDA kernel functions in S-expression. The kernel description language also provides facilities to define kernel macros and kernel symbol macros in addition to kernel functions. Cl-cuda's kernel macro and kernel symbol macro offer powerful abstraction that CUDA C itself does not have and provide enormous advantage in resource-limited GPU programming.
+oclcl is a library to use OpenCL in Common Lisp programs.
+It provides the kernel description language with which users can define OpenCL kernel functions in S-expression.
+The kernel description language also provides facilities to define kernel macros and kernel symbol macros in addition to kernel functions.
+oclcl's kernel macro and kernel symbol macro offer powerful abstraction that OpenCL C itself does not have and provide enormous advantage in resource-limited GPU programming.
+
+<!--
 
 Kernel functions defined with the kernel description language can be launched as almost same as ordinal Common Lisp functions except that they must be launched in a CUDA context and followed with grid and block sizes. Kernel functions are compiled and loaded automatically and lazily when they are to be launched for the first time. This process is as following. First, they are compiled into a CUDA C code (.cu file) by cl-cuda. The compiled CUDA C code, then, is compiled into a CUDA kernel module (.ptx file) by NVCC - NVIDIA CUDA Compiler Driver. The obtained kernel module is automatically loaded via CUDA driver API and finally the kernel functions are launched with properly constructed arguments to be passed to CUDA device. Since this process is autonomously managed by the kernel manager, users do not need to handle it for themselves. About the kernel manager, see [Kernel manager](https://github.com/takagi/cl-cuda/blob/master/README.markdown#kernel-manager) section.
 
 Memory management is also one of the most important things in GPU programming. Cl-cuda provides memory block data structure which abstract host memory and device memory. With memory block, users do not need to manage host memory and device memory individually for themselves. It lightens their burden on memory management, prevents bugs and keeps code simple. Besides memory block that provides high level abstraction on host and device memory, cl-cuda also offers low level interfaces to handle CFFI pointers and CUDA device pointers directly. With these primitive interfaces, users can choose to gain more flexible memory control than using memory block if needed.
 
 Cl-cuda is verified on several environments. For detail, see [Verification environments](https://github.com/takagi/cl-cuda/blob/master/README.markdown#verification-environments) section.
+
+-->
+
+<!--
 
 ## Example
 
@@ -45,66 +54,36 @@ For the whole code, please see [examples/vector-add.lisp](https://github.com/tak
             (sync-memory-block c :device-to-host)
             (verify-result a b c n)))))
 
+-->
+
 ## Installation
 
-Since cl-cuda is not available in Quicklisp distribution because of its testing policy (see [#514](https://github.com/quicklisp/quicklisp-projects/issues/514) in quicklisp-projects), please use its local-projects feature.
+If you use roswell,
 
-    $ cd ~/quicklisp/local-projects
-    $ git clone git://github.com/takagi/cl-cuda.git
+    $ cd ~/.roswell/local-projects
+    $ git clone git://github.com/gos-k/oclcl.git
 
-Then `(ql:quickload :cl-cuda)` from `REPL` to load it.
+Then `(ql:quickload :oclcl)` from `REPL` to load it.
 
 ## Requirements
 
-Cl-cuda requires following:
+oclcl requires following:
 
-* NVIDIA CUDA-enabled GPU
-* CUDA Toolkit, CUDA Drivers and CUDA SDK need to be installed
+* OpenCL 1.2
 
 ## Verification environments
 
-Cl-cuda is verified to work in following environments:
+oclcl is verified to work in following environments:
 
-#### Environment 1
-* Mac OS X 10.6.8 (MacBookPro)
-* GeForce 9400M
-* CUDA 4
-* SBCL 1.0.55 32-bit
-* All tests pass, all examples work
+### Environment 1
 
-#### Environment2
-* Amazon Linux x86_64 (Amazon EC2)
-* Tesla M2050
-* CUDA 4
-* SBCL 1.1.7 64-bit
-* All tests pass, all examples which are verified work (others not tried yet)
-* `(setf *nvcc-options* (list "-arch=sm_20" "-m32"))` needed
+* Ubuntu 15.04 x86_64
+* Intel Core i5-4210U
+* POCL 0.10
+* SBCL 1.3.11 64-bit
+* Roswell 0.0.3.50
 
-#### Environment3 (Thanks to Viktor Cerovski)
-* Linux 3.5.0-32-generic Ubuntu SMP x86_64
-* GeFroce 9800 GT
-* CUDA 5
-* SBCL 1.1.7 64-bit
-* All tests pass, all examples work
-
-#### Environment4 (Thanks to wvxvw)
-* Fedra18 x86_64
-* GeForce GTX 560M
-* CUDA 5.5
-* SBCL 1.1.2-1.fc18
-* `vector-add` example works (didn't try the rest yet)
-
-Further information: 
-* `(setf *nvcc-options* (list "-arch=sm_20" "-m32"))` needed
-* using video drivers from `rpmfusion` instead of the ones in `cuda` package
-* see issue [#1](https://github.com/takagi/cl-cuda/issues/1#issuecomment-22813518)
-
-#### Environment5 (Thanks to Atabey Kaygun)
-* Linux 3.11-2-686-pae SMP Debian 3.11.8-1 (2013-11-13) i686 GNU/Linux
-* NVIDIA Corporation GK106 GeForce GTX 660
-* CUDA 5.5
-* SBCL 1.1.12
-* All tests pass, all examples work
+<!--
 
 ## API
 
@@ -182,6 +161,8 @@ Specifies whether to let cl-cuda show operational messages or not. The default i
 Readonly. The value is `nil` if cl-cuda found CUDA SDK when its build, otherwise `t`.
 
     *sdk-not-found*    ; => nil
+
+-->
 
 ## Kernel Description Language
 
@@ -264,6 +245,8 @@ Compiled:
       do_some_statement();
     }
 
+<!--
+
 ### WITH-SHARED-MEMORY statement
 
     WITH-SHARED-MEMORY ({(var type size*)}*) statement*
@@ -283,6 +266,8 @@ Compiled:
       __shared__ float b[16][16];
       return;
     }
+
+-->
 
 ### SET statement
 
@@ -332,6 +317,8 @@ Example:
 Compiled:
 
     return 0;
+
+<!--
 
 ## Architecture
 
@@ -423,9 +410,13 @@ then, call a kernel function with binding a stream to `*cuda-stream*`:
     (with-cuda-stream (*cuda-stream*)
       (call-kernel-function))
 
+-->
+
 ## Author
 
-* Masayuki Takagi (kamonama@gmail.com)
+* gos-k (mag4.elan@gmail.com)
+
+C source generator is forked from [[https://github.com/takagi/cl-cuda][cl-cuda]].
 
 ## Copyright
 
