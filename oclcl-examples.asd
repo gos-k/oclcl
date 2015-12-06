@@ -9,7 +9,7 @@
 (in-package :oclcl-examples-asd)
 
 (defsystem oclcl-examples
-  :author "Masayuki Takagi"
+  :author "gos-k"
   :license "LLGPL"
   :depends-on (:oclcl
                :cl-test-more

@@ -15,7 +15,7 @@
 
 (defsystem oclcl
   :version "0.1"
-  :author "Masayuki Takagi"
+  :author "gos-k"
   :license "LLGPL"
   :depends-on (:cffi :alexandria :external-program :osicat
                :cl-pattern :split-sequence :cl-reexport :cl-ppcre)
