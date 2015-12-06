@@ -160,7 +160,7 @@
       (func-env (function-environment-add-function 'foo 'int '(int int)
                   (empty-function-environment))))
   (is (compile-function '(foo 1 1) var-env func-env)
-      "cl_cuda_test_lang_compiler_compile_expression_foo( 1, 1 )"
+      "oclcl_test_lang_compiler_compile_expression_foo( 1, 1 )"
       "basic case 1")
   (is-error (compile-function '(foo 1 1 1) var-env func-env) simple-error))
 

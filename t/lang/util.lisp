@@ -28,7 +28,7 @@
     "basic case 4")
 (is (c-identifier 'VecAdd_kernel) "vecadd_kernel"
     "basic case 5")
-(is (c-identifier 'foo t) "cl_cuda_test_lang_util_foo"
+(is (c-identifier 'foo t) "oclcl_test_lang_util_foo"
     "basic case 6")
 
 

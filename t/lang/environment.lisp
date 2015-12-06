@@ -86,7 +86,7 @@
       "basic case 3")
   (is (function-environment-function-name func-env 'foo) 'foo
       "basic case 4")
-  (is (function-environment-function-c-name func-env 'foo) "cl_cuda_test_lang_environment_foo"
+  (is (function-environment-function-c-name func-env 'foo) "oclcl_test_lang_environment_foo"
       "basic case 5")
   (is (function-environment-function-return-type func-env 'foo) 'int
       "basic case 6")
