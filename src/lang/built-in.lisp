@@ -27,7 +27,9 @@
            :built-in-function-c-name))
 (in-package :oclcl.lang.built-in)
 
-(defparameter +integer-types+ '(char uchar short ushort int uint long ulong))
+(defparameter +signed-integer-types+ '(char short int long))
+(defparameter +unsigned-integer-types+ '(uchar ushort uint ulong))
+(defparameter +integer-types+ (append +signed-integer-types+ +unsigned-integer-types+))
 (defparameter +float-types+ '(float double))
 (defparameter +gentypes+ (append +integer-types+ +float-types+))
 
@@ -77,7 +79,8 @@
 (defparameter +built-in-functions+
   `(;; arithmetic operators
     + ,(arithmetic-binary-operator "+" +gentypes+)
-    - ,(arithmetic-binary-operator "-" +gentypes+)
+    - ,(append '(((int) int nil "-"))
+               (arithmetic-binary-operator "-" +gentypes+))
     * ,(arithmetic-binary-operator "+" +gentypes+)
     / ,(arithmetic-binary-operator "/" +gentypes+)
     mod ,(arithmetic-binary-operator "%" +integer-types+)

@@ -171,7 +171,7 @@
 
 (let ((var-env (empty-variable-environment))
       (func-env (empty-function-environment)))
-  (is (compile-function '(- 1) var-env func-env) "int_negate( 1 )"
+  (is (compile-function '(- 1) var-env func-env) "-( 1 )"
       "basic case 3")
   (is (compile-function '(+ (float3 1.0 1.0 1.0) (float3 2.0 2.0 2.0))
                         var-env func-env)
