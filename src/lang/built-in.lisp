@@ -66,7 +66,8 @@
 (defun relational-operator (operator)
   (loop for argument-type in +gentypes+
         for result-type in +result-gentypes+
-        collecting (list (list argument-type argument-type) 'int t operator)
+        ;; spec is 'int but ...
+        collecting (list (list argument-type argument-type) 'bool t operator)
         appending (vector-relational-operator operator argument-type result-type)))
 
 ;;;
@@ -82,8 +83,8 @@
     mod ,(arithmetic-binary-operator "%" +integer-types+)
 
     ;; relational operators
-    = ,(same-types-binary-operator "==" +gentypes+)
-    /= ,(same-types-binary-operator "!=" +gentypes+)
+    = ,(relational-operator "==")
+    /= ,(relational-operator "!=")
     < ,(relational-operator "<")
     > ,(relational-operator ">")
     <= ,(relational-operator "<=")

@@ -136,17 +136,23 @@
 (let ((var-env (empty-variable-environment))
       (func-env (empty-function-environment)))
   (is-error (type-of-inline-if '(if) var-env func-env)
-            simple-error)
+            simple-error
+            "only if")
   (is-error (type-of-inline-if '(if (= 1 1)) var-env func-env)
-            simple-error)
+            simple-error
+            "test")
   (is-error (type-of-inline-if '(if (= 1 1) 1) var-env func-env)
-            simple-error)
+            simple-error
+            "test and then")
   (is (type-of-inline-if '(if (= 1 1) 1 2) var-env func-env)
-      'int)
+      'int
+      "valid if expression")
   (is-error (type-of-inline-if '(if 1 2 3) var-env func-env)
-            simple-error)
+            simple-error
+            "test is not bool")
   (is-error (type-of-inline-if '(if (= 1 1) 1 2.0) var-env func-env)
-            simple-error))
+            simple-error
+            "different type"))
 
 
 ;;;
