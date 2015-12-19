@@ -63,4 +63,7 @@
 (defun compile-double (expr)
   (unless (oclcl-double-p expr)
     (error "The value ~S is an invalid expression." expr))
-  (format nil "(double)~S" (float expr 0.0)))
+  (let ((s (format nil "(double)~A" (float expr 0.0d0))))
+    (if (string= "0d" (subseq (reverse s) 0 2))
+        (subseq s 0 (- (length s) 2))
+        s)))
