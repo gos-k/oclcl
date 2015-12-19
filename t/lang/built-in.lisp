@@ -27,7 +27,7 @@
   (dolist (operator '(+ * - /))
     (is (built-in-function-return-type operator '(float4 float4)) 'float4))
   (dolist (operator '(< > <= >=))
-    (is (built-in-function-return-type operator '(int int)) 'int))
+    (is (built-in-function-return-type operator '(int int)) 'bool))
   (dolist (operator '(< > <= >=))
     (is (built-in-function-return-type operator '(float4 float4)) 'int4))
   (dolist (operator '(< > <= >=))
