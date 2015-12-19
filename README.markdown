@@ -70,6 +70,7 @@ Then `(ql:quickload :oclcl)` from `REPL` to load it.
 oclcl requires following:
 
 * OpenCL 1.2
+* SBCL 1.3.1
 
 ## Test
 
