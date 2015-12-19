@@ -41,26 +41,26 @@
  *  Kernel function prototypes
  */
 
-extern \"C\" __global__ void oclcl_test_lang_compiler_compile_kernel_baz();
-extern \"C\" __device__ int oclcl_test_lang_compiler_compile_kernel_bar( int x );
-extern \"C\" __global__ void oclcl_test_lang_compiler_compile_kernel_foo( int* x );
+__kernel void oclcl_test_lang_compiler_compile_kernel_baz();
+ int oclcl_test_lang_compiler_compile_kernel_bar( int x );
+__kernel void oclcl_test_lang_compiler_compile_kernel_foo( int* x );
 
 
 /**
  *  Kernel function definitions
  */
 
-__global__ void oclcl_test_lang_compiler_compile_kernel_baz()
+__kernel void oclcl_test_lang_compiler_compile_kernel_baz()
 {
   return;
 }
 
-__device__ int oclcl_test_lang_compiler_compile_kernel_bar( int x )
+ int oclcl_test_lang_compiler_compile_kernel_bar( int x )
 {
   return x;
 }
 
-__global__ void oclcl_test_lang_compiler_compile_kernel_foo( int* x )
+__kernel void oclcl_test_lang_compiler_compile_kernel_foo( int* x )
 {
   x[0] = oclcl_test_lang_compiler_compile_kernel_bar( 1 );
   return;
