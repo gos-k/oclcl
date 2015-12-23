@@ -287,12 +287,12 @@
 ;;; Arithmetic
 ;;;
 
-(defparameter +aritmetic-operators+
+(defparameter +arithmetic-operators+
   '(+ - * /))
 
 (defun arithmetic-p (form)
   (cl-pattern:match form
-    ((name . _) (and (member name +aritmetic-operators+)
+    ((name . _) (and (member name +arithmetic-operators+)
                      t))
     (_ nil)))
 
