@@ -54,7 +54,7 @@
 (defun compile-float (expr)
   (unless (oclcl-float-p expr)
     (error "The value ~S is an invalid expression." expr))
-  (princ-to-string expr))
+  (format nil "~Ff" expr))
 
 
 ;;;
@@ -64,4 +64,4 @@
 (defun compile-double (expr)
   (unless (oclcl-double-p expr)
     (error "The value ~S is an invalid expression." expr))
-  (format nil "(double)~F" (float expr 0.0d0)))
+  (format nil "~F" (float expr 0.0d0)))
