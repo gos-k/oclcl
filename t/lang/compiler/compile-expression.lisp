@@ -138,8 +138,11 @@
 (subtest "COMPILE-ARITHMETIC"
   (let ((var-env (empty-variable-environment))
         (func-env (empty-function-environment)))
-    (is (compile-arithmetic '(+ 1 1 1) var-env func-env) "(1 + (1 + 1))"
-        "basic case 1")))
+    (is (compile-arithmetic '(+ 1 1 1) var-env func-env) "((1 + 1) + 1)"
+        "add integer")
+    (is (compile-arithmetic '(+ 1.0 2.0 3.0 4.0) var-env func-env)
+        "(((1.0f + 2.0f) + 3.0f) + 4.0f)"
+        "add float")))
 
 
 ;;;

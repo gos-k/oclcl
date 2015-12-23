@@ -184,10 +184,11 @@
         (operands (arithmetic-operands form)))
     (if (<= (length operands) 2)
         (compile-function form var-env func-env)
-        (let ((operand-head (car operands))
-              (operand-tail (cdr operands)))
-          (let ((form1 `(,operator ,operand-head
-                                   (,operator ,@operand-tail))))
+        (let ((operand-first (car operands))
+              (operand-second (cadr operands))
+              (operand-tail (cddr operands)))
+          (let ((form1 `(,operator (,operator ,operand-first ,operand-second)
+                                   ,@operand-tail)))
             (compile-expression form1 var-env func-env))))))
 
 
