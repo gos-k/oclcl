@@ -1,6 +1,7 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
+                2015 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
@@ -46,15 +47,7 @@
                                     '()
                                     '((return (+ 1 2 3 4 5 6 7))))
     (is (kernel-manager-translate mgr)
-        "#include \"int.h\"
-#include \"float.h\"
-#include \"float3.h\"
-#include \"float4.h\"
-#include \"double.h\"
-#include \"double3.h\"
-#include \"double4.h\"
-#include \"curand.h\"
-
+        "
 
 /**
  *  Kernel function prototypes
