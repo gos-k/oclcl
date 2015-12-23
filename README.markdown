@@ -431,6 +431,10 @@ C source generator is forked from [cl-cuda](https://github.com/takagi/cl-cuda).
 
 ## Copyright
 
+2015 gos-k (mag4.elan@gmail.com)
+
+### cl-cuda
+
 Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
 
 ## License
