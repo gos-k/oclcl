@@ -19,23 +19,23 @@
 ;;; test COMPILE-KERNEL funcition
 ;;;
 
-(diag "COMPILE-KERNEL")
+(subtest "COMPILE-KERNEL"
 
-(let ((kernel (make-kernel)))
-  (kernel-define-function kernel 'foo 'void '((x int*))
-                                 '((set (aref x 0) (bar 1))
-                                   (return)))
-  (kernel-define-function kernel 'bar 'int '((x int)) '((return x)))
-  (kernel-define-function kernel 'baz 'void '() '((return)))
-  (is (compile-kernel kernel)
-      "
+  (let ((kernel (make-kernel)))
+    (kernel-define-function kernel 'foo 'void '((x int*))
+                            '((set (aref x 0) (bar 1))
+                              (return)))
+    (kernel-define-function kernel 'bar 'int '((x int)) '((return x)))
+    (kernel-define-function kernel 'baz 'void '() '((return)))
+    (is (compile-kernel kernel)
+        "
 
 /**
  *  Kernel function prototypes
  */
 
 __kernel void oclcl_test_lang_compiler_compile_kernel_baz();
- int oclcl_test_lang_compiler_compile_kernel_bar( int x );
+int oclcl_test_lang_compiler_compile_kernel_bar( int x );
 __kernel void oclcl_test_lang_compiler_compile_kernel_foo( int* x );
 
 
@@ -48,7 +48,7 @@ __kernel void oclcl_test_lang_compiler_compile_kernel_baz()
   return;
 }
 
- int oclcl_test_lang_compiler_compile_kernel_bar( int x )
+int oclcl_test_lang_compiler_compile_kernel_bar( int x )
 {
   return x;
 }
@@ -59,7 +59,7 @@ __kernel void oclcl_test_lang_compiler_compile_kernel_foo( int* x )
   return;
 }
 "
-      "basic case 1"))
+        "basic case 1")))
 
 
 (finalize)

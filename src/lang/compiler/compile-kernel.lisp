@@ -75,13 +75,13 @@
 (defun compile-includes ()
   "")
 
-(defun compile-specifier (return-type)
+(defun compile-function-qualifier (return-type)
   (unless (oclcl-type-p return-type)
     (error 'type-error :datum return-type :expected 'oclcl-type))
   ;; OpenCL v1.2 dr19: 6.7 Function Qualifiers
   (if (eq return-type 'void)
       "__kernel"
-      ""))
+      nil))
 
 (defun compile-argument (argument)
   (let ((var (argument-var argument))
@@ -100,10 +100,12 @@
   (let ((c-name (kernel-function-c-name kernel name))
         (return-type (kernel-function-return-type kernel name))
         (arguments (kernel-function-arguments kernel name)))
-    (let ((specifier (compile-specifier return-type))
+    (let ((function-qualifier (compile-function-qualifier return-type))
           (return-type1 (compile-type return-type))
           (arguments1 (compile-arguments arguments)))
-      (format nil "~A ~A ~A(~A)" specifier return-type1 c-name arguments1))))
+      (if function-qualifier
+          (format nil "~A ~A ~A(~A)" function-qualifier return-type1 c-name arguments1)
+          (format nil "~A ~A(~A)" return-type1 c-name arguments1)))))
 
 (defun compile-prototype (kernel name)
   (let ((declaration (compile-declaration kernel name)))

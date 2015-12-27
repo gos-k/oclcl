@@ -53,19 +53,19 @@
  *  Kernel function prototypes
  */
 
- float oclcl_test_api_kernel_manager_one();
+float oclcl_test_api_kernel_manager_one();
 
 
 /**
  *  Kernel function definitions
  */
 
- float oclcl_test_api_kernel_manager_one()
+float oclcl_test_api_kernel_manager_one()
 {
   return ((((((1 + 2) + 3) + 4) + 5) + 6) + 7);
 }
 "
-        )))
+        "define function")))
 
 ;;;
 ;;; test KERNEL-MANAGER-DEFINE-FUNCTION function
