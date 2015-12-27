@@ -19,4 +19,4 @@
 (defun compile-type (type)
   (unless (oclcl-type-p type)
     (error "The value ~S is an invalid oclcl type." type))
-  (cuda-type type))
+  (opencl-type type))

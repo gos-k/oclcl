@@ -8,7 +8,7 @@
 (defpackage oclcl.lang.type
   (:use :cl
         :oclcl.lang.data)
-  (:export ;; Cl-cuda types
+  (:export ;; opencl types
            :void
            :bool
            :char
@@ -96,7 +96,7 @@
            :oclcl-type-p
            :cffi-type
            :cffi-type-size
-           :cuda-type
+           :opencl-type
            ;; Scalar type
            :scalar-type-p
            ;; Structure type
@@ -104,7 +104,7 @@
            ;; Structure accessor
            :structure-accessor-p
            :structure-from-accessor
-           :structure-accessor-cuda-accessor
+           :structure-accessor-opencl-accessor
            :structure-accessor-return-type
            ;; Array type
            :array-type-p
@@ -142,11 +142,11 @@
     ((array-type-p type) (array-cffi-type-size type))
     (t (error "The value ~S is an invalid type." type))))
 
-(defun cuda-type (type)
+(defun opencl-type (type)
   (cond
-    ((scalar-type-p type) (scalar-cuda-type type))
-    ((structure-type-p type) (structure-cuda-type type))
-    ((array-type-p type) (array-cuda-type type))
+    ((scalar-type-p type) (scalar-opencl-type type))
+    ((structure-type-p type) (structure-opencl-type type))
+    ((array-type-p type) (array-opencl-type type))
     (t (error "The value ~S is an invalid type." type))))
 
 
@@ -180,7 +180,7 @@
 (defun scalar-cffi-type-size (type)
   (cffi:foreign-type-size (scalar-cffi-type type)))
 
-(defun scalar-cuda-type (type)
+(defun scalar-opencl-type (type)
   (unless (scalar-type-p type)
     (error "The vaue ~S is an invalid type." type))
   (caddr (assoc type +scalar-types+)))
@@ -221,7 +221,7 @@
 (defun structure-cffi-type-size (type)
   (cffi:foreign-type-size (structure-cffi-type type)))
 
-(defun structure-cuda-type (type)
+(defun structure-opencl-type (type)
   (unless (structure-type-p type)
     (error "The vaue ~S is an invalid type." type))
   (cadr (assoc type +structure-table+)))
@@ -252,7 +252,7 @@
   (or (%structure-from-accessor accessor)
       (error "The value ~S is not a structure accessor." accessor)))
 
-(defun structure-accessor-cuda-accessor (accessor)
+(defun structure-accessor-opencl-accessor (accessor)
   (let ((structure (structure-from-accessor accessor)))
     (second (assoc accessor (structure-accessors structure)))))
 
@@ -305,10 +305,10 @@
 (defun array-cffi-type-size (type)
   (cffi:foreign-type-size (array-cffi-type type)))
 
-(defun array-cuda-type (type)
+(defun array-opencl-type (type)
   (let ((base (array-type-base type))
         (stars (array-type-stars type)))
-    (format nil "~A~A" (cuda-type base) stars)))
+    (format nil "~A~A" (opencl-type base) stars)))
 
 (defun array-type (type dimension)
   (unless (and (oclcl-type-p type)

@@ -124,7 +124,7 @@
           (expr-type (type-of-expression expr var-env func-env)))
       (unless (eq structure expr-type)
         (error "The structure reference ~S is invalid." form)))
-    (let ((accessor1 (structure-accessor-cuda-accessor accessor))
+    (let ((accessor1 (structure-accessor-opencl-accessor accessor))
           (expr1 (compile-expression expr var-env func-env)))
       (format nil "~A.~A" expr1 accessor1))))
 
