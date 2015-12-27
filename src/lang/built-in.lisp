@@ -82,7 +82,7 @@
     + ,(arithmetic-binary-operator "+" +gentypes+)
     - ,(append '(((int) int nil "-"))
                (arithmetic-binary-operator "-" +gentypes+))
-    * ,(arithmetic-binary-operator "+" +gentypes+)
+    * ,(arithmetic-binary-operator "*" +gentypes+)
     / ,(arithmetic-binary-operator "/" +gentypes+)
     mod ,(arithmetic-binary-operator "%" +integer-types+)
 

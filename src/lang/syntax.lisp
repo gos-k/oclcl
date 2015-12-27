@@ -288,7 +288,7 @@
 ;;;
 
 (defparameter +arithmetic-operators+
-  '(+ - * /))
+  '(+ - * / mod))
 
 (defun arithmetic-p (form)
   (cl-pattern:match form

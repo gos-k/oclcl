@@ -135,6 +135,16 @@
   (multiple-value-bind (var-env func-env) (empty-environment)
     (is (compile-arithmetic '(+ 1 1 1) var-env func-env) "((1 + 1) + 1)"
         "add integer")
+    (is (compile-arithmetic '(- 1 1 1) var-env func-env) "((1 - 1) - 1)"
+        "sub integer")
+    (is (compile-arithmetic '(* 1 1 1) var-env func-env) "((1 * 1) * 1)"
+        "mul integer")
+    (is (compile-arithmetic '(/ 1 1 1) var-env func-env) "((1 / 1) / 1)"
+        "div integer")
+    (is (compile-arithmetic '(mod 1 1 1) var-env func-env) "((1 % 1) % 1)"
+        "mod integer")
+    (is (compile-arithmetic '(+ 1 1 (- 1 1)) var-env func-env) "((1 + 1) + (1 - 1))"
+        "mix integer")
     (is (compile-arithmetic '(+ 1.0 2.0 3.0 4.0) var-env func-env)
         "(((1.0f + 2.0f) + 3.0f) + 4.0f)"
         "add float")))
