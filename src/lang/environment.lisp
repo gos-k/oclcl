@@ -35,7 +35,9 @@
            :function-environment-add-macro
            :function-environment-macro-exists-p
            :function-environment-macro-name
-           :function-environment-macro-expander)
+           :function-environment-macro-expander
+           ;; Other
+           :empty-environment)
   (:import-from :alexandria
                 :with-gensyms))
 (in-package :oclcl.lang.environment)
@@ -243,3 +245,7 @@
       (eval `#'(lambda (,arguments1)
                  (destructuring-bind ,arguments ,arguments1
                    ,@body))))))
+
+(defun empty-environment ()
+  (values (empty-variable-environment)
+          (empty-function-environment)))

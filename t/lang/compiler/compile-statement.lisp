@@ -45,8 +45,7 @@
 
 (subtest "COMPILE-IF"
 
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(if t (return) (return)))
           (c-code (unlines "if (true) {"
                            "  return;"
@@ -56,8 +55,7 @@
       (is (compile-if lisp-code var-env func-env) c-code
           "basic case 1")))
 
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(if t (return 0)))
           (c-code (unlines "if (true) {"
                            "  return 0;"
@@ -65,8 +63,7 @@
       (is (compile-if lisp-code var-env func-env) c-code
           "basic case 2")))
 
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(if 1 (return))))
       (is-error (compile-if lisp-code var-env func-env) simple-error))))
 
@@ -77,8 +74,7 @@
 
 (subtest "COMPILE-LET"
 
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(let ((i 0))
                        (return)))
           (c-code (unlines "{"
@@ -88,8 +84,7 @@
       (is (compile-let lisp-code var-env func-env) c-code
           "basic case 1")))
 
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (is-error (compile-let '(let (i) (return)) var-env func-env)
               simple-error)
     (is-error (compile-let '(let ((i)) (return)) var-env func-env)
@@ -104,8 +99,7 @@
 
 (subtest "COMPILE-SYMBOL-MACROLET"
 
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(symbol-macrolet ((x 1))
                        (return x)))
           (c-code (unlines "{"
@@ -121,8 +115,7 @@
 ;;;
 
 (subtest "COMPILE-DO"
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(do ((a 0 (+ a 1))
                            (b 0 (+ b 1)))
                        ((> a 15))
@@ -140,8 +133,7 @@
 ;;;
 
 (subtest "COMPILE-WITH-SHARED-MEMORY"
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(with-shared-memory ((a int 16)
                                            (b float 16 16))
                        (return)))
@@ -153,8 +145,7 @@
       (is (compile-with-shared-memory lisp-code var-env func-env) c-code
           "basic case 1")))
 
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(with-shared-memory () (return)))
           (c-code (unlines "{"
                            "  return;"
@@ -162,16 +153,14 @@
       (is (compile-with-shared-memory lisp-code var-env func-env) c-code
           "basic case 2")))
 
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(with-shared-memory ()))
           (c-code (unlines "{"
                            "}")))
       (is (compile-with-shared-memory lisp-code var-env func-env) c-code
           "basic case 3")))
 
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(with-shared-memory ((a float))
                        (return a)))
           (c-code (unlines "{"
@@ -181,8 +170,7 @@
       (is (compile-with-shared-memory lisp-code var-env func-env) c-code
           "basic case 4")))
 
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(with-shared-memory ((a float 16 16))
                        (set (aref a 0 0) 1.0)))
           (c-code (unlines "{"
@@ -192,8 +180,7 @@
       (is (compile-with-shared-memory lisp-code var-env func-env) c-code
           "basic case 5")))
 
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(with-shared-memory ((a float (+ 16 2)))
                        (set (aref a 0) 1.0)))
           (c-code (unlines "{"
@@ -203,15 +190,13 @@
       (is (compile-with-shared-memory lisp-code var-env func-env) c-code
           "basic case 6")))
 
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(with-shared-memory (a float)
                        (return))))
       (is-error (compile-with-shared-memory lisp-code var-env func-env)
                 simple-error)))
 
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(with-shared-memory ((a float 16 16))
                        (set (aref a 0) 1.0))))
       (is-error (compile-with-shared-memory lisp-code var-env func-env)

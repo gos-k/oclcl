@@ -30,8 +30,7 @@
 ;;;
 
 (subtest "COMPILE-EXPRESSION"
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (is (compile-expression 1 var-env func-env) "1")))
 
 
@@ -122,8 +121,7 @@
 ;;;
 
 (subtest "COMPILE-INLINE-IF"
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (is (compile-inline-if '(if (= 1 1) 1 2) var-env func-env)
         "((1 == 1) ? 1 : 2)"
         "basic case 1")))
@@ -134,8 +132,7 @@
 ;;;
 
 (subtest "COMPILE-ARITHMETIC"
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (is (compile-arithmetic '(+ 1 1 1) var-env func-env) "((1 + 1) + 1)"
         "add integer")
     (is (compile-arithmetic '(+ 1.0 2.0 3.0 4.0) var-env func-env)
@@ -156,13 +153,11 @@
         "basic case 1")
     (is-error (compile-function '(foo 1 1 1) var-env func-env) simple-error))
 
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (is (compile-function '(+ 1 1) var-env func-env) "(1 + 1)"
         "basic case 2"))
 
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (multiple-value-bind (var-env func-env) (empty-environment)
     (is (compile-function '(- 1) var-env func-env) "-( 1 )"
         "basic case 3")
     (is (compile-function '(+ (float3 1.0 1.0 1.0) (float3 2.0 2.0 2.0))
@@ -170,8 +165,7 @@
         "(make_float3( 1.0f, 1.0f, 1.0f ) + make_float3( 2.0f, 2.0f, 2.0f ))"
         "basic case 4")))
 
-(let ((var-env (empty-variable-environment))
-      (func-env (empty-function-environment)))
+(multiple-value-bind (var-env func-env) (empty-environment)
   (is (compile-function '(syncthreads) var-env func-env) "__syncthreads()"
       "basic case 1"))
 
