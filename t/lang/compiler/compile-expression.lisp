@@ -86,11 +86,10 @@
 ;;;
 
 (subtest "COMPILE-REFERENCE - VARIABLE"
-  (let ((var-env (variable-environment-add-variable 'y-expansion 'float
-                                                    (variable-environment-add-symbol-macro 'y 'y-expansion
-                                                                                           (variable-environment-add-variable 'x 'int
-                                                                                                                              (empty-variable-environment)))))
-        (func-env (empty-function-environment)))
+  (let* ((add-var (variable-environment-add-variable 'x 'int (empty-variable-environment)))
+         (add-symbol-macro (variable-environment-add-symbol-macro 'y 'y-expansion add-var))
+         (var-env (variable-environment-add-variable 'y-expansion 'float add-symbol-macro))
+         (func-env (empty-function-environment)))
     (is (compile-reference 'x var-env func-env) "x"
         "basic case 1")
     (is-error (compile-reference 'y var-env func-env) simple-error
@@ -111,10 +110,9 @@
 
 
 (subtest "COMPILE-REFERENCE - ARRAY"
-  (let ((var-env (variable-environment-add-variable 'i 'int
-                                                    (variable-environment-add-variable 'x 'int*
-                                                                                       (empty-variable-environment))))
-        (func-env (empty-function-environment)))
+  (let* ((add-var (variable-environment-add-variable 'x 'int* (empty-variable-environment)))
+         (var-env (variable-environment-add-variable 'i 'int add-var))
+         (func-env (empty-function-environment)))
     (is (compile-reference '(aref x i) var-env func-env) "x[i]"
         "basic case 1")))
 
