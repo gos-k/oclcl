@@ -8,7 +8,17 @@
 (defpackage oclcl.lang.built-in
   (:use :cl
         :oclcl.lang.type)
-  (:export ;; Built-in functions
+  (:export ;; Built-in work-item functions
+           :get-work-dim
+           :get-global-size
+           :get-global-id
+           :get-local-size
+           :get-local-id
+           :get-num-groups
+           :get-group-id
+           :get-global-offset
+
+           ;; Built-in math functions
            :acos
            :acosh
            :acospi
