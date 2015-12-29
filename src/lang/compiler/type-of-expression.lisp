@@ -25,7 +25,6 @@
     ((%symbol-macro-p form var-env)
      (type-of-symbol-macro form var-env func-env))
     ((literal-p form) (type-of-literal form))
-    ((cuda-dimension-p form) (type-of-cuda-dimension form))
     ((reference-p form) (type-of-reference form var-env func-env))
     ((inline-if-p form) (type-of-inline-if form var-env func-env))
     ((arithmetic-p form) (type-of-arithmetic form var-env func-env))
@@ -74,15 +73,6 @@
     ((float-literal-p form) 'float)
     ((double-literal-p form) 'double)
     (t (error "The value ~S is an invalid expression." form))))
-
-
-;;;
-;;; CUDA dimension
-;;;
-
-(defun type-of-cuda-dimension (form)
-  (declare (ignore form))
-  'int)
 
 
 ;;;

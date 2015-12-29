@@ -21,16 +21,6 @@
            :int-literal-p
            :float-literal-p
            :double-literal-p
-           ;; CUDA dimension
-           :cuda-dimension-p
-           :grid-dim-p
-           :block-dim-p
-           :block-idx-p
-           :thread-idx-p
-           :grid-dim-x :grid-dim-y :grid-dim-z
-           :block-dim-x :block-dim-y :block-dim-z
-           :block-idx-x :block-idx-y :block-idx-z
-           :thread-idx-x :thread-idx-y :thread-idx-z
            ;; Reference
            :reference-p
            ;; Reference - Variable
@@ -165,33 +155,6 @@
 
 (defun double-literal-p (form)
   (oclcl-double-p form))
-
-
-;;;
-;;; CUDA dimension
-;;;
-
-(defun cuda-dimension-p (form)
-  (or (grid-dim-p form)
-      (block-dim-p form)
-      (block-idx-p form)
-      (thread-idx-p form)))
-
-(defun grid-dim-p (form)
-  (and (member form '(grid-dim-x grid-dim-y grid-dim-z))
-       t))
-
-(defun block-dim-p (form)
-  (and (member form '(block-dim-x block-dim-y block-dim-z))
-       t))
-
-(defun block-idx-p (form)
-  (and (member form '(block-idx-x block-idx-y block-idx-z))
-       t))
-
-(defun thread-idx-p (form)
-  (and (member form '(thread-idx-x thread-idx-y thread-idx-z))
-       t))
 
 
 ;;;

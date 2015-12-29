@@ -16,7 +16,6 @@
                 :type-of-macro
                 :type-of-symbol-macro
                 :type-of-literal
-                :type-of-cuda-dimension
                 :type-of-reference
                 :type-of-inline-if
                 :type-of-arithmetic
@@ -65,16 +64,6 @@
 
   (is (type-of-literal 1.0d0) 'double
       "basic case 5"))
-
-
-;;;
-;;; test TYPE-OF-CUDA-DIMENSION function
-;;;
-
-(subtest "TYPE-OF-CUDA-DIMENSION"
-
-  (is (type-of-cuda-dimension 'grid-dim) 'int
-      "basic case 1"))
 
 
 ;;;
