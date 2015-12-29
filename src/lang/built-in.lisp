@@ -38,9 +38,12 @@
 (defparameter +float-result-types+ '(int long))
 (defparameter +result-gentypes+ (append +integer-result-types+ +float-result-types+))
 
+(defun generate-vector-type-symbols (scalar-type)
+  (loop for n in '("2" "3" "4" "8" "16")
+        collecting (intern (concatenate 'string (symbol-name scalar-type) n))))
+
 (defun same-type-binary-operator (operator type)
-  (loop for n in '("" "2" "3" "4" "8" "16")
-        for type-symbol = (intern (concatenate 'string (symbol-name type) n))
+  (loop for type-symbol in (cons type (generate-vector-type-symbols type))
         collecting (list (list type-symbol type-symbol) type-symbol t operator)))
 
 (defun same-types-binary-operator (operator types)
@@ -48,8 +51,7 @@
         appending (same-type-binary-operator operator type)))
 
 (defun scalar-vector-binary-operator (operator scalar-type)
-  (loop for n in '("2" "3" "4" "8" "16")
-        for vector-type = (intern (concatenate 'string (symbol-name scalar-type) n))
+  (loop for vector-type in (generate-vector-type-symbols scalar-type)
         collecting (list (list scalar-type vector-type) vector-type t operator)
         collecting (list (list vector-type scalar-type) vector-type t operator)))
 
