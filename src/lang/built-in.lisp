@@ -9,19 +9,71 @@
   (:use :cl
         :oclcl.lang.type)
   (:export ;; Built-in functions
+           :acos
+           :acosh
+           :acospi
+           :asin
+           :asinh
+           :asinpi
+           :atan
+           :atan2
+           :cbrt
+           :ceil
+           :copysign
+           :cos
+           :cosh
+           :cospi
+           :erfc
+           :erf
+           :exp
+           :exp2
+           :exp10
+           :expm1
+           :fabs
+           :fdim
+           :floor
+           :fma
+           :fmax
+           :fmin
+           :fmod
+           :fract
+           :frexp
+           :hypot
+           :ilogb
+           :ldexp
+           :lgamma
+           :lgamma_r
+           :log
+           :log2
+           :log10
+           :log1p
+           :logb
+           :mad
+           :maxmag
+           :minmag
+           :modf
+           :nan
+           :nextafter
+           :pow
+           :pown
+           :powr
+           :remainder
+           :remquo
+           :rint
+           :rootn
+           :round
            :rsqrt
-           :__exp
-           :__divide
-           :atomic-add
-           :pointer
-           :syncthreads
-           :double-to-int-rn
-           :dot
-           :curand-init-xorwow
-           :curand-uniform-float-xorwow
-           :curand-uniform-double-xorwow
-           :curand-normal-float-xorwow
-           :curand-normal-double-xorwow
+           :sin
+           :sincos
+           :sinh
+           :sinpi
+           :sqrt
+           :tan
+           :tanh
+           :tanpi
+           :tgamma
+           :trunc
+
            ;; Interfaces
            :built-in-function-return-type
            :built-in-function-infix-p
@@ -42,13 +94,26 @@
   (loop for n in '("2" "3" "4" "8" "16")
         collecting (intern (concatenate 'string (symbol-name scalar-type) n))))
 
-(defun same-type-binary-operator (operator type)
+(defun same-type-function (function size type infix)
   (loop for type-symbol in (cons type (generate-vector-type-symbols type))
-        collecting (list (list type-symbol type-symbol) type-symbol t operator)))
+        collecting (list (make-list size :initial-element type-symbol) type-symbol infix function)))
+
+(defun float-types-function (function size)
+  (loop for type in +float-types+
+        appending (same-type-function function size type nil)))
+
+(defun float-types-unary-function (function)
+  (float-types-function function 1))
+
+(defun float-types-binary-function (function)
+  (float-types-function function 2))
+
+(defun float-types-ternary-function (function)
+  (float-types-function function 3))
 
 (defun same-types-binary-operator (operator types)
   (loop for type in types
-        appending (same-type-binary-operator operator type)))
+        appending (same-type-function operator 2 type t)))
 
 (defun scalar-vector-binary-operator (operator scalar-type)
   (loop for vector-type in (generate-vector-type-symbols scalar-type)
@@ -57,7 +122,7 @@
 
 (defun arithmetic-binary-operator (operator types)
   (loop for type in types
-        appending (same-type-binary-operator operator type)
+        appending (same-type-function operator 2 type t)
         appending (scalar-vector-binary-operator operator type)))
 
 (defun vector-relational-operator (operator argument-type result-type)
@@ -98,39 +163,6 @@
 
     ;; logical operators
     not  (((bool) bool nil "!"))
-    ;; mathematical functions
-    exp  (((float) float nil "expf")
-          ((double) double nil "exp"))
-    log  (((float) float nil "logf")
-          ((double) double nil "log"))
-    expt   (((float float) float nil "powf")
-            ((double double) double nil "pow"))
-    sin  (((float) float nil "sinf")
-          ((double) double nil "sin"))
-    cos  (((float) float nil "cosf")
-          ((double) double nil "cos"))
-    tan  (((float) float nil "tanf")
-          ((double) double nil "tan"))
-    sinh  (((float) float nil "sinhf")
-           ((double) double nil "sinh"))
-    cosh  (((float) float nil "coshf")
-           ((double) double nil "cosh"))
-    tanh  (((float) float nil "tanhf")
-           ((double) double nil "tanh"))
-    rsqrt (((float) float nil "rsqrtf")
-           ((double) double nil "rsqrt"))
-    sqrt   (((float) float nil "sqrtf")
-            ((double) double nil "sqrt"))
-    floor  (((float) int   nil "floorf")
-            ((double) int   nil "floor"))
-    ;; mathematical intrinsics
-    ;;
-    ;; If there is no double version, then fall back on a correct but
-    ;; slow implementation.
-    __exp    (((float) float nil "__expf")
-              ((double) double nil "exp"))
-    __divide (((float float) float nil "__fdividef")
-              ((double double) double t "/"))
     ;; atomic functions
     atomic-add (((int* int) int nil "atomicAdd"))
     ;; address-of operator
@@ -161,7 +193,73 @@
     get-local-id (((int) size-t nil "get_local_id"))
     get-num-groups (((uint) size-t nil "get_num_groups"))
     get-group-id (((uint) size-t nil "get_group_id"))
-    get-global-offset (((uint) size-t nil "get_global_offset"))))
+    get-global-offset (((uint) size-t nil "get_global_offset"))
+
+    ;; OpenCL v.1.2 dr19: 6.12.2 Math Functions
+    acos ,(float-types-unary-function "acos")
+    acosh ,(float-types-unary-function "acosh")
+    acospi ,(float-types-unary-function "acospi")
+    asin ,(float-types-unary-function "asin")
+    asinh ,(float-types-unary-function "asinh")
+    asinpi ,(float-types-unary-function "asinpi")
+    atan ,(float-types-unary-function "atan")
+    atan2 ,(float-types-binary-function "atan2")
+    cbrt ,(float-types-unary-function "cbrt")
+    ceil ,(float-types-unary-function "ceil")
+    copysign ,(float-types-binary-function "copysign")
+    cos ,(float-types-unary-function "cos")
+    cosh ,(float-types-unary-function "cosh")
+    cospi ,(float-types-unary-function "cospi")
+    erfc ,(float-types-unary-function "erfc")
+    erf ,(float-types-unary-function "erf")
+    exp ,(float-types-unary-function "exp")
+    exp2 ,(float-types-unary-function "exp2")
+    exp10 ,(float-types-unary-function "exp10")
+    expm1 ,(float-types-unary-function "expm1")
+    fabs ,(float-types-unary-function "fabs")
+    fdim ,(float-types-binary-function "fdim")
+    floor ,(float-types-unary-function "floor")
+    fma ,(float-types-ternary-function "fma")
+    ;;fmax ,(float-types-binary-function "fmax")
+    ;;fmin ,(float-types-binary-function "fmin")
+    fmod ,(float-types-binary-function "fmod")
+    ;;fract
+    ;;frexp
+    hypot ,(float-types-binary-function "hypot")
+    ;;ilogb
+    ;;ldexp
+    lgamma ,(float-types-unary-function "lgamma")
+    ;;lgamma_r
+    log ,(float-types-unary-function "log")
+    log2 ,(float-types-unary-function "log2")
+    log10 ,(float-types-unary-function "log10")
+    log1p ,(float-types-unary-function "log1p")
+    logb ,(float-types-unary-function "logb")
+    mad ,(float-types-ternary-function "mad")
+    maxmag ,(float-types-unary-function "maxmag")
+    minmag ,(float-types-unary-function "minmag")
+    ;;modf
+    ;;nan
+    nextafter ,(float-types-binary-function "nextafter")
+    pow ,(float-types-binary-function "pow")
+    ;;pown
+    powr ,(float-types-binary-function "powr")
+    remainder ,(float-types-binary-function "remainder")
+    ;;remquo
+    rint ,(float-types-unary-function "rint")
+    ;;rootn
+    round ,(float-types-unary-function "round")
+    rsqrt ,(float-types-unary-function "rsqrt")
+    sin ,(float-types-unary-function "sin")
+    ;;sincos
+    sinh ,(float-types-unary-function "sinh")
+    sinpi ,(float-types-unary-function "sinpi")
+    sqrt ,(float-types-unary-function "sqrt")
+    tan ,(float-types-unary-function "tan")
+    tanh ,(float-types-unary-function "tanh")
+    tanpi ,(float-types-unary-function "tanpi")
+    tgamma ,(float-types-unary-function "tgamma")
+    trunc ,(float-types-unary-function "trunc")))
 
 (defun inferred-function-candidates (name)
   (or (getf +built-in-functions+ name)

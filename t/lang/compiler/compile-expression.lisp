@@ -176,9 +176,9 @@
         "(make_float3( 1.0f, 1.0f, 1.0f ) + make_float3( 2.0f, 2.0f, 2.0f ))"
         "basic case 4")))
 
-(multiple-value-bind (var-env func-env) (empty-environment)
-  (is (compile-function '(syncthreads) var-env func-env) "__syncthreads()"
-      "basic case 1"))
+;(multiple-value-bind (var-env func-env) (empty-environment)
+;  (is (compile-function '(syncthreads) var-env func-env) "__syncthreads()"
+;      "basic case 1"))
 
 
 (finalize)

@@ -84,6 +84,7 @@
                :include '(:rsqrt
                           :__exp
                           :__divide
+                          :pow
                           :atomic-add
                           :pointer
                           :syncthreads

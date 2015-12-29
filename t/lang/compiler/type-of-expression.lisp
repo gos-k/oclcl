@@ -11,7 +11,8 @@
         :oclcl.lang.data
         :oclcl.lang.type
         :oclcl.lang.syntax
-        :oclcl.lang.environment)
+        :oclcl.lang.environment
+        :oclcl.lang.built-in)
   (:import-from :oclcl.lang.compiler.type-of-expression
                 :type-of-macro
                 :type-of-symbol-macro
@@ -162,7 +163,6 @@
     (is (type-of-function '(foo 1 1) var-env func-env) 'int)
     (is (type-of-function '(+ 1.0 1.0) var-env func-env) 'float)
     (is-error (type-of-function '(+ 1 1.0) var-env func-env) simple-error)
-    (is (type-of-function '(expt 1.0 1.0) var-env func-env) 'float)))
-
+    (is (type-of-function '(pow 1.0 1.0) var-env func-env) 'float)))
 
 (finalize)
