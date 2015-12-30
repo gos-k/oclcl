@@ -131,6 +131,16 @@
            :upsampl
            :popcount
 
+           :clamp
+           :degrees
+           :max
+           :min
+           :mix
+           :radians
+           :step
+           :smoothstep
+           :sign
+
            ;; Interfaces
            :built-in-function-return-type
            :built-in-function-infix-p
@@ -382,7 +392,18 @@
     mad24 ,(append (same-type-function "mad24" 3 'int nil)
                    (same-type-function "mad24" 3 'uint nil))
     mul24 ,(append (same-type-function "mul24" 2 'int nil)
-                   (same-type-function "mul24" 2 'uint nil))))
+                   (same-type-function "mul24" 2 'uint nil))
+
+    ;; OpenCL v.1.2 dr19: 6.12.4 Common Functions
+    ;;clamp
+    degrees ,(float-types-unary-function "degrees")
+    ;;max
+    ;;min
+    ;;mix
+    radians ,(float-types-unary-function "radians")
+    ;;step
+    ;;smoothstep
+    sign ,(float-types-unary-function "sign")))
 
 (defun inferred-function-candidates (name)
   (or (getf +built-in-functions+ name)
