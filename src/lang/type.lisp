@@ -21,6 +21,7 @@
            :ulong
            :float
            :double
+           :cl-mem-fence-flags
            ;; vector char
            :char2
            :char3
@@ -166,7 +167,8 @@
     (long :long "long")
     (ulong :ulong "ulong")
     (float :float "float")
-    (double :double "double")))
+    (double :double "double")
+    (cl-mem-fence-flags :int "cl_mem_fence_flags")))
 
 (defun scalar-type-p (object)
   (and (assoc object +scalar-types+)

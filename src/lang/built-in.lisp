@@ -150,6 +150,8 @@
            :fast-length
            :fast-normalize
            
+           :barrier
+
            ;; Interfaces
            :built-in-function-return-type
            :built-in-function-infix-p
@@ -264,8 +266,6 @@
     float4 (((float float float float) float4 nil "make_float4"))
     double3 (((double double double) double3 nil "make_double3"))
     double4 (((double double double double) double4 nil "make_double4"))
-    ;; Synchronization functions
-    syncthreads ((() void nil "__syncthreads"))
     ;; type casting intrinsics
     double-to-int-rn (((double) int nil "__double2int_rn"))
 
@@ -463,7 +463,16 @@
                                                         ((float2) . float)
                                                         ((float3) . float)
                                                         ((float4) . float))
-                          collecting `(,arguments ,return nil "fast_normalize"))))
+                          collecting `(,arguments ,return nil "fast_normalize"))
+
+    ;; TODO
+    ;; OpenCL v.1.2 dr19: 6.12.6 Relational Functions
+
+    ;; TODO
+    ;; OpenCL v.1.2 dr19: 6.12.7 Vector Data Load and Store Functions
+
+    ;; OpenCL v.1.2 dr19: 6.12.8 Synchronization Functions
+    barrier (((cl-mem-fence-flags) void nil "barrier"))))
 
 (defun inferred-function-candidates (name)
   (or (getf +built-in-functions+ name)
