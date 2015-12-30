@@ -164,6 +164,8 @@
     (is-error (type-of-function '(+ 1 1.0) var-env func-env) simple-error)
     (is (type-of-function '(pow 1.0 1.0) var-env func-env) 'float)
     (is (type-of-function '(half-cos 1.0) var-env func-env) 'float)
-    (is-error (type-of-function '(half-divide 1.0) var-env func-env) simple-error)))
+    (is-error (type-of-function '(half-divide 1.0) var-env func-env) simple-error)
+    (is (type-of-function '(native-cos 1.0) var-env func-env) 'float)
+    (is-error (type-of-function '(native-divide 1.0) var-env func-env) simple-error)))
 
 (finalize)
