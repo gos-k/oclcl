@@ -155,7 +155,6 @@
 ;;;
 
 (subtest "TYPE-OF-FUNCTION"
-
   (let ((var-env (empty-variable-environment))
         (func-env (function-environment-add-function 'foo 'int '(int int)
                                                      (empty-function-environment))))
@@ -163,6 +162,8 @@
     (is (type-of-function '(foo 1 1) var-env func-env) 'int)
     (is (type-of-function '(+ 1.0 1.0) var-env func-env) 'float)
     (is-error (type-of-function '(+ 1 1.0) var-env func-env) simple-error)
-    (is (type-of-function '(pow 1.0 1.0) var-env func-env) 'float)))
+    (is (type-of-function '(pow 1.0 1.0) var-env func-env) 'float)
+    (is (type-of-function '(half-cos 1.0) var-env func-env) 'float)
+    (is-error (type-of-function '(half-divide 1.0) var-env func-env) simple-error)))
 
 (finalize)

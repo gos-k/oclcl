@@ -83,6 +83,7 @@
            :tanpi
            :tgamma
            :trunc
+
            :half-cos
            :half-divide
            :half-exp
