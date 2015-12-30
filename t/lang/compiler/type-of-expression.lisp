@@ -167,6 +167,7 @@
     (is-error (type-of-function '(half-divide 1.0) var-env func-env) simple-error)
     (is (type-of-function '(native-cos 1.0) var-env func-env) 'float)
     (is-error (type-of-function '(native-divide 1.0) var-env func-env) simple-error)
-    (is (type-of-function '(popcount 1) var-env func-env) 'int)))
+    (is (type-of-function '(popcount 1) var-env func-env) 'int)
+    (is (type-of-function '(degrees 1.0) var-env func-env) 'float)))
 
 (finalize)
