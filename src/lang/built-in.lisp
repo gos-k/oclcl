@@ -83,6 +83,20 @@
            :tanpi
            :tgamma
            :trunc
+           :half-cos
+           :half-divide
+           :half-exp
+           :half-exp2
+           :half-exp10
+           :half-log
+           :half-log2
+           :half-log10
+           :half-powr
+           :half-recip
+           :half-rsqrt
+           :half-sin
+           :half-sqrt
+           :half-tan
 
            ;; Interfaces
            :built-in-function-return-type
@@ -269,7 +283,22 @@
     tanh ,(float-types-unary-function "tanh")
     tanpi ,(float-types-unary-function "tanpi")
     tgamma ,(float-types-unary-function "tgamma")
-    trunc ,(float-types-unary-function "trunc")))
+    trunc ,(float-types-unary-function "trunc")
+
+    half-cos ,(same-type-function "half_cos" 1 'float nil)
+    half-divide ,(same-type-function "half_divide" 2 'float nil)
+    half-exp ,(same-type-function "half_exp" 1 'float nil)
+    half-exp2 ,(same-type-function "half_exp2" 1 'float nil)
+    half-exp10 ,(same-type-function "half_exp10" 1 'float nil)
+    half-log ,(same-type-function "half_log" 1 'float nil)
+    half-log2 ,(same-type-function "half_log2" 1 'float nil)
+    half-log10 ,(same-type-function "half_log10" 1 'float nil)
+    half-powr ,(same-type-function "half_powr" 1 'float nil)
+    half-recip ,(same-type-function "half_recip" 1 'float nil)
+    half-rsqrt ,(same-type-function "half_rsqrt" 1 'float nil)
+    half-sin ,(same-type-function "half_sin" 1 'float nil)
+    half-sqrt ,(same-type-function "half_sqrt" 1 'float nil)
+    half-tan ,(same-type-function "half_tan" 1 'float nil)))
 
 (defun inferred-function-candidates (name)
   (or (getf +built-in-functions+ name)
