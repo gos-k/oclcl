@@ -141,6 +141,15 @@
            :smoothstep
            :sign
 
+           :cross
+           :dot
+           :distance
+           :length
+           :normalize
+           :fast-distance
+           :fast-length
+           :fast-normalize
+           
            ;; Interfaces
            :built-in-function-return-type
            :built-in-function-infix-p
@@ -259,11 +268,6 @@
     syncthreads ((() void nil "__syncthreads"))
     ;; type casting intrinsics
     double-to-int-rn (((double) int nil "__double2int_rn"))
-    ;; linear algebraic operators
-    dot (((float3 float3) float nil "float3_dot")
-         ((float4 float4) float nil "float4_dot")
-         ((double3 double3) double nil "double3_dot")
-         ((double4 double4) double nil "double4_dot"))
 
     ;; OpenCL v1.2 dr19: 6.12.1 Work-Item Functions
     get-work-dim ((() uint nil "get_work_dim"))
@@ -349,6 +353,7 @@
     half-log ,(same-type-function "half_log" 1 'float nil)
     half-log2 ,(same-type-function "half_log2" 1 'float nil)
     half-log10 ,(same-type-function "half_log10" 1 'float nil)
+
     half-powr ,(same-type-function "half_powr" 1 'float nil)
     half-recip ,(same-type-function "half_recip" 1 'float nil)
     half-rsqrt ,(same-type-function "half_rsqrt" 1 'float nil)
@@ -403,7 +408,62 @@
     radians ,(float-types-unary-function "radians")
     ;;step
     ;;smoothstep
-    sign ,(float-types-unary-function "sign")))
+    sign ,(float-types-unary-function "sign")
+
+    ;; OpenCL v.1.2 dr19: 6.12.5 Geometric Functions
+    cross ,(loop for (argments . return) in '(((float3 float3) . float3)
+                                              ((float4 float4) . float4)
+                                              ((double3 double3) . double3)
+                                              ((double4 double4) . double4))
+                 collecting `(,argments ,return nil "cross"))
+    dot ,(loop for (argments . return) in '(((float3 float3) . float)
+                                            ((float4 float4) . float)
+                                            ((double3 double3) . double)
+                                            ((double4 double4) . double))
+               collecting `(,argments ,return nil "dot"))
+    distance ,(loop for (arguments . return) in '(((float float) . float)
+                                                  ((float2 float2) . float)
+                                                  ((float3 float3) . float)
+                                                  ((float4 float4) . float)
+                                                  ((double double) . double)
+                                                  ((double2 double2) . double)
+                                                  ((double3 double3) . double)
+                                                  ((double4 double4) . double))
+                    collecting `(,arguments ,return nil "distance"))
+    length ,(loop for (arguments . return) in '(((float) . float)
+                                                ((float2) . float)
+                                                ((float3) . float)
+                                                ((float4) . float)
+                                                ((double) . double)
+                                                ((double2) . double)
+                                                ((double3) . double)
+                                                ((double4) . double))
+                  collecting `(,arguments ,return nil "length"))
+    normalize ,(loop for (arguments . return) in '(((float) . float)
+                                                   ((float2) . float2)
+                                                   ((float3) . float3)
+                                                   ((float4) . float4)
+                                                   ((double) . double)
+                                                   ((double2) . double2)
+                                                   ((double3) . double3)
+                                                   ((double4) . double4))
+                     collecting `(,arguments ,return nil "normalize"))
+
+    fast-distance ,(loop for (arguments . return) in '(((float float) . float)
+                                                       ((float2 float2) . float)
+                                                       ((float3 float3) . float)
+                                                       ((float4 float4) . float))
+                         collecting `(,arguments ,return nil "fast_distance"))
+    fast-length ,(loop for (arguments . return) in '(((float) . float)
+                                                     ((float2) . float)
+                                                     ((float3) . float)
+                                                     ((float4) . float))
+                       collecting `(,arguments ,return nil "fast_length"))
+    fast-normalize ,(loop for (arguments . return) in '(((float) . float)
+                                                        ((float2) . float)
+                                                        ((float3) . float)
+                                                        ((float4) . float))
+                          collecting `(,arguments ,return nil "fast_normalize"))))
 
 (defun inferred-function-candidates (name)
   (or (getf +built-in-functions+ name)
