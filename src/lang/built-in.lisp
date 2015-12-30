@@ -99,6 +99,21 @@
            :half-sqrt
            :half-tan
 
+           :native-cos
+           :native-divide
+           :native-exp
+           :native-exp2
+           :native-exp10
+           :native-log
+           :native-log2
+           :native-log10
+           :native-powr
+           :native-recip
+           :native-rsqrt
+           :native-sin
+           :native-sqrt
+           :native-tan
+
            ;; Interfaces
            :built-in-function-return-type
            :built-in-function-infix-p
@@ -299,7 +314,22 @@
     half-rsqrt ,(same-type-function "half_rsqrt" 1 'float nil)
     half-sin ,(same-type-function "half_sin" 1 'float nil)
     half-sqrt ,(same-type-function "half_sqrt" 1 'float nil)
-    half-tan ,(same-type-function "half_tan" 1 'float nil)))
+    half-tan ,(same-type-function "half_tan" 1 'float nil)
+
+    native-cos ,(same-type-function "native_cos" 1 'float nil)
+    native-divide ,(same-type-function "native_divide" 2 'float nil)
+    native-exp ,(same-type-function "native_exp" 1 'float nil)
+    native-exp2 ,(same-type-function "native_exp2" 1 'float nil)
+    native-exp10 ,(same-type-function "native_exp10" 1 'float nil)
+    native-log ,(same-type-function "native_log" 1 'float nil)
+    native-log2 ,(same-type-function "native_log2" 1 'float nil)
+    native-log10 ,(same-type-function "native_log10" 1 'float nil)
+    native-powr ,(same-type-function "native_powr" 1 'float nil)
+    native-recip ,(same-type-function "native_recip" 1 'float nil)
+    native-rsqrt ,(same-type-function "native_rsqrt" 1 'float nil)
+    native-sin ,(same-type-function "native_sin" 1 'float nil)
+    native-sqrt ,(same-type-function "native_sqrt" 1 'float nil)
+    native-tan ,(same-type-function "native_tan" 1 'float nil)))
 
 (defun inferred-function-candidates (name)
   (or (getf +built-in-functions+ name)
