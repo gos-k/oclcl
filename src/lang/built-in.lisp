@@ -114,6 +114,23 @@
            :native-sqrt
            :native-tan
 
+           :abs
+           :abs-diff
+           :add-sat
+           :hadd
+           :rhadd
+           :clamp
+           :clz
+           :mad-hi
+           :mad-sat
+           :max
+           :min
+           :mul-hi
+           :rotate
+           :sub-sat
+           :upsampl
+           :popcount
+
            ;; Interfaces
            :built-in-function-return-type
            :built-in-function-infix-p
@@ -150,6 +167,19 @@
 
 (defun float-types-ternary-function (function)
   (float-types-function function 3))
+
+(defun integer-types-function (function size)
+  (loop for type in +integer-types+
+        appending (same-type-function function size type nil)))
+
+(defun integer-types-unary-function (function)
+  (integer-types-function function 1))
+
+(defun integer-types-binary-function (function)
+  (integer-types-function function 2))
+
+(defun integer-types-ternary-function (function)
+  (integer-types-function function 3))
 
 (defun same-types-binary-operator (operator types)
   (loop for type in types
@@ -329,7 +359,30 @@
     native-rsqrt ,(same-type-function "native_rsqrt" 1 'float nil)
     native-sin ,(same-type-function "native_sin" 1 'float nil)
     native-sqrt ,(same-type-function "native_sqrt" 1 'float nil)
-    native-tan ,(same-type-function "native_tan" 1 'float nil)))
+    native-tan ,(same-type-function "native_tan" 1 'float nil)
+
+    ;; OpenCL v.1.2 dr19: 6.12.3 Integer Functions
+    ;;abs
+    ;;abs-diff
+    add-sat ,(integer-types-binary-function "add_sat")
+    hadd ,(integer-types-binary-function "hadd")
+    rhadd ,(integer-types-binary-function "rhadd")
+    ;;clamp
+    clz ,(integer-types-unary-function "clz")
+    mad-hi ,(integer-types-ternary-function "mad_hi")
+    mad-sat ,(integer-types-ternary-function "mad_sat")
+    ;;max
+    ;;min
+    mul-hi ,(integer-types-binary-function "mul_hi")
+    rotate ,(integer-types-binary-function "rotate")
+    sub-sat ,(integer-types-binary-function "sub_sat")
+    ;;upsampl
+    popcount ,(integer-types-unary-function "popcount")
+
+    mad24 ,(append (same-type-function "mad24" 3 'int nil)
+                   (same-type-function "mad24" 3 'uint nil))
+    mul24 ,(append (same-type-function "mul24" 2 'int nil)
+                   (same-type-function "mul24" 2 'uint nil))))
 
 (defun inferred-function-candidates (name)
   (or (getf +built-in-functions+ name)
