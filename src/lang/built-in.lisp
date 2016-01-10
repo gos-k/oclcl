@@ -271,13 +271,20 @@
 
     ;; OpenCL v1.2 dr19: 6.12.1 Work-Item Functions
     get-work-dim ((() uint nil "get_work_dim"))
-    get-global-size (((uint) size-t nil "get_global_size"))
-    get-global-id (((uint) size-t nil "get_global_id"))
-    get-local-size (((uint) size-t nil "get_local_size"))
-    get-local-id (((uint) size-t nil "get_local_id"))
-    get-num-groups (((uint) size-t nil "get_num_groups"))
-    get-group-id (((uint) size-t nil "get_group_id"))
-    get-global-offset (((uint) size-t nil "get_global_offset"))
+    get-global-size (((int) size-t nil "get_global_size")
+                     ((uint) size-t nil "get_global_size"))
+    get-global-id (((int) size-t nil "get_global_id")
+                   ((uint) size-t nil "get_global_id"))
+    get-local-size (((int) size-t nil "get_local_size")
+                    ((uint) size-t nil "get_local_size"))
+    get-local-id (((int) size-t nil "get_local_id")
+                  ((uint) size-t nil "get_local_id"))
+    get-num-groups (((int) size-t nil "get_num_groups")
+                    ((uint) size-t nil "get_num_groups"))
+    get-group-id (((int) size-t nil "get_group_id")
+                  ((uint) size-t nil "get_group_id"))
+    get-global-offset (((int) size-t nil "get_global_offset")
+                       ((uint) size-t nil "get_global_offset"))
 
     ;; OpenCL v.1.2 dr19: 6.12.2 Math Functions
     acos ,(float-types-unary-function "acos")
