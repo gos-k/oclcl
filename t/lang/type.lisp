@@ -54,7 +54,7 @@
 (subtest "OPENCL-TYPE"
   (is (opencl-type 'int) "int" "basic case 1")
   (is (opencl-type 'float3) "float3" "basic case 2")
-  (is (opencl-type 'float3*) "float3*" "basic case 3"))
+  (is (opencl-type 'float3*) "__global float3*" "basic case 3"))
 
 
 ;;;
