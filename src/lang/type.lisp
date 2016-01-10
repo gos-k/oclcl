@@ -83,6 +83,7 @@
            :double8
            :double16
 
+           :size-t
            :bool*
            :int*
            :float*
@@ -168,6 +169,7 @@
     (ulong :ulong "ulong")
     (float :float "float")
     (double :double "double")
+    (size-t :size-t "size_t")
     (cl-mem-fence-flags :int "cl_mem_fence_flags")))
 
 (defun scalar-type-p (object)
