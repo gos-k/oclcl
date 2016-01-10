@@ -312,7 +312,7 @@
 (defun array-opencl-type (type)
   (let ((base (array-type-base type))
         (stars (array-type-stars type)))
-    (format nil "~A~A" (opencl-type base) stars)))
+    (format nil "__global ~A~A" (opencl-type base) stars)))
 
 (defun array-type (type dimension)
   (unless (and (oclcl-type-p type)
