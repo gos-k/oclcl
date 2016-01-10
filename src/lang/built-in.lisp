@@ -455,6 +455,7 @@
                                                        ((float4 float4) . float))
                          collecting `(,arguments ,return nil "fast_distance"))
     fast-length ,(loop for (arguments . return) in '(((float) . float)
+
                                                      ((float2) . float)
                                                      ((float3) . float)
                                                      ((float4) . float))
@@ -481,7 +482,7 @@
 (defun inferred-function (name argument-types)
   (let ((candidates (inferred-function-candidates name)))
     (or (assoc argument-types candidates :test #'equal)
-        (error "The function ~S is undefined." name))))
+        (error "The function ~S is type mismatch." name))))
 
 (defun built-in-function-return-type (name argument-types)
   (cadr (inferred-function name argument-types)))
