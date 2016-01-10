@@ -1,6 +1,7 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
+                2016 gos-k (magfloat-size.elan@gmail.com)
 |#
 
 #|
@@ -10,46 +11,111 @@
 (in-package :cl-user)
 (defpackage oclcl-examples.vector-add
   (:use :cl
-        :oclcl)
+        :oclcl
+        :cffi
+        :eazy-opencl.host)
   (:export :main))
 (in-package :oclcl-examples.vector-add)
 
 (defun random-init (data n)
   (dotimes (i n)
-    (setf (memory-block-aref data i) (random 1.0))))
+    (let ((r (random 1.0)))
+      (setf (mem-aref data :float i) r))))
+
+(defun zero-init (data n)
+  (dotimes (i n)
+    (setf (mem-aref data :float i) 0.0)))
 
 (defun verify-result (as bs cs n)
   (dotimes (i n)
-    (let ((a (memory-block-aref as i))
-          (b (memory-block-aref bs i))
-          (c (memory-block-aref cs i)))
+    (let ((a (mem-aref as :float i))
+          (b (mem-aref bs :float i))
+          (c (mem-aref cs :float i)))
       (let ((sum (+ a b)))
         (when (> (abs (- c sum)) 1.0)
           (error (format nil "verification fault, i:~A a:~A b:~A c:~A"
                          i a b c))))))
   (format t "verification succeed.~%"))
 
-(defkernel vec-add-kernel (void ((a float*) (b float*) (c float*) (n int)))
-  (let ((i (+ (* block-dim-x block-idx-x) thread-idx-x)))
-    (if (< i n)
-        (set (aref c i)
-             (+ (aref a i) (aref b i))))))
+(defkernel vec-add-kernel (void ((a float*) (b float*) (c float*)))
+  (let ((i (get-global-id 0)))
+    (set (aref c i)
+         (+ (aref a i) (aref b i)))))
+
+(defvar *vector-add* "
+
+__kernel void oclcl_examples_vector_add_vec_add_kernel( __global float* a, __global float* b, __global float* c )
+{
+    size_t i = get_global_id( 0 );
+    c[i] = (a[i] + b[i]);
+}
+
+")
 
 (defun main ()
-  (let* ((dev-id 0)
-         (n 1024)
-         (threads-per-block 256)
-         (blocks-per-grid (/ n threads-per-block)))
-    (with-cuda (dev-id)
-      (with-memory-blocks ((a 'float n)
-                           (b 'float n)
-                           (c 'float n))
-        (random-init a n)
-        (random-init b n)
-        (sync-memory-block a :host-to-device)
-        (sync-memory-block b :host-to-device)
-        (vec-add-kernel a b c n
-                        :grid-dim (list blocks-per-grid 1 1)
-                        :block-dim (list threads-per-block 1 1))
-        (sync-memory-block c :device-to-host)
-        (verify-result a b c n)))))
+  (let* ((platform-id (car (get-platform-ids)))
+         (devices (get-device-ids platform-id :device-type-default))
+         (context (create-context devices))
+         (command-queue (create-command-queue context (first devices)))
+         (program
+           (create-program-with-source context (vec-add-kernel))
+           #+nil
+           (create-program-with-source context *vector-add*))
+         (elements 128)
+         (float-size (foreign-type-size :float))
+         (data-bytes (* float-size elements)))
+    (with-foreign-objects ((a-host :float elements)
+                           (b-host :float elements)
+                           (c-host :float elements))
+      (random-init a-host elements)
+      (random-init b-host elements)
+      (zero-init c-host elements)
+      (let* ((a-device (create-buffer context :mem-read-only data-bytes))
+             (b-device (create-buffer context :mem-read-only data-bytes))
+             (c-device (create-buffer context :mem-read-only data-bytes)))
+        (%ocl:enqueue-write-buffer command-queue
+                                   a-device
+                                   %ocl:true
+                                   0
+                                   data-bytes
+                                   a-host
+                                   0
+                                   (null-pointer)
+                                   (null-pointer))
+        (%ocl:enqueue-write-buffer command-queue
+                                   b-device
+                                   %ocl:true
+                                   0
+                                   data-bytes
+                                   b-host
+                                   0
+                                   (null-pointer)
+                                   (null-pointer))
+        (%ocl/h::with-foreign-array (global-work-size '%ocl:size-t (list elements))
+          (build-program program :devices devices)
+          (let ((kernel
+                  (create-kernel program "oclcl_examples_vector_add_vec_add_kernel")
+                  #+nil
+                  (create-kernel program "hello")))
+            (set-kernel-arg kernel 0 a-device '%ocl:mem)
+            (set-kernel-arg kernel 1 b-device '%ocl:mem)
+            (set-kernel-arg kernel 2 c-device '%ocl:mem)
+            (%ocl:enqueue-nd-range-kernel command-queue
+                                          kernel
+                                          1
+                                          (null-pointer)
+                                          global-work-size
+                                          (null-pointer)
+                                          0
+                                          (null-pointer)
+                                          (null-pointer))))
+        (%ocl:enqueue-read-buffer command-queue
+                                  c-device
+                                  %ocl:true
+                                  0
+                                  data-bytes
+                                  c-host
+                                  0
+                                  (null-pointer)
+                                  (null-pointer)))
+      (verify-result a-host b-host c-host elements))))
