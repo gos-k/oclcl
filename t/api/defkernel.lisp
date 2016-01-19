@@ -225,30 +225,42 @@ __kernel void oclcl_test_api_defkernel_test_when()
 }
 " "work defkernelmacro")))
 
-#|
-
 ;;;
 ;;; test DEFKERNEL-SYMBOL-MACRO macro
 ;;;
 
-(diag "DEFKERNEL-SYMBOL-MACRO")
+(subtest "DEFKERNEL-SYMBOL-MACRO"
+  (with-stub-kernel-manager
 
-(defkernel-symbol-macro x 1)
+    (defkernel-symbol-macro x 1)
 
-(defkernel test-symbol-macro (void ((ret int*)))
-  (set (aref ret 0) x)
-  (return))
+    (defkernel test-symbol-macro (void ((ret int*)))
+      (set (aref ret 0) x)
+      (return))
 
-(with-cuda (0)
-  (with-memory-blocks ((x 'int 1))
-    (setf (memory-block-aref x 0) 0)
-    (sync-memory-block x :host-to-device)
-    (is (test-symbol-macro x :grid-dim '(1 1 1) :block-dim '(1 1 1))
-        nil "basic case 20")
-    (sync-memory-block x :device-to-host)
-    (is (memory-block-aref x 0) 1
-        "basic case 21")))
+    (is (kernel-manager-translate *kernel-manager*)
+"
 
+/**
+ *  Kernel function prototypes
+ */
+
+__kernel void oclcl_test_api_defkernel_test_symbol_macro( __global int* ret );
+
+
+/**
+ *  Kernel function definitions
+ */
+
+__kernel void oclcl_test_api_defkernel_test_symbol_macro( __global int* ret )
+{
+  ret[0] = 1;
+  return;
+}
+" "work defkernel-symbol-macro")))
+
+
+#|
 
 ;;;
 ;;; test MOD
