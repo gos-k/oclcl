@@ -11,5 +11,6 @@
 
 (reexport-from :oclcl.api.defkernel)
 (reexport-from :oclcl.api.macro)
-
-;; reexport no symbols from oclcl.api.kernel-manager package
+(reexport-from :oclcl.api.kernel-manager
+               :include '(:kernel-manager-translate
+                          :*kernel-manager*))
