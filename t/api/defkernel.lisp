@@ -9,10 +9,23 @@
   (:use :cl :prove
         :oclcl.api.defkernel
         :oclcl.lang)
-  (:import-from :oclcl.api.defkernel))
+  (:import-from :oclcl.api.defkernel)
+  (:import-from :oclcl.api.kernel-manager
+                :make-kernel-manager
+                :kernel-manager-translate
+                :*kernel-manager*))
 (in-package :oclcl-test.api.defkernel)
 
 (plan nil)
+
+(defmacro with-stub-kernel-manager (&body body)
+  `(let ((kernel-manager *kernel-manager*))
+    (setf *kernel-manager* (make-kernel-manager))
+    (unwind-protect
+         (progn ,@body)
+      (progn
+        (setf *kernel-manager* kernel-manager)
+        t))))
 
 ;;;
 ;;; test DEFKERNEL macro
@@ -171,26 +184,48 @@
       (memcpy-device-to-host h d 'int 1)
       (is (cffi:mem-aref h (cffi-type 'int) 0) 1
           "basic case 19"))))
+|#
 
 
 ;;;
 ;;; test DEFKERNELMACRO macro
 ;;;
 
-(diag "DEFKERNELMACRO")
+(subtest "DEFKERNELMACRO"
+  (with-stub-kernel-manager
 
-(defkernelmacro when (test &body forms)
-  `(if ,test
-       (progn ,@forms)))
+    (defkernelmacro when (test &body forms)
+      `(if ,test
+           (progn ,@forms)))
 
-(defkernel test-when (void ())
-  (when t (return))
-  (return))
+    (defkernel test-when (void ())
+      (when t (return))
+      (return))
 
-(with-cuda (0)
-  (is (test-when :grid-dim '(1 1 1) :block-dim '(1 1 1))
-      nil "basic case 19"))
+    (is (kernel-manager-translate *kernel-manager*)
+"
 
+/**
+ *  Kernel function prototypes
+ */
+
+__kernel void oclcl_test_api_defkernel_test_when();
+
+
+/**
+ *  Kernel function definitions
+ */
+
+__kernel void oclcl_test_api_defkernel_test_when()
+{
+  if (true) {
+    return;
+  }
+  return;
+}
+" "work defkernelmacro")))
+
+#|
 
 ;;;
 ;;; test DEFKERNEL-SYMBOL-MACRO macro
