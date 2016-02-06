@@ -1,6 +1,7 @@
 # oclcl
 
-[![Build Status](https://circleci.com/gh/gos-k/oclcl.svg?style=shield)](https://circleci.com/gh/gos-k/oclcl)
+[![CircleCI Status](https://circleci.com/gh/gos-k/oclcl.svg?style=shield)](https://circleci.com/gh/gos-k/oclcl)
+[![TravisCI Status](https://travis-ci.org/gos-k/oclcl.svg?branch=master)](https://travis-ci.org/gos-k/oclcl)
 
 oclcl is a library to use OpenCL in Common Lisp programs.
 It provides the kernel description language with which users can define OpenCL kernel functions in S-expression.
