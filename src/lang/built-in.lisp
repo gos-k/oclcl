@@ -489,7 +489,7 @@
 (defun inferred-function (name argument-types)
   (let ((candidates (inferred-function-candidates name)))
     (or (assoc argument-types candidates :test #'equal)
-        (error "The function ~S is type mismatch." name))))
+        (error "The function ~S with ~S is type mismatch." name argument-types))))
 
 (defun built-in-function-return-type (name argument-types)
   (cadr (inferred-function name argument-types)))
