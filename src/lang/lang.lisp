@@ -90,6 +90,8 @@
                           :get-group-id
                           :get-global-offset
 
+                          :size-t-to-int
+
                           :acos
                           :acosh
                           :acospi
