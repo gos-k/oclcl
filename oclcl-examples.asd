@@ -13,10 +13,12 @@
   :author "gos-k"
   :license "LLGPL"
   :depends-on (:oclcl
-               :eazy-opencl)
+               :eazy-opencl
+               :imago)
   :components ((:module "examples"
                 :components
-                ((:file "vector-add"))))
+                ((:file "vector-add")
+                 (:file "diffuse0"))))
   :defsystem-depends-on (:prove-asdf)
   :perform (test-op :after (op c)
                     (funcall (intern #.(string :run-test-system) :prove.asdf) c)
