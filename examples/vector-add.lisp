@@ -56,7 +56,7 @@ __kernel void oclcl_examples_vector_add_vec_add_kernel( __global float* a, __glo
   (let* ((platform-id (car (get-platform-ids)))
          (devices (get-device-ids platform-id :device-type-default))
          (context (create-context devices))
-         (command-queue (create-command-queue context (first devices)))
+         (command-queue (create-command-queue context (first devices) 0))
          (c-source-code (kernel-manager-translate *kernel-manager*))
          (program
            (create-program-with-source context c-source-code)
