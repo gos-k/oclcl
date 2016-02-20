@@ -7,6 +7,7 @@
 (in-package :cl-user)
 (defpackage oclcl.lang.compiler.compile-expression
   (:use :cl
+        :oclcl.lang.util
         :oclcl.lang.type
         :oclcl.lang.syntax
         :oclcl.lang.environment
@@ -27,6 +28,7 @@
     ((%symbol-macro-p form var-env)
      (compile-symbol-macro form var-env func-env))
     ((literal-p form) (compile-literal form))
+    ((opencl-literal-p form) (compile-opencl-literal form))
     ((reference-p form) (compile-reference form var-env func-env))
     ((inline-if-p form) (compile-inline-if form var-env func-env))
     ((arithmetic-p form) (compile-arithmetic form var-env func-env))
@@ -85,6 +87,11 @@
 (defun compile-double-literal (form)
   (compile-double form))
 
+;;; OpenCL literal
+;;;;
+
+(defun compile-opencl-literal (form)
+  (c-macro-name form))
 
 ;;;
 ;;; Reference
