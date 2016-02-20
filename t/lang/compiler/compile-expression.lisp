@@ -17,6 +17,7 @@
                 :compile-macro
                 :compile-symbol-macro
                 :compile-literal
+                :compile-opencl-literal
                 :compile-reference
                 :compile-inline-if
                 :compile-arithmetic
@@ -80,6 +81,15 @@
   (is (compile-literal 1.0d0) "1.0"
       "basic case 5"))
 
+;;; test COMPILE-OPENCL-LITERAL function
+
+(subtest "COMPILE-OPENCL-LITERAL"
+  (is (compile-opencl-literal :clk-local-mem-fence)
+      "CLK_LOCAL_MEM_FENCE"
+      "CLK_LOCAL_MEM_FENCE")
+  (is (compile-opencl-literal :clk-global-mem-fence)
+      "CLK_GLOBAL_MEM_FENCE"
+      "CLK_GLOBAL_MEM_FENCE"))
 
 ;;;
 ;;; test COMPILE-REFERENCE funcion
