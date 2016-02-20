@@ -155,6 +155,10 @@
            
            :barrier
 
+           :mem-fence
+           :read-mem-fence
+           :write-mem-fence
+
            ;; Interfaces
            :built-in-function-return-type
            :built-in-function-infix-p
