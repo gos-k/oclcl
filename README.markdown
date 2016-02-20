@@ -265,29 +265,25 @@ Compiled:
       do_some_statement();
     }
 
-<!--
+### WITH-LOCAL-MEMORY statement
 
-### WITH-SHARED-MEMORY statement
+    WITH-LOCAL-MEMORY ({(var type size*)}*) statement*
 
-    WITH-SHARED-MEMORY ({(var type size*)}*) statement*
-
-`with-shared-memory` declares new variable bindings on shared memory by adding `__shared__` variable specifiers. It allows to declare array variables if dimensions are provided. A series of `statement`s are executed with these bindings.
+`with-local-memory` declares new variable bindings on local memory by adding `__local` variable specifiers. It allows to declare array variables if dimensions are provided. A series of `statement`s are executed with these bindings.
 
 Example:
 
-    (with-shared-memory ((a int 16)
-                         (b float 16 16))
+    (with-local-memory ((a int 16)
+                        (b float 16 16))
       (return))
 
 Compiled:
 
     {
-      __shared__ int a[16];
-      __shared__ float b[16][16];
+      __local int a[16];
+      __local float b[16][16];
       return;
     }
-
--->
 
 ### SET statement
 
