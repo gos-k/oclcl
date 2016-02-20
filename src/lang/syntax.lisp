@@ -23,6 +23,7 @@
            :double-literal-p
            ;; OpenCL literal
            :opencl-literal-p
+           :cl-mem-fence-flags-literal-p
            :clk-local-mem-fence
            :clk-global-mem-fence
            ;; Reference
@@ -164,6 +165,9 @@
 ;;;
 
 (defun opencl-literal-p (form)
+  (or (cl-mem-fence-flags-literal-p form)))
+
+(defun cl-mem-fence-flags-literal-p (form)
   (find form '(:clk-local-mem-fence
                :clk-global-mem-fence)))
 
