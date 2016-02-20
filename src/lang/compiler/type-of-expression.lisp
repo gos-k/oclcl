@@ -25,6 +25,7 @@
     ((%symbol-macro-p form var-env)
      (type-of-symbol-macro form var-env func-env))
     ((literal-p form) (type-of-literal form))
+    ((opencl-literal-p form) (type-of-opencl-literal form))
     ((reference-p form) (type-of-reference form var-env func-env))
     ((inline-if-p form) (type-of-inline-if form var-env func-env))
     ((arithmetic-p form) (type-of-arithmetic form var-env func-env))
@@ -74,6 +75,10 @@
     ((double-literal-p form) 'double)
     (t (error "The value ~S is an invalid expression." form))))
 
+(defun type-of-opencl-literal (form)
+  (cond
+    ((cl-mem-fence-flags-literal-p form) 'cl-mem-fence-flags)
+    (t (error "The value ~s is an invalid expression." form))))
 
 ;;;
 ;;; Reference
