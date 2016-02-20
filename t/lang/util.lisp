@@ -31,6 +31,10 @@
   (is (c-identifier 'foo t) "oclcl_test_lang_util_foo"
       "basic case 6"))
 
+(subtest "C-MACRO-NAME"
+  (is (c-macro-name :--alfa-bravo-charlie--)
+      "__ALFA_BRAVO_CHARLIE__"
+      "keyword symbol to C macro name"))
 
 ;;;
 ;;; test LINES function
