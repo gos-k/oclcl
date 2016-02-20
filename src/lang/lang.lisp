@@ -71,10 +71,8 @@
 ;; reexport symbols of oclcl syntax except the ones exported
 ;; from COMMON-LISP package
 (reexport-from :oclcl.lang.syntax
-               :include '(:grid-dim-x :grid-dim-y :grid-dim-z
-                          :block-dim-x :block-dim-y :block-dim-z
-                          :block-idx-x :block-idx-y :block-idx-z
-                          :thread-idx-x :thread-idx-y :thread-idx-z
+               :include '(:clk-local-mem-fence
+                          :clk-global-mem-fence
                           :with-shared-memory
                           :set))
 

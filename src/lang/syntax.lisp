@@ -21,6 +21,10 @@
            :int-literal-p
            :float-literal-p
            :double-literal-p
+           ;; OpenCL literal
+           :opencl-literal-p
+           :clk-local-mem-fence
+           :clk-global-mem-fence
            ;; Reference
            :reference-p
            ;; Reference - Variable
@@ -156,6 +160,12 @@
 (defun double-literal-p (form)
   (oclcl-double-p form))
 
+;;; OpenCL literal
+;;;
+
+(defun opencl-literal-p (form)
+  (find form '(:clk-local-mem-fence
+               :clk-global-mem-fence)))
 
 ;;;
 ;;; Reference
