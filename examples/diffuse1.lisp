@@ -71,7 +71,7 @@
            (jy (+ local-id-y 1))
            (j (+ (* nx global-id-y) global-id-x))
            (fcc (aref f j)))
-      (with-shared-memory ((fs float (+ 16 2) (+ 16 2)))
+      (with-local-memory ((fs float (+ 16 2) (+ 16 2)))
         (set (aref fs jy jx) fcc)
         (if (= local-id-x 0)
             (if (= group-id-x 0)

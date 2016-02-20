@@ -30,8 +30,8 @@
     ((let-p form) (compile-let form var-env func-env))
     ((symbol-macrolet-p form) (compile-symbol-macrolet form var-env func-env))
     ((do-p form) (compile-do form var-env func-env))
-    ((with-shared-memory-p form)
-     (compile-with-shared-memory form var-env func-env))
+    ((with-local-memory-p form)
+     (compile-with-local-memory form var-env func-env))
     ((set-p form) (compile-set form var-env func-env))
     ((progn-p form) (compile-progn form var-env func-env))
     ((return-p form) (compile-return form var-env func-env))
@@ -198,45 +198,45 @@
 
 
 ;;;
-;;; With-shared-memory statement
+;;; With-local-memory statement
 ;;;
 
-(defun var-env-add-with-shared-memory-specs (var-env specs)
+(defun var-env-add-with-local-memory-specs (var-env specs)
   (flet ((aux (var-env0 spec)
-           (let* ((var (with-shared-memory-spec-var spec))
-                  (type (with-shared-memory-spec-type spec))
-                  (dims (length (with-shared-memory-spec-dimensions spec))))
+           (let* ((var (with-local-memory-spec-var spec))
+                  (type (with-local-memory-spec-type spec))
+                  (dims (length (with-local-memory-spec-dimensions spec))))
              (let ((type1 (array-type type dims)))
                (variable-environment-add-variable var type1 var-env0)))))
     (reduce #'aux specs :initial-value var-env)))
 
-(defun compile-with-shared-memory-spec-dimensions (dims var-env func-env)
+(defun compile-with-local-memory-spec-dimensions (dims var-env func-env)
   (flet ((aux (dim)
            (compile-expression dim var-env func-env)))
     (mapcar #'aux dims)))
 
-(defun compile-with-shared-memory-specs (specs var-env func-env)
+(defun compile-with-local-memory-specs (specs var-env func-env)
   (flet ((aux (spec)
-           (let ((var (with-shared-memory-spec-var spec))
-                 (type (with-shared-memory-spec-type spec))
-                 (dims (with-shared-memory-spec-dimensions spec)))
+           (let ((var (with-local-memory-spec-var spec))
+                 (type (with-local-memory-spec-type spec))
+                 (dims (with-local-memory-spec-dimensions spec)))
              (let ((var1 (compile-symbol var))
                    (type1 (compile-type type))
-                   (dims1 (compile-with-shared-memory-spec-dimensions
+                   (dims1 (compile-with-local-memory-spec-dimensions
                             dims var-env func-env)))
                ;; OpenCL v1.2 dr19: 6.5 Address Spece Qualifiers
                (format nil "__local ~A ~A~{[~A]~};~%" type1 var1 dims1)))))
     (format nil "~{~A~}" (mapcar #'aux specs))))
 
-(defun compile-with-shared-memory-statements (statements var-env func-env)
+(defun compile-with-local-memory-statements (statements var-env func-env)
   (compile-statement `(progn ,@statements) var-env func-env))
 
-(defun compile-with-shared-memory (form var-env func-env)
-  (let ((specs (with-shared-memory-specs form))
-        (statements (with-shared-memory-statements form)))
-    (let ((var-env1 (var-env-add-with-shared-memory-specs var-env specs)))
-      (let ((specs1 (compile-with-shared-memory-specs specs var-env func-env))
-            (statements1 (compile-with-shared-memory-statements statements
+(defun compile-with-local-memory (form var-env func-env)
+  (let ((specs (with-local-memory-specs form))
+        (statements (with-local-memory-statements form)))
+    (let ((var-env1 (var-env-add-with-local-memory-specs var-env specs)))
+      (let ((specs1 (compile-with-local-memory-specs specs var-env func-env))
+            (statements1 (compile-with-local-memory-statements statements
                                                                 var-env1
                                                                 func-env)))
         (let ((specs2 (indent 2 specs1))

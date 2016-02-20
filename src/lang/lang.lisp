@@ -73,7 +73,7 @@
 (reexport-from :oclcl.lang.syntax
                :include '(:clk-local-mem-fence
                           :clk-global-mem-fence
-                          :with-shared-memory
+                          :with-local-memory
                           :set))
 
 ;; reexport symbols of oclcl built-in functions except the ones

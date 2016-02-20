@@ -18,7 +18,8 @@
   :author "gos-k"
   :license "LLGPL"
   :depends-on (:cffi :alexandria :external-program :osicat
-               :cl-pattern :split-sequence :cl-reexport :cl-ppcre)
+               :cl-pattern :split-sequence :cl-reexport :cl-ppcre
+               :arrow-macros)
   :components ((:module "src"
                 :serial t
                 :components

@@ -19,7 +19,7 @@
                 :compile-let
                 :compile-symbol-macrolet
                 :compile-do
-                :compile-with-shared-memory
+                :compile-with-local-memory
                 :compile-set
                 :compile-progn
                 :compile-return
@@ -129,12 +129,12 @@
 
 
 ;;;
-;;; test COMPILE-WITH-SHARED-MEMORY function
+;;; test COMPILE-WITH-LOCAL-MEMORY function
 ;;;
 
-(subtest "COMPILE-WITH-SHARED-MEMORY"
+(subtest "COMPILE-WITH-LOCAL-MEMORY"
   (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(with-shared-memory ((a int 16)
+    (let ((lisp-code '(with-local-memory ((a int 16)
                                            (b float 16 16))
                        (return)))
           (c-code (unlines "{"
@@ -142,64 +142,64 @@
                            "  __local float b[16][16];"
                            "  return;"
                            "}")))
-      (is (compile-with-shared-memory lisp-code var-env func-env) c-code
+      (is (compile-with-local-memory lisp-code var-env func-env) c-code
           "basic case 1")))
 
   (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(with-shared-memory () (return)))
+    (let ((lisp-code '(with-local-memory () (return)))
           (c-code (unlines "{"
                            "  return;"
                            "}")))
-      (is (compile-with-shared-memory lisp-code var-env func-env) c-code
+      (is (compile-with-local-memory lisp-code var-env func-env) c-code
           "basic case 2")))
 
   (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(with-shared-memory ()))
+    (let ((lisp-code '(with-local-memory ()))
           (c-code (unlines "{"
                            "}")))
-      (is (compile-with-shared-memory lisp-code var-env func-env) c-code
+      (is (compile-with-local-memory lisp-code var-env func-env) c-code
           "basic case 3")))
 
   (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(with-shared-memory ((a float))
+    (let ((lisp-code '(with-local-memory ((a float))
                        (return a)))
           (c-code (unlines "{"
                            "  __local float a;"
                            "  return a;"
                            "}")))
-      (is (compile-with-shared-memory lisp-code var-env func-env) c-code
+      (is (compile-with-local-memory lisp-code var-env func-env) c-code
           "basic case 4")))
 
   (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(with-shared-memory ((a float 16 16))
+    (let ((lisp-code '(with-local-memory ((a float 16 16))
                        (set (aref a 0 0) 1.0)))
           (c-code (unlines "{"
                            "  __local float a[16][16];"
                            "  a[0][0] = 1.0f;"
                            "}")))
-      (is (compile-with-shared-memory lisp-code var-env func-env) c-code
+      (is (compile-with-local-memory lisp-code var-env func-env) c-code
           "basic case 5")))
 
   (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(with-shared-memory ((a float (+ 16 2)))
+    (let ((lisp-code '(with-local-memory ((a float (+ 16 2)))
                        (set (aref a 0) 1.0)))
           (c-code (unlines "{"
                            "  __local float a[(16 + 2)];"
                            "  a[0] = 1.0f;"
                            "}")))
-      (is (compile-with-shared-memory lisp-code var-env func-env) c-code
+      (is (compile-with-local-memory lisp-code var-env func-env) c-code
           "basic case 6")))
 
   (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(with-shared-memory (a float)
+    (let ((lisp-code '(with-local-memory (a float)
                        (return))))
-      (is-error (compile-with-shared-memory lisp-code var-env func-env)
+      (is-error (compile-with-local-memory lisp-code var-env func-env)
                 simple-error)))
 
   (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(with-shared-memory ((a float 16 16))
+    (let ((lisp-code '(with-local-memory ((a float 16 16))
                        (set (aref a 0) 1.0))))
-      (is-error (compile-with-shared-memory lisp-code var-env func-env)
+      (is-error (compile-with-local-memory lisp-code var-env func-env)
                 simple-error))))
 
 

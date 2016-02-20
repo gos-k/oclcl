@@ -209,28 +209,28 @@
 
 
 ;;;
-;;; test With-shared-memory statement
+;;; test With-local-memory statement
 ;;;
 
-(subtest "WITH-SHARED-MEMORY-P"
+(subtest "WITH-LOCAL-MEMORY-P"
 
-  (ok (with-shared-memory-p '(with-shared-memory ((a float 16))
+  (ok (with-local-memory-p '(with-local-memory ((a float 16))
                               (return)))
       "basic case 1")
-  (ok (with-shared-memory-p '(with-shared-memory ()
+  (ok (with-local-memory-p '(with-local-memory ()
                               (return)))
       "basic case 2")
-  (ok (with-shared-memory-p '(with-shared-memory ()))
+  (ok (with-local-memory-p '(with-local-memory ()))
       "basic case 3")
-  (ok (with-shared-memory-p '(with-shared-memory))
+  (ok (with-local-memory-p '(with-local-memory))
       "basic case 4"))
 
 
-(subtest "WITH-SHARED-MEMORY-SPEC-P"
+(subtest "WITH-LOCAL-MEMORY-SPEC-P"
 
-(ok (with-shared-memory-spec-p '(a float 16))
+(ok (with-local-memory-spec-p '(a float 16))
     "basic case 1")
-(ok (with-shared-memory-spec-p '(a float (+ 16 2)))
+(ok (with-local-memory-spec-p '(a float (+ 16 2)))
     "basic case 2"))
 
 

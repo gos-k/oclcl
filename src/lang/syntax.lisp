@@ -82,16 +82,16 @@
            :do-binding-var
            :do-binding-init
            :do-binding-step
-           ;; With-shared-memory statement
-           :with-shared-memory
-           :with-shared-memory-p
-           :with-shared-memory-specs
-           :with-shared-memory-statements
-           ;; With-shared-memory statement - spec
-           :with-shared-memory-spec-p
-           :with-shared-memory-spec-var
-           :with-shared-memory-spec-type
-           :with-shared-memory-spec-dimensions
+           ;; With-local-memory statement
+           :with-local-memory
+           :with-local-memory-p
+           :with-local-memory-specs
+           :with-local-memory-statements
+           ;; With-local-memory statement - spec
+           :with-local-memory-spec-p
+           :with-local-memory-spec-var
+           :with-local-memory-spec-type
+           :with-local-memory-spec-dimensions
            ;; Set statement
            :set
            :set-p
@@ -476,54 +476,54 @@
 
 
 ;;;
-;;; With-shared-memory statement
+;;; With-local-memory statement
 ;;;
 
-(defun with-shared-memory-p (object)
+(defun with-local-memory-p (object)
   (cl-pattern:match object
-    (('with-shared-memory . _) t)
+    (('with-local-memory . _) t)
     (_ nil)))
 
-(defun with-shared-memory-specs (form)
+(defun with-local-memory-specs (form)
   (cl-pattern:match form
-    (('with-shared-memory specs . _)
-     (if (every #'with-shared-memory-spec-p specs)
+    (('with-local-memory specs . _)
+     (if (every #'with-local-memory-spec-p specs)
          specs
          (error "The statement ~S is malformed." form)))
-    (('with-shared-memory . _)
+    (('with-local-memory . _)
      (error "The statement ~S is malformed." form))
     (_ (error "The value ~S is an invalid statement." form))))
 
-(defun with-shared-memory-statements (form)
+(defun with-local-memory-statements (form)
   (cl-pattern:match form
-    (('with-shared-memory _ . statements) statements)
-    (('with-shared-memory . _)
+    (('with-local-memory _ . statements) statements)
+    (('with-local-memory . _)
      (error "The statement ~S is malformed." form))
     (_ (error "The value ~S is an invalid statement." form))))
 
 
 ;;;
-;;; With-shared-memory statement - spec
+;;; With-local-memory statement - spec
 ;;;
 
-(defun with-shared-memory-spec-p (object)
+(defun with-local-memory-spec-p (object)
   (cl-pattern:match object
     ((var type . _) (and (oclcl-symbol-p var)
                          (oclcl-type-p type)))
     (_ nil)))
 
-(defun with-shared-memory-spec-var (spec)
-  (unless (with-shared-memory-spec-p spec)
+(defun with-local-memory-spec-var (spec)
+  (unless (with-local-memory-spec-p spec)
     (error "The value ~S is an invalid shared memory spec." spec))
   (car spec))
 
-(defun with-shared-memory-spec-type (spec)
-  (unless (with-shared-memory-spec-p spec)
+(defun with-local-memory-spec-type (spec)
+  (unless (with-local-memory-spec-p spec)
     (error "The value ~S is an invalid shared memory spec." spec))
   (cadr spec))
 
-(defun with-shared-memory-spec-dimensions (spec)
-  (unless (with-shared-memory-spec-p spec)
+(defun with-local-memory-spec-dimensions (spec)
+  (unless (with-local-memory-spec-p spec)
     (error "The value ~S is an invalid shared memory spec." spec))
   (cddr spec))
 
