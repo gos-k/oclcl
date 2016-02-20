@@ -484,7 +484,12 @@
     ;; OpenCL v.1.2 dr19: 6.12.7 Vector Data Load and Store Functions
 
     ;; OpenCL v.1.2 dr19: 6.12.8 Synchronization Functions
-    barrier (((cl-mem-fence-flags) void nil "barrier"))))
+    barrier (((cl-mem-fence-flags) void nil "barrier"))
+
+    ;; OpenCL v.1.2 dr19: 6.12.9 Explicit Memory Fence Functions
+    mem-fence (((cl-mem-fence-flags) void nil "mem_fence"))
+    read-mem-fence (((cl-mem-fence-flags) void nil "read_mem_fence"))
+    write-mem-fence (((cl-mem-fence-flags) void nil "write_mem_fence"))))
 
 (defun inferred-function-candidates (name)
   (or (getf +built-in-functions+ name)
