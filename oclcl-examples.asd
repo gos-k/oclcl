@@ -18,7 +18,8 @@
   :components ((:module "examples"
                 :components
                 ((:file "vector-add")
-                 (:file "diffuse0"))))
+                 (:file "diffuse0")
+                 (:file "diffuse1"))))
   :defsystem-depends-on (:prove-asdf)
   :perform (test-op :after (op c)
                     (funcall (intern #.(string :run-test-system) :prove.asdf) c)
