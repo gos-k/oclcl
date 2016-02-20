@@ -253,6 +253,27 @@ Compiled:
 
     return 0;
 
+### Built in Functions
+
+Implementation status of built in functions.
+
+| Status | Functions |
+|:------:|:----------|
+| Yes    | Work-Item |
+| Part   | Math |
+| Part   | Integer |
+| Part   | Common |
+| Yes    | Geometric |
+| No     | Relational |
+| No     | Vector Data Load and Store |
+| Yes    | Synchronization |
+| Yes    | Explicit Memory Fence |
+| No     | Async Copies from Global to Local Memory, Local to Global Memory, and Prefetch |
+| No     | Atomic |
+| No     | Miscellaneous Vector |
+| No     | printf |
+| No     | Image Read and Write Functions |
+
 <!--
 
 ## Architecture
