@@ -56,6 +56,12 @@
   (is (literal-p 1.0d0) t
       "basic case 5"))
 
+;;; test OpenCL literal
+;;;
+
+(subtest "OpenCL literal")
+
+
 ;;;
 ;;; test Reference
 ;;;
