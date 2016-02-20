@@ -493,7 +493,11 @@
     ;; OpenCL v.1.2 dr19: 6.12.9 Explicit Memory Fence Functions
     mem-fence (((cl-mem-fence-flags) void nil "mem_fence"))
     read-mem-fence (((cl-mem-fence-flags) void nil "read_mem_fence"))
-    write-mem-fence (((cl-mem-fence-flags) void nil "write_mem_fence"))))
+    write-mem-fence (((cl-mem-fence-flags) void nil "write_mem_fence"))
+
+    ;; TODO
+    ;; OpenCL v.1.2 dr19: 6.12.10 Async Copies from Global to Local Memory, Local to Global Memory, and Prefetch
+    ))
 
 (defun inferred-function-candidates (name)
   (or (getf +built-in-functions+ name)
