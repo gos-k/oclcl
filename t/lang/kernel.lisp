@@ -18,95 +18,95 @@
 ;;; test MAKE-KERNEL function
 ;;;
 
-(diag "MAKE-KERNEL")
+(subtest "MAKE-KERNEL"
 
-(let ((kernel (make-kernel)))
-  (is (kernel-function-names kernel) nil
-      "basic case 1")
-  (is (kernel-symbol-macro-names kernel) nil
-      "basic case 2"))
+  (let ((kernel (make-kernel)))
+    (is (kernel-function-names kernel) nil
+        "basic case 1")
+    (is (kernel-symbol-macro-names kernel) nil
+        "basic case 2")))
 
 
 ;;;
 ;;; test KERNEL-FUNCTION-NAMES function
 ;;;
 
-(diag "KERNEL-FUNCTION-NAMES")
+(subtest "KERNEL-FUNCTION-NAMES"
 
-(let ((kernel (make-kernel)))
-  (kernel-define-function kernel 'foo 'int '((x int)) '((return x)))
-  (kernel-define-macro kernel 'bar '(x) '(`(return ,x)))
-  (is (kernel-function-names kernel) '(foo)
-      "basic case 1"))
+  (let ((kernel (make-kernel)))
+    (kernel-define-function kernel 'foo 'int '((x int)) '((return x)))
+    (kernel-define-macro kernel 'bar '(x) '(`(return ,x)))
+    (is (kernel-function-names kernel) '(foo)
+        "basic case 1")))
 
 
 ;;;
 ;;; test KERNEL-MACRO-NAMES function
 ;;;
 
-(diag "KERNEL-MACRO-NAMES")
+(subtest "KERNEL-MACRO-NAMES"
 
-(let ((kernel (make-kernel)))
-  (kernel-define-function kernel 'foo 'int '((x int)) '((return x)))
-  (kernel-define-macro kernel 'bar '(x) '(`(return ,x)))
-  (is (kernel-macro-names kernel) '(bar)
-      "basic case 1"))
+  (let ((kernel (make-kernel)))
+    (kernel-define-function kernel 'foo 'int '((x int)) '((return x)))
+    (kernel-define-macro kernel 'bar '(x) '(`(return ,x)))
+    (is (kernel-macro-names kernel) '(bar)
+        "basic case 1")))
 
 
 ;;;
 ;;; test KERNEL-SYMBOL-MACRO-NAMES function
 ;;;
 
-(diag "KERNEL-SYMBOL-MACRO-NAMES")
+(subtest "KERNEL-SYMBOL-MACRO-NAMES"
 
-(let ((kernel (make-kernel)))
-  (kernel-define-symbol-macro kernel 'x 1.0)
-  (is (kernel-symbol-macro-names kernel) '(x)
-      "kernel basic 1"))
+  (let ((kernel (make-kernel)))
+    (kernel-define-symbol-macro kernel 'x 1.0)
+    (is (kernel-symbol-macro-names kernel) '(x)
+        "kernel basic 1")))
 
 
 ;;;
 ;;; test KERNEL-DEFINE-FUNCTION function
 ;;;
 
-(diag "KERNEL-DEFINE-FUNCTION")
+(subtest "KERNEL-DEFINE-FUNCTION"
 
-(let ((kernel (make-kernel)))
-  (is (kernel-define-function kernel 'foo 'int '((x int)) '((return x)))
-      'foo "basic case 1"))
+  (let ((kernel (make-kernel)))
+    (is (kernel-define-function kernel 'foo 'int '((x int)) '((return x)))
+        'foo "basic case 1"))
 
-(let ((kernel (make-kernel)))
-  (is-error (kernel-define-function kernel
-                                    1 'int '((x int)) '((return x)))
-            type-error
-            "NAME which is not a oclcl symbol."))
+  (let ((kernel (make-kernel)))
+    (is-error (kernel-define-function kernel
+                                      1 'int '((x int)) '((return x)))
+              type-error
+              "NAME which is not a oclcl symbol."))
 
-(let ((kernel (make-kernel)))
-  (is-error (kernel-define-function kernel 'foo 1 '((x int)) '((return x)))
-            type-error
-            "RETURN-TYPE which is not a oclcl type."))
+  (let ((kernel (make-kernel)))
+    (is-error (kernel-define-function kernel 'foo 1 '((x int)) '((return x)))
+              type-error
+              "RETURN-TYPE which is not a oclcl type."))
 
-(let ((kernel (make-kernel)))
-  (is-error (kernel-define-function kernel 'foo 1 'bar '((return x)))
-            type-error
-            "ARGUMENTS which are invlalid arguments."))
+  (let ((kernel (make-kernel)))
+    (is-error (kernel-define-function kernel 'foo 1 'bar '((return x)))
+              type-error
+              "ARGUMENTS which are invlalid arguments.")))
 
 
 ;;;
 ;;; test KERNEL-FUNCTION-EXISTS-P function
 ;;;
 
-(diag "KERNEL-FUNCTION-EXISTS-P")
+(subtest "KERNEL-FUNCTION-EXISTS-P"
 
-(let ((kernel (make-kernel)))
-  (kernel-define-function kernel 'foo 'int '((x int)) '((return x)))
-  (kernel-define-macro kernel 'bar '(x) '(`(return ,x)))
-  (is (kernel-function-exists-p kernel 'foo) t
-      "basic case 1")
-  (is (kernel-function-exists-p kernel 'bar) nil
-      "basic case 2")
-  (is (kernel-function-exists-p kernel 'baz) nil
-      "basic case 3"))
+  (let ((kernel (make-kernel)))
+    (kernel-define-function kernel 'foo 'int '((x int)) '((return x)))
+    (kernel-define-macro kernel 'bar '(x) '(`(return ,x)))
+    (is (kernel-function-exists-p kernel 'foo) t
+        "basic case 1")
+    (is (kernel-function-exists-p kernel 'bar) nil
+        "basic case 2")
+    (is (kernel-function-exists-p kernel 'baz) nil
+        "basic case 3")))
 
 
 ;;;
@@ -156,33 +156,33 @@
 ;;; test KERNEL-DEFINE-MACRO function
 ;;;
 
-(diag "KERNEL-DEFINE-MACRO")
+(subtest "KERNEL-DEFINE-MACRO"
 
-(let ((kernel (make-kernel)))
-  (is (kernel-define-macro kernel 'foo '(x) '(`(return ,x)))
-      'foo "basic case 1"))
+  (let ((kernel (make-kernel)))
+    (is (kernel-define-macro kernel 'foo '(x) '(`(return ,x)))
+        'foo "basic case 1"))
 
-(let ((kernel (make-kernel)))
-  (is-error (kernel-define-macro kernel 1 '(x) '(`(return ,x)))
-            type-error
-            "NAME which is not a oclcl symbol."))
+  (let ((kernel (make-kernel)))
+    (is-error (kernel-define-macro kernel 1 '(x) '(`(return ,x)))
+              type-error
+              "NAME which is not a oclcl symbol.")))
 
 
 ;;;
 ;;; test KERNEL-MACRO-EXISTS-P function
 ;;;
 
-(diag "KERNEL-MACRO-EXISTS-P")
+(subtest "KERNEL-MACRO-EXISTS-P"
 
-(let ((kernel (make-kernel)))
-  (kernel-define-function kernel 'foo 'int '((x int)) '((return x)))
-  (kernel-define-macro kernel 'bar '(x) '(`(return ,x)))
-  (is (kernel-macro-exists-p kernel 'foo) nil
-      "basic case 1")
-  (is (kernel-macro-exists-p kernel 'bar) t
-      "basic case 2")
-  (is (kernel-macro-exists-p kernel 'baz) nil
-      "basic case 3"))
+  (let ((kernel (make-kernel)))
+    (kernel-define-function kernel 'foo 'int '((x int)) '((return x)))
+    (kernel-define-macro kernel 'bar '(x) '(`(return ,x)))
+    (is (kernel-macro-exists-p kernel 'foo) nil
+        "basic case 1")
+    (is (kernel-macro-exists-p kernel 'bar) t
+        "basic case 2")
+    (is (kernel-macro-exists-p kernel 'baz) nil
+        "basic case 3")))
 
 
 ;;;
@@ -217,69 +217,69 @@
 ;;; test EXPAND-MACRO-1 function
 ;;;
 
-(diag "EXPAND-MACRO-1")
+(subtest "EXPAND-MACRO-1"
 
-(let ((kernel (make-kernel)))
-  (kernel-define-macro kernel 'foo '(x) '(`(return ,x)))
-  (kernel-define-macro kernel 'bar '(x) '(`(foo ,x)))
-  (kernel-define-symbol-macro kernel 'a 1.0)
-  (kernel-define-symbol-macro kernel 'b 'a)
-  (is-values (expand-macro-1 '(foo 1) kernel) '((return 1) t))
-  (is-values (expand-macro-1 '(bar 1) kernel) '((foo 1) t))
-  (is-values (expand-macro-1 '(baz 1) kernel) '((baz 1) nil))
-  (is-values (expand-macro-1 'a kernel) '(1.0 t))
-  (is-values (expand-macro-1 'b kernel) '(a t))
-  (is-values (expand-macro-1 'c kernel) '(c nil))
-  (is-error (expand-macro-1 '(foo)) error))
+  (let ((kernel (make-kernel)))
+    (kernel-define-macro kernel 'foo '(x) '(`(return ,x)))
+    (kernel-define-macro kernel 'bar '(x) '(`(foo ,x)))
+    (kernel-define-symbol-macro kernel 'a 1.0)
+    (kernel-define-symbol-macro kernel 'b 'a)
+    (is-values (expand-macro-1 '(foo 1) kernel) '((return 1) t))
+    (is-values (expand-macro-1 '(bar 1) kernel) '((foo 1) t))
+    (is-values (expand-macro-1 '(baz 1) kernel) '((baz 1) nil))
+    (is-values (expand-macro-1 'a kernel) '(1.0 t))
+    (is-values (expand-macro-1 'b kernel) '(a t))
+    (is-values (expand-macro-1 'c kernel) '(c nil))
+    (is-error (expand-macro-1 '(foo)) error)))
 
 
 ;;;
 ;;; test EXPAND-MACRO function
 ;;;
 
-(diag "EXPAND-MACRO")
+(subtest "EXPAND-MACRO"
 
-(let ((kernel (make-kernel)))
-  (kernel-define-macro kernel 'foo '(x) '(`(return ,x)))
-  (kernel-define-macro kernel 'bar '(x) '(`(foo ,x)))
-  (kernel-define-symbol-macro kernel 'a 1.0)
-  (kernel-define-symbol-macro kernel 'b 'a)
-  (is-values (expand-macro '(foo 1) kernel) '((return 1) t))
-  (is-values (expand-macro '(bar 1) kernel) '((return 1) t))
-  (is-values (expand-macro '(baz 1) kernel) '((baz 1) nil))
-  (is-values (expand-macro 'a kernel) '(1.0 t))
-  (is-values (expand-macro 'b kernel) '(1.0 t))
-  (is-values (expand-macro 'c kernel) '(c nil))
-  (is-error (expand-macro '(foo)) error))
+  (let ((kernel (make-kernel)))
+    (kernel-define-macro kernel 'foo '(x) '(`(return ,x)))
+    (kernel-define-macro kernel 'bar '(x) '(`(foo ,x)))
+    (kernel-define-symbol-macro kernel 'a 1.0)
+    (kernel-define-symbol-macro kernel 'b 'a)
+    (is-values (expand-macro '(foo 1) kernel) '((return 1) t))
+    (is-values (expand-macro '(bar 1) kernel) '((return 1) t))
+    (is-values (expand-macro '(baz 1) kernel) '((baz 1) nil))
+    (is-values (expand-macro 'a kernel) '(1.0 t))
+    (is-values (expand-macro 'b kernel) '(1.0 t))
+    (is-values (expand-macro 'c kernel) '(c nil))
+    (is-error (expand-macro '(foo)) error)))
 
 
 ;;;
 ;;; test KERNEL-DEFINE-SYMBOL-MACRO function
 ;;;
 
-(diag "KERNEL-DEFINE-SYMBOL-MACRO")
+(subtest "KERNEL-DEFINE-SYMBOL-MACRO"
 
-(let ((kernel (make-kernel)))
-  (is (kernel-define-symbol-macro kernel 'x 1.0)
-      'x "basic case 1"))
+  (let ((kernel (make-kernel)))
+    (is (kernel-define-symbol-macro kernel 'x 1.0)
+        'x "basic case 1"))
 
-(let ((kernel (make-kernel)))
-  (is-error (kernel-define-symbol-macro kernel 1 1.0) type-error
-            "NAME which is not a oclcl symbol."))
+  (let ((kernel (make-kernel)))
+    (is-error (kernel-define-symbol-macro kernel 1 1.0) type-error
+              "NAME which is not a oclcl symbol.")))
 
 
 ;;;
 ;;; test KERNEL-SYMBOL-MACRO-EXISTS-P function
 ;;;
 
-(diag "KERNEL-SYMBOL-MACRO-EXISTS-P")
+(subtest "KERNEL-SYMBOL-MACRO-EXISTS-P"
 
-(let ((kernel (make-kernel)))
-  (kernel-define-symbol-macro kernel 'x 1.0)
-  (is (kernel-symbol-macro-exists-p kernel 'x) t
-      "basic case 1")
-  (is (kernel-symbol-macro-exists-p kernel 'y) nil
-      "basic case 2"))
+  (let ((kernel (make-kernel)))
+    (kernel-define-symbol-macro kernel 'x 1.0)
+    (is (kernel-symbol-macro-exists-p kernel 'x) t
+        "basic case 1")
+    (is (kernel-symbol-macro-exists-p kernel 'y) nil
+        "basic case 2")))
 
 
 ;;;
