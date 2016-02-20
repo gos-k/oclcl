@@ -8,6 +8,7 @@
 (defpackage oclcl.lang.util
   (:use :cl)
   (:export :c-identifier
+           :c-macro-name
            :lines
            :unlines
            :indent))
@@ -30,6 +31,9 @@
                                 (symbol-package symbol)))))
           (concatenate 'string package-name "_" symbol-name))
         symbol-name)))
+
+(defun c-macro-name (keyword)
+  (substitute #\_ #\- (symbol-name keyword)))
 
 (defun lines (str)
   (split-sequence:split-sequence #\LineFeed str :remove-empty-subseqs t))
