@@ -499,6 +499,8 @@
     ;; OpenCL v.1.2 dr19: 6.12.8 Atomic Functions
     atomic-add (((int* int) int nil "atomic_add")
                 ((uint* uint) uint nil "atomic_add"))
+    atomic-sub (((int* int) int nil "atomic_sub")
+                ((uint* uint) uint nil "atomic_sub"))
     ))
 
 (defun inferred-function-candidates (name)
