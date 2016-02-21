@@ -518,7 +518,8 @@
                 ((uint*) uint nil "atomic_and"))
     atomic-or (((int*) int nil "atomic_or")
                ((uint*) uint nil "atomic_or"))
-    ))
+    atomic-xor (((uint*) uint nil "atomic_xor")
+                ((uint*) uint nil "atomic_xor"))))
 
 (defun inferred-function-candidates (name)
   (or (getf +built-in-functions+ name)
