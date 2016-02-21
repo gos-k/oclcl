@@ -516,6 +516,8 @@
                 ((uint*) uint nil "atomic_max"))
     atomic-and (((int*) int nil "atomic_and")
                 ((uint*) uint nil "atomic_and"))
+    atomic-or (((int*) int nil "atomic_or")
+               ((uint*) uint nil "atomic_or"))
     ))
 
 (defun inferred-function-candidates (name)
