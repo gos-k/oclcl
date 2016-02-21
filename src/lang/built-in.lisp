@@ -508,6 +508,8 @@
                 ((uint*) uint nil "atomic_inc"))
     atomic-dec (((int*) int nil "atomic_dec")
                 ((uint*) uint nil "atomic_dec"))
+    atomic-cmpxchg (((int* int int) int nil "atomic_cmpxchg")
+                    ((uint* uint uint) uint nil "atomic_cmpxchg"))
     ))
 
 (defun inferred-function-candidates (name)
