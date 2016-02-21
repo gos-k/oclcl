@@ -512,6 +512,8 @@
                     ((uint* uint uint) uint nil "atomic_cmpxchg"))
     atomic-min (((int*) int nil "atomic_min")
                 ((uint*) uint nil "atomic_min"))
+    atomic-max (((int*) int nil "atomic_max")
+                ((uint*) uint nil "atomic_max"))
     ))
 
 (defun inferred-function-candidates (name)
