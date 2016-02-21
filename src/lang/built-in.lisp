@@ -261,8 +261,6 @@
 
     ;; logical operators
     not  (((bool) bool nil "!"))
-    ;; atomic functions
-    atomic-add (((int* int) int nil "atomicAdd"))
     ;; address-of operator
     pointer (((int)   int*   nil "&")
              ((float) float* nil "&")
@@ -497,6 +495,10 @@
 
     ;; TODO
     ;; OpenCL v.1.2 dr19: 6.12.10 Async Copies from Global to Local Memory, Local to Global Memory, and Prefetch
+
+    ;; OpenCL v.1.2 dr19: 6.12.8 Atomic Functions
+    atomic-add (((int* int) int nil "atomic_add")
+                ((uint* uint) uint nil "atomic_add"))
     ))
 
 (defun inferred-function-candidates (name)
