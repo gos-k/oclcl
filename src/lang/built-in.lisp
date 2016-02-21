@@ -501,6 +501,9 @@
                 ((uint* uint) uint nil "atomic_add"))
     atomic-sub (((int* int) int nil "atomic_sub")
                 ((uint* uint) uint nil "atomic_sub"))
+    atomic-xchg (((int* int) int nil "atomic_xchg")
+                 ((uint* uint) uint nil "atomic_xchg")
+                 ((float* float) float nil "atomic_xchg"))
     ))
 
 (defun inferred-function-candidates (name)
