@@ -159,6 +159,18 @@
            :read-mem-fence
            :write-mem-fence
 
+           :atomic-add
+           :atomic-sub
+           :atomic-xchg
+           :atomic-inc
+           :atomic-dec
+           :atomic-cmpxchg
+           :atomic-min
+           :atomic-max
+           :atomic-and
+           :atomic-or
+           :atomic-xor
+
            ;; Interfaces
            :built-in-function-return-type
            :built-in-function-infix-p
