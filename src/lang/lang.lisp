@@ -51,22 +51,34 @@
 ;; OpenCL v1.2 dr19: 6.1 Supported Data Type
 (reexport-from :oclcl.lang.type
                :include '(:bool
+                          :bool*
                           :char :char2 :char3 :char4 :char8 :char16
-                          :unsigned-char :uchar :uchar2 :uchar3 :uchar4 :uchar8 :uchar16
+                          :char* :char2* :char3* :char4* :char8* :char16*
+                          :uchar :uchar2 :uchar3 :uchar4 :uchar8 :uchar16
+                          :uchar* :uchar2* :uchar3* :uchar4* :uchar8* :uchar16*
                           :short :short2 :short3 :short4 :short8 :short16
-                          :unsigned-short :ushort :ushort2 :ushort3 :ushort4 :ushort8 :ushort16
+                          :short* :short2* :short3* :short4* :short8* :short16*
+                          :ushort :ushort2 :ushort3 :ushort4 :ushort8 :ushort16
+                          :ushort* :ushort2* :ushort3* :ushort4* :ushort8* :ushort16*
                           :int :int2 :int3 :int4 :int8 :int16
-                          :unsigned-int :uint :uint2 :uint3 :uint4 :uint8 :uint16
+                          :int* :int2* :int3* :int4* :int8* :int16*
+                          :uint :uint2 :uint3 :uint4 :uint8 :uint16
+                          :uint* :uint2* :uint3* :uint4* :uint8* :uint16*
                           :long :long2 :long3 :long4 :long8 :long16
-                          :unsigned-long :ulong :ulong2 :ulong3 :ulong4 :ulong8 :ulong16
+                          :long* :long2* :long3* :long4* :long8* :long16*
+                          :ulong :ulong2 :ulong3 :ulong4 :ulong8 :ulong16
+                          :ulong* :ulong2* :ulong3* :ulong4* :ulong8* :ulong16*
                           :float :float2 :float3 :float4 :float8 :float16
+                          :float* :float2* :float3* :float4* :float8* :float16*
                           :double :double2 :double3 :double4 :double8 :double16
+                          :double* :double2* :double3* :double4* :double8* :double16*
                           :half
                           :size-t
                           :ptrdiff-t
                           :intptr-t
                           :uintptr-t
-                          :void))
+                          :void
+                          :cl-mem-fence-flags))
 
 ;; reexport symbols of oclcl syntax except the ones exported
 ;; from COMMON-LISP package

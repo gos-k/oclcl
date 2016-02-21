@@ -9,90 +9,31 @@
   (:use :cl
         :oclcl.lang.data)
   (:export ;; opencl types
-           :void
            :bool
-           :char
-           :uchar
-           :short
-           :ushort
-           :int
-           :uint
-           :long
-           :ulong
-           :float
-           :double
-           :cl-mem-fence-flags
-           ;; vector char
-           :char2
-           :char3
-           :char4
-           :char8
-           :char16
-           ;; vector uchar
-           :uchar2
-           :uchar3
-           :uchar4
-           :uchar8
-           :uchar16
-           ;; vector short
-           :short2
-           :short3
-           :short4
-           :short8
-           :short16
-           ;; vector ushort
-           :ushort2
-           :ushort3
-           :ushort4
-           :ushort8
-           :ushort16
-           ;; vector int
-           :int2
-           :int3
-           :int4
-           :int8
-           :int16
-           ;; vector uint
-           :uint2
-           :uint3
-           :uint4
-           :uint8
-           :uint16
-           ;; vector long
-           :long2
-           :long3
-           :long4
-           :long8
-           :long16
-           ;; vector ulong
-           :ulong2
-           :ulong3
-           :ulong4
-           :ulong8
-           :ulong16
-           ;; vector float
-           :float2
-           :float3
-           :float4
-           :float8
-           :float16
-           ;; vector double
-           :double2
-           :double3
-           :double4
-           :double8
-           :double16
-
-           :size-t
            :bool*
-           :int*
-           :float*
-           :double*
-           :curand-state-xorwow*
-           :float3*
-           :float4*
-           :double3*
-           :double4*
+           :char :char2 :char3 :char4 :char8 :char16
+           :char* :char2* :char3* :char4* :char8* :char16*
+           :uchar :uchar2 :uchar3 :uchar4 :uchar8 :uchar16
+           :uchar* :uchar2* :uchar3* :uchar4* :uchar8* :uchar16*
+           :short :short2 :short3 :short4 :short8 :short16
+           :short* :short2* :short3* :short4* :short8* :short16*
+           :ushort :ushort2 :ushort3 :ushort4 :ushort8 :ushort16
+           :ushort* :ushort2* :ushort3* :ushort4* :ushort8* :ushort16*
+           :int :int2 :int3 :int4 :int8 :int16
+           :int* :int2* :int3* :int4* :int8* :int16*
+           :uint :uint2 :uint3 :uint4 :uint8 :uint16
+           :uint* :uint2* :uint3* :uint4* :uint8* :uint16*
+           :long :long2 :long3 :long4 :long8 :long16
+           :long* :long2* :long3* :long4* :long8* :long16*
+           :ulong :ulong2 :ulong3 :ulong4 :ulong8 :ulong16
+           :ulong* :ulong2* :ulong3* :ulong4* :ulong8* :ulong16*
+           :float :float2 :float3 :float4 :float8 :float16
+           :float* :float2* :float3* :float4* :float8* :float16*
+           :double :double2 :double3 :double4 :double8 :double16
+           :double* :double2* :double3* :double4* :double8* :double16*
+           :size-t
+           :void
+           :cl-mem-fence-flags
            ;; Type
            :oclcl-type
            :oclcl-type-p
