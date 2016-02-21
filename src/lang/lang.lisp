@@ -221,4 +221,8 @@
                           :fast-length
                           :fast-normalize
 
-                          :barrier))
+                          :barrier
+
+                          :mem-fence
+                          :read-mem-fence
+                          :write-mem-fence))
