@@ -177,9 +177,9 @@
            :built-in-function-c-name))
 (in-package :oclcl.lang.built-in)
 
-(defparameter +signed-integer-types+ '(char short int long))
+(defparameter +scalar-signed-integer-types+ '(char short int long))
 (defparameter +unsigned-integer-types+ '(uchar ushort uint ulong))
-(defparameter +integer-types+ (append +signed-integer-types+ +unsigned-integer-types+))
+(defparameter +integer-types+ (append +scalar-signed-integer-types+ +unsigned-integer-types+))
 (defparameter +float-types+ '(float double))
 (defparameter +gentypes+ (append +integer-types+ +float-types+))
 
