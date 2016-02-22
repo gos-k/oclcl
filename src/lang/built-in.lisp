@@ -496,7 +496,6 @@
                                                        ((float4 float4) . float))
                          collecting `(,arguments ,return nil "fast_distance"))
     fast-length ,(loop for (arguments . return) in '(((float) . float)
-
                                                      ((float2) . float)
                                                      ((float3) . float)
                                                      ((float4) . float))
@@ -547,7 +546,12 @@
     atomic-or (((int*) int nil "atomic_or")
                ((uint*) uint nil "atomic_or"))
     atomic-xor (((uint*) uint nil "atomic_xor")
-                ((uint*) uint nil "atomic_xor"))))
+                ((uint*) uint nil "atomic_xor"))
+
+    ;; OpenCL v.1.2 dr19: 6.12.12 Miscellaneous Vector Functions
+    vec-step ,(loop for argument in +number-types+
+                    collecting `((argument) int nil "vec_step"))
+    ))
 
 (defun inferred-function-candidates (name)
   (or (getf +built-in-functions+ name)
