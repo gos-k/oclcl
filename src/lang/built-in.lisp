@@ -191,6 +191,10 @@
                                               short2 short3 short4 short8 short16
                                               int2 int3 int4 int8 int16
                                               long2 long3 long4 long8 long16))
+(defparameter +vector-unsigned-integer-types+ '(uchar2 uchar3 uchar4 uchar8 uchar16
+                                                ushort2 ushort3 ushort4 ushort8 ushort16
+                                                uint2 uint3 uint4 uint8 uint16
+                                                ulong2 ulong3 ulong4 ulong8 ulong16))
 
 (defun generate-vector-type-symbols (scalar-type)
   (loop for n in '("2" "3" "4" "8" "16")
