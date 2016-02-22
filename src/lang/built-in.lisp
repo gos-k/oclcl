@@ -180,8 +180,8 @@
 (defparameter +scalar-signed-integer-types+ '(char short int long))
 (defparameter +scalar-unsigned-integer-types+ '(uchar ushort uint ulong))
 (defparameter +scalar-integer-types+ (append +scalar-signed-integer-types+ +scalar-unsigned-integer-types+))
-(defparameter +float-types+ '(float double))
-(defparameter +gentypes+ (append +scalar-integer-types+ +float-types+))
+(defparameter +scalar-float-types+ '(float double))
+(defparameter +gentypes+ (append +scalar-integer-types+ +scalar-float-types+))
 
 (defparameter +integer-result-types+ '(char char short short int int long long))
 (defparameter +float-result-types+ '(int long))
@@ -207,7 +207,7 @@
         collecting (list (make-list size :initial-element type-symbol) type-symbol infix function)))
 
 (defun float-types-function (function size)
-  (loop for type in +float-types+
+  (loop for type in +scalar-float-types+
         appending (same-type-function function size type nil)))
 
 (defun float-types-unary-function (function)
