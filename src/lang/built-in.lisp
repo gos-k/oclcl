@@ -179,9 +179,9 @@
 
 (defparameter +scalar-signed-integer-types+ '(char short int long))
 (defparameter +scalar-unsigned-integer-types+ '(uchar ushort uint ulong))
-(defparameter +integer-types+ (append +scalar-signed-integer-types+ +scalar-unsigned-integer-types+))
+(defparameter +scalar-integer-types+ (append +scalar-signed-integer-types+ +scalar-unsigned-integer-types+))
 (defparameter +float-types+ '(float double))
-(defparameter +gentypes+ (append +integer-types+ +float-types+))
+(defparameter +gentypes+ (append +scalar-integer-types+ +float-types+))
 
 (defparameter +integer-result-types+ '(char char short short int int long long))
 (defparameter +float-result-types+ '(int long))
@@ -220,7 +220,7 @@
   (float-types-function function 3))
 
 (defun integer-types-function (function size)
-  (loop for type in +integer-types+
+  (loop for type in +scalar-integer-types+
         appending (same-type-function function size type nil)))
 
 (defun integer-types-unary-function (function)
@@ -272,7 +272,7 @@
                (arithmetic-binary-operator "-" +gentypes+))
     * ,(arithmetic-binary-operator "*" +gentypes+)
     / ,(arithmetic-binary-operator "/" +gentypes+)
-    mod ,(arithmetic-binary-operator "%" +integer-types+)
+    mod ,(arithmetic-binary-operator "%" +scalar-integer-types+)
 
     ;; relational operators
     = ,(relational-operator "==")
