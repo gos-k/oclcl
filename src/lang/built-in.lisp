@@ -200,6 +200,9 @@
                                      double2 double3 double4 double8 double16))
 (defparameter +vector-number-types+ (append +vector-integer-types+ +vector-float-types+))
 
+(defparameter +number-types+ (append +scalar-number-types+
+                                     +vector-number-types+))
+
 (defun generate-vector-type-symbols (scalar-type)
   (loop for n in '("2" "3" "4" "8" "16")
         collecting (intern (concatenate 'string (symbol-name scalar-type) n))))
