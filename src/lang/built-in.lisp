@@ -198,6 +198,7 @@
 (defparameter +vector-integer-types+ (append +vector-signed-integer-types+ +vector-unsigned-integer-types+))
 (defparameter +vector-float-types+ '(float2 float3 float4 float8 float16
                                      double2 double3 double4 double8 double16))
+(defparameter +vector-number-types+ (append +vector-integer-types+ +vector-float-types+))
 
 (defun generate-vector-type-symbols (scalar-type)
   (loop for n in '("2" "3" "4" "8" "16")
