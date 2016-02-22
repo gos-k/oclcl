@@ -187,6 +187,11 @@
 (defparameter +float-result-types+ '(int long))
 (defparameter +result-gentypes+ (append +integer-result-types+ +float-result-types+))
 
+(defparameter +vector-signed-integer-types+ '(char2 char3 char4 char8 char16
+                                              short2 short3 short4 short8 short16
+                                              int2 int3 int4 int8 int16
+                                              long2 long3 long4 long8 long16))
+
 (defun generate-vector-type-symbols (scalar-type)
   (loop for n in '("2" "3" "4" "8" "16")
         collecting (intern (concatenate 'string (symbol-name scalar-type) n))))
