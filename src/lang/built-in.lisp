@@ -178,8 +178,8 @@
 (in-package :oclcl.lang.built-in)
 
 (defparameter +scalar-signed-integer-types+ '(char short int long))
-(defparameter +unsigned-integer-types+ '(uchar ushort uint ulong))
-(defparameter +integer-types+ (append +scalar-signed-integer-types+ +unsigned-integer-types+))
+(defparameter +scalar-unsigned-integer-types+ '(uchar ushort uint ulong))
+(defparameter +integer-types+ (append +scalar-signed-integer-types+ +scalar-unsigned-integer-types+))
 (defparameter +float-types+ '(float double))
 (defparameter +gentypes+ (append +integer-types+ +float-types+))
 
