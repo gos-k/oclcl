@@ -181,7 +181,7 @@
 (defparameter +scalar-unsigned-integer-types+ '(uchar ushort uint ulong))
 (defparameter +scalar-integer-types+ (append +scalar-signed-integer-types+ +scalar-unsigned-integer-types+))
 (defparameter +scalar-float-types+ '(float double))
-(defparameter +gentypes+ (append +scalar-integer-types+ +scalar-float-types+))
+(defparameter +scalar-number-types+ (append +scalar-integer-types+ +scalar-float-types+))
 
 (defparameter +integer-result-types+ '(char char short short int int long long))
 (defparameter +float-result-types+ '(int long))
@@ -255,7 +255,7 @@
         collecting (list (list argument-vector-type argument-vector-type) result-vector-type t operator)))
 
 (defun relational-operator (operator)
-  (loop for argument-type in +gentypes+
+  (loop for argument-type in +scalar-number-types+
         for result-type in +result-gentypes+
         ;; spec is 'int but ...
         collecting (list (list argument-type argument-type) 'bool t operator)
@@ -267,11 +267,11 @@
 
 (defparameter +built-in-functions+
   `(;; arithmetic operators
-    + ,(arithmetic-binary-operator "+" +gentypes+)
+    + ,(arithmetic-binary-operator "+" +scalar-number-types+)
     - ,(append '(((int) int nil "-"))
-               (arithmetic-binary-operator "-" +gentypes+))
-    * ,(arithmetic-binary-operator "*" +gentypes+)
-    / ,(arithmetic-binary-operator "/" +gentypes+)
+               (arithmetic-binary-operator "-" +scalar-number-types+))
+    * ,(arithmetic-binary-operator "*" +scalar-number-types+)
+    / ,(arithmetic-binary-operator "/" +scalar-number-types+)
     mod ,(arithmetic-binary-operator "%" +scalar-integer-types+)
 
     ;; relational operators
