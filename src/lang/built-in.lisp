@@ -195,6 +195,7 @@
                                                 ushort2 ushort3 ushort4 ushort8 ushort16
                                                 uint2 uint3 uint4 uint8 uint16
                                                 ulong2 ulong3 ulong4 ulong8 ulong16))
+(defparameter +vector-integer-types+ (append +vector-signed-integer-types+ +vector-unsigned-integer-types+))
 (defparameter +vector-float-types+ '(float2 float3 float4 float8 float16
                                      double2 double3 double4 double8 double16))
 
