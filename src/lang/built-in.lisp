@@ -508,7 +508,7 @@
     ;; TODO
     ;; OpenCL v.1.2 dr19: 6.12.10 Async Copies from Global to Local Memory, Local to Global Memory, and Prefetch
 
-    ;; OpenCL v.1.2 dr19: 6.12.8 Atomic Functions
+    ;; OpenCL v.1.2 dr19: 6.12.11 Atomic Functions
     atomic-add (((int* int) int nil "atomic_add")
                 ((uint* uint) uint nil "atomic_add"))
     atomic-sub (((int* int) int nil "atomic_sub")
