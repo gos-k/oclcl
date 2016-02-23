@@ -309,10 +309,10 @@
              ((double) double* nil "&")
              ((curand-state-xorwow) curand-state-xorwow* nil "&"))
     ;; built-in vector constructor
-    float3 (((float float float) float3 nil "make_float3"))
-    float4 (((float float float float) float4 nil "make_float4"))
-    double3 (((double double double) double3 nil "make_double3"))
-    double4 (((double double double double) double4 nil "make_double4"))
+    float3 (((float float float) float3 nil "(float3)"))
+    float4 (((float float float float) float4 nil "(float4)"))
+    double3 (((double double double) double3 nil "(double3)"))
+    double4 (((double double double double) double4 nil "(double4)"))
     ;; type casting intrinsics
     double-to-int-rn (((double) int nil "__double2int_rn"))
     size-t-to-int (((size-t) int nil "(int)"))

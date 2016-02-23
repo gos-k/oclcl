@@ -183,8 +183,8 @@
         "basic case 3")
     (is (compile-function '(+ (float3 1.0 1.0 1.0) (float3 2.0 2.0 2.0))
                           var-env func-env)
-        "(make_float3( 1.0f, 1.0f, 1.0f ) + make_float3( 2.0f, 2.0f, 2.0f ))"
-        "basic case 4")))
+        "((float3)( 1.0f, 1.0f, 1.0f ) + (float3)( 2.0f, 2.0f, 2.0f ))"
+        "float3 constructor")))
 
 ;(multiple-value-bind (var-env func-env) (empty-environment)
 ;  (is (compile-function '(syncthreads) var-env func-env) "__syncthreads()"
