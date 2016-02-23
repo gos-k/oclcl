@@ -205,8 +205,9 @@
 (defparameter +vector-integer-types+ (append +vector-signed-integer-types+
                                              +vector-unsigned-integer-types+))
 (defparameter +vector-single-float-types+ '(float2 float3 float4 float8 float16))
+(defparameter +vector-double-float-types+ '(double2 double3 double4 double8 double16))
 (defparameter +vector-float-types+ (append +vector-single-float-types+
-                                           '(double2 double3 double4 double8 double16)))
+                                           +vector-double-float-types+))
 (defparameter +vector-number-types+ (append +vector-integer-types+
                                             +vector-float-types+))
 
