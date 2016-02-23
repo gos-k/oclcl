@@ -562,7 +562,11 @@
     ;; OpenCL v.1.2 dr19: 6.12.12 Miscellaneous Vector Functions
     vec-step ,(loop for argument in +number-types+
                     collecting `((argument) int nil "vec_step"))
-    ))
+    shuffle ,(loop for (x . mask) in (append (mapcar #'cons +vector-integer-types+ +vector-unsigned-integer-types+)
+                                             (mapcar #'cons +vector-unsigned-integer-types+ +vector-unsigned-integer-types+)
+                                             (mapcar #'cons +vector-single-float-types+ +vector-uint-types+)
+                                             (mapcar #'cons +vector-double-float-types+ +vector-ulong-types+))
+                   collecting `((,x ,mask) x nil "shuffle"))))
 
 (defun inferred-function-candidates (name)
   (or (getf +built-in-functions+ name)
