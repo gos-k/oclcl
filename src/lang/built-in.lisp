@@ -179,13 +179,16 @@
 
 (defparameter +scalar-signed-integer-types+ '(char short int long))
 (defparameter +scalar-unsigned-integer-types+ '(uchar ushort uint ulong))
-(defparameter +scalar-integer-types+ (append +scalar-signed-integer-types+ +scalar-unsigned-integer-types+))
+(defparameter +scalar-integer-types+ (append +scalar-signed-integer-types+
+                                             +scalar-unsigned-integer-types+))
 (defparameter +scalar-float-types+ '(float double))
-(defparameter +scalar-number-types+ (append +scalar-integer-types+ +scalar-float-types+))
+(defparameter +scalar-number-types+ (append +scalar-integer-types+
+                                            +scalar-float-types+))
 
 (defparameter +integer-result-types+ '(char char short short int int long long))
 (defparameter +float-result-types+ '(int long))
-(defparameter +result-gentypes+ (append +integer-result-types+ +float-result-types+))
+(defparameter +result-gentypes+ (append +integer-result-types+
+                                        +float-result-types+))
 
 (defparameter +vector-signed-integer-types+ '(char2 char3 char4 char8 char16
                                               short2 short3 short4 short8 short16
@@ -195,10 +198,12 @@
                                                 ushort2 ushort3 ushort4 ushort8 ushort16
                                                 uint2 uint3 uint4 uint8 uint16
                                                 ulong2 ulong3 ulong4 ulong8 ulong16))
-(defparameter +vector-integer-types+ (append +vector-signed-integer-types+ +vector-unsigned-integer-types+))
+(defparameter +vector-integer-types+ (append +vector-signed-integer-types+
+                                             +vector-unsigned-integer-types+))
 (defparameter +vector-float-types+ '(float2 float3 float4 float8 float16
                                      double2 double3 double4 double8 double16))
-(defparameter +vector-number-types+ (append +vector-integer-types+ +vector-float-types+))
+(defparameter +vector-number-types+ (append +vector-integer-types+
+                                            +vector-float-types+))
 
 (defparameter +number-types+ (append +scalar-number-types+
                                      +vector-number-types+))
