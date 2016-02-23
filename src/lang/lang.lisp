@@ -249,4 +249,7 @@
                           :atomic-max
                           :atomic-and
                           :atomic-or
-                          :atomic-xor))
+                          :atomic-xor
+
+                          :vec-step
+                          :shuffle))

@@ -171,6 +171,9 @@
            :atomic-or
            :atomic-xor
 
+           :vec-step
+           :shuffle
+
            ;; Interfaces
            :built-in-function-return-type
            :built-in-function-infix-p
