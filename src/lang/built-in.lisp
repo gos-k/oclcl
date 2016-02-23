@@ -194,10 +194,11 @@
                                               short2 short3 short4 short8 short16
                                               int2 int3 int4 int8 int16
                                               long2 long3 long4 long8 long16))
-(defparameter +vector-unsigned-integer-types+ '(uchar2 uchar3 uchar4 uchar8 uchar16
-                                                ushort2 ushort3 ushort4 ushort8 ushort16
-                                                uint2 uint3 uint4 uint8 uint16
-                                                ulong2 ulong3 ulong4 ulong8 ulong16))
+(defparameter +vector-uchar-types+ '(uchar2 uchar3 uchar4 uchar8 uchar16))
+(defparameter +vector-unsigned-integer-types+ (append +vector-uchar-types+
+                                                      '(ushort2 ushort3 ushort4 ushort8 ushort16
+                                                        uint2 uint3 uint4 uint8 uint16
+                                                        ulong2 ulong3 ulong4 ulong8 ulong16)))
 (defparameter +vector-integer-types+ (append +vector-signed-integer-types+
                                              +vector-unsigned-integer-types+))
 (defparameter +vector-float-types+ '(float2 float3 float4 float8 float16
