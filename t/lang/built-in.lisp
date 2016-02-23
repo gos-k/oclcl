@@ -8,6 +8,7 @@
 (defpackage oclcl-test.lang.built-in
   (:use :cl :prove
         :oclcl.lang.type
+        :oclcl.lang.data
         :oclcl.lang.built-in))
 (in-package :oclcl-test.lang.built-in)
 

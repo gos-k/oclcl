@@ -7,7 +7,8 @@
 (in-package :cl-user)
 (defpackage oclcl.lang.built-in
   (:use :cl
-        :oclcl.lang.type)
+        :oclcl.lang.type
+        :oclcl.lang.data)
   (:export ;; Built-in work-item functions
            :get-work-dim
            :get-global-size

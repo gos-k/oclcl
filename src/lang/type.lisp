@@ -27,9 +27,11 @@
            :long* :long2* :long3* :long4* :long8* :long16*
            :ulong :ulong2 :ulong3 :ulong4 :ulong8 :ulong16
            :ulong* :ulong2* :ulong3* :ulong4* :ulong8* :ulong16*
-           :float :float2 :float3 :float4 :float8 :float16
+           ;:float :float2 :float3 :float4 :float8 :float16
+           :float :float2 :float8 :float16
            :float* :float2* :float3* :float4* :float8* :float16*
-           :double :double2 :double3 :double4 :double8 :double16
+           ;:double :double2 :double3 :double4 :double8 :double16
+           :double :double2 :double8 :double16
            :double* :double2* :double3* :double4* :double8* :double16*
            :size-t
            :void
