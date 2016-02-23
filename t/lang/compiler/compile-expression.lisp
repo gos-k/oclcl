@@ -184,11 +184,11 @@
     (is (compile-function '(+ (float3 1.0 1.0 1.0) (float3 2.0 2.0 2.0))
                           var-env func-env)
         "((float3)( 1.0f, 1.0f, 1.0f ) + (float3)( 2.0f, 2.0f, 2.0f ))"
-        "float3 constructor")))
+        "float3 constructor"))
 
-;(multiple-value-bind (var-env func-env) (empty-environment)
-;  (is (compile-function '(syncthreads) var-env func-env) "__syncthreads()"
-;      "basic case 1"))
-
+  (multiple-value-bind (var-env func-env) (empty-environment)
+    (is (compile-function '(barrier :clk-local-mem-fence) var-env func-env)
+        "barrier( CLK_LOCAL_MEM_FENCE )"
+        "barrier")))
 
 (finalize)
