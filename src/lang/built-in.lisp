@@ -309,6 +309,8 @@
              ((double) double* nil "&")
              ((curand-state-xorwow) curand-state-xorwow* nil "&"))
     ;; built-in vector constructor
+    uint4 (((uint uint uint uint) uint4 nil "(uint4)")
+           ((int int int int) uint4 nil "(uint4)"))
     float3 (((float float float) float3 nil "(float3)"))
     float4 (((float float float float) float4 nil "(float4)"))
     double3 (((double double double) double3 nil "(double3)"))
