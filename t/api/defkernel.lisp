@@ -277,40 +277,39 @@ __kernel void oclcl_test_api_defkernel_test_symbol_macro( __global int* ret )
     (sync-memory-block x :device-to-host)
     (is (memory-block-aref x 0) 2
         "basic case 23")))
+|#
 
 
 ;;;
 ;;; test EXPAND-MACRO function
 ;;;
 
-(diag "EXPAND-MACRO")
+(subtest "EXPAND-MACRO"
+  (defkernelmacro foo (x)
+    `(return ,x))
 
-(defkernelmacro foo (x)
-  `(return ,x))
+  (defkernelmacro bar (x)
+    `(foo ,x))
 
-(defkernelmacro bar (x)
-  `(foo ,x))
+  (defkernel-symbol-macro a 1.0)
 
-(defkernel-symbol-macro a 1.0)
+  (defkernel-symbol-macro b a)
 
-(defkernel-symbol-macro b a)
+  (is-values (expand-macro-1 '(foo 1)) '((return 1) t))
+  (is-values (expand-macro-1 '(bar 1)) '((foo 1) t))
+  (is-values (expand-macro-1 '(baz 1)) '((baz 1) nil))
+  (is-values (expand-macro-1 'a) '(1.0 t))
+  (is-values (expand-macro-1 'b) '(a t))
+  (is-values (expand-macro-1 'c) '(c nil))
+  (is-error (expand-macro-1 '(foo)) error)
 
-(is-values (expand-macro-1 '(foo 1)) '((return 1) t))
-(is-values (expand-macro-1 '(bar 1)) '((foo 1) t))
-(is-values (expand-macro-1 '(baz 1)) '((baz 1) nil))
-(is-values (expand-macro-1 'a) '(1.0 t))
-(is-values (expand-macro-1 'b) '(a t))
-(is-values (expand-macro-1 'c) '(c nil))
-(is-error (expand-macro-1 '(foo)) error)
-
-(is-values (expand-macro '(foo 1)) '((return 1) t))
-(is-values (expand-macro '(bar 1)) '((return 1) t))
-(is-values (expand-macro '(baz 1)) '((baz 1) nil))
-(is-values (expand-macro 'a) '(1.0 t))
-(is-values (expand-macro 'b) '(1.0 t))
-(is-values (expand-macro 'c) '(c nil))
-(is-error (expand-macro '(foo)) error)
-|#
+  (is-values (expand-macro '(foo 1)) '((return 1) t))
+  (is-values (expand-macro '(bar 1)) '((return 1) t))
+  (is-values (expand-macro '(baz 1)) '((baz 1) nil))
+  (is-values (expand-macro 'a) '(1.0 t))
+  (is-values (expand-macro 'b) '(1.0 t))
+  (is-values (expand-macro 'c) '(c nil))
+  (is-error (expand-macro '(foo)) error))
 
 
 (finalize)
