@@ -100,10 +100,9 @@
 ;;;
 
 (subtest "Function environment - Macro"
-
-  (let ((func-env (function-environment-add-macro 'bar '(x) '(`(return ,x))
-                                                  (function-environment-add-function 'foo 'int '(int)
-                                                                                     (empty-function-environment)))))
+  (let ((func-env (->> (empty-function-environment)
+                    (function-environment-add-function 'foo 'int '(int))
+                    (function-environment-add-macro 'bar '(x) '(`(return ,x))))))
     (is (function-environment-macro-exists-p func-env 'foo) nil
         "basic case 1")
     (is (function-environment-macro-exists-p func-env 'bar) t
