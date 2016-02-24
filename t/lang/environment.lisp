@@ -6,7 +6,9 @@
 
 (in-package :cl-user)
 (defpackage oclcl-test.lang.environment
-  (:use :cl :prove
+  (:use :cl
+        :prove
+        :arrow-macros
         :oclcl.lang.type
         :oclcl.lang.environment))
 (in-package :oclcl-test.lang.environment)
@@ -20,9 +22,9 @@
 
 (subtest "Variable environment - Variable"
 
-  (let ((var-env (variable-environment-add-symbol-macro 'y 1.0
-                                                        (variable-environment-add-variable 'x 'int
-                                                                                           (empty-variable-environment)))))
+  (let ((var-env (->> (empty-variable-environment)
+                   (variable-environment-add-variable 'x 'int)
+                   (variable-environment-add-symbol-macro 'y 1.0))))
     (is (variable-environment-variable-exists-p var-env 'x) t
         "basic case 1")
     (is (variable-environment-variable-exists-p var-env 'y) nil
@@ -34,15 +36,15 @@
     (is (variable-environment-variable-type var-env 'x) 'int
         "basic case 5"))
 
-  (let ((var-env (variable-environment-add-variable 'x 'float
-                                                    (variable-environment-add-variable 'x 'int
-                                                                                       (empty-variable-environment)))))
+  (let ((var-env (->> (empty-variable-environment)
+                   (variable-environment-add-variable 'x 'int)
+                   (variable-environment-add-variable 'x 'float))))
     (is (variable-environment-variable-type var-env 'x) 'float
         "basic case 6"))
 
-  (let ((var-env (variable-environment-add-symbol-macro 'x '1.0
-                                                        (variable-environment-add-variable 'x 'int
-                                                                                           (empty-variable-environment)))))
+  (let ((var-env (->> (empty-variable-environment)
+                   (variable-environment-add-variable 'x 'int)
+                   (variable-environment-add-symbol-macro 'x '1.0))))
     (is (variable-environment-variable-exists-p var-env 'x) nil
         "basic case 7")
     (is (variable-environment-symbol-macro-exists-p var-env 'x) t

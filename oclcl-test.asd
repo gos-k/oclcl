@@ -12,7 +12,8 @@
   :author "gos-k"
   :license "LLGPL"
   :depends-on (:oclcl
-               :prove)
+               :prove
+               :arrow-macros)
   :components ((:module "t"
                 :serial t
                 :components
