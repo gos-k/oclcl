@@ -81,6 +81,7 @@ Support types.
 * `float*` `float2*` `float3*` `float4*` `float8*` `float16*`
 * `double` `double2` `double3` `double4` `double8` `double16`
 * `double*` `double2*` `double3*` `double4*` `double8*` `double16*`
+* `bool` `void` `size-t`
 
 ### IF statement
 
