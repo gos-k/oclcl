@@ -307,8 +307,7 @@
     ;; address-of operator
     pointer (((int)   int*   nil "&")
              ((float) float* nil "&")
-             ((double) double* nil "&")
-             ((curand-state-xorwow) curand-state-xorwow* nil "&"))
+             ((double) double* nil "&"))
     ;; built-in vector constructor
     uint4 (((uint uint uint uint) uint4 nil "(uint4)")
            ((int int int int) uint4 nil "(uint4)"))

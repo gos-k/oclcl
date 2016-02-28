@@ -232,16 +232,3 @@
 (defmethod cffi:translate-from-foreign (value (type double3-c))
   (cffi:with-foreign-slots ((x y z w) value (:struct double4))
     (make-double4 x y z w)))
-
-
-;;;
-;;; CURAND State XORWOW
-;;;
-
-(cffi:defcstruct curand-state-xorwow
-  (d :unsigned-int)
-  (v :unsigned-int :count 5)
-  (boxmuller-flag :int)
-  (boxmuller-flag-double :int)
-  (boxmuller-extra :float)
-  (boxmuller-extra-double :double))
