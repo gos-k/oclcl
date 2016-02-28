@@ -17,4 +17,6 @@ ros run
 (ql:quickload :oclcl)
 (ql:quickload :oclcl-examples)
 (oclcl-examples.vector-add:main)
+(oclcl-examples.diffuse0:main)
+(oclcl-examples.diffuse1:main)
 ```
