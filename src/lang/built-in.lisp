@@ -561,7 +561,7 @@
                 ((uint*) uint nil "atomic_and"))
     atomic-or (((int*) int nil "atomic_or")
                ((uint*) uint nil "atomic_or"))
-    atomic-xor (((uint*) uint nil "atomic_xor")
+    atomic-xor (((int*) int nil "atomic_xor")
                 ((uint*) uint nil "atomic_xor"))
 
     ;; OpenCL v.1.2 dr19: 6.12.12 Miscellaneous Vector Functions
