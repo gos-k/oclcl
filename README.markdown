@@ -245,7 +245,7 @@ Implementation status of built in functions.
 | No     | Async Copies from Global to Local Memory, Local to Global Memory, and Prefetch |
 | Yes    | Atomic |
 | Part   | Miscellaneous Vector |
-| No     | printf |
+| Yes    | printf |
 | No     | Image Read and Write Functions |
 
 ## Author
