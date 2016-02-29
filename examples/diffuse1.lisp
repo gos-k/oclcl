@@ -90,6 +90,7 @@
                 (set (aref fs (+ local-size-y 1) jx) fcc)
                 (set (aref fs (+ local-size-y 1) jx) (aref f (+ j nx)))))
         (barrier :clk-local-mem-fence)
+        (printf "%f" (aref fs 0 0))
         (set (aref fn j) (+ (* c0 (+ (aref fs jy (+ jx 1))
                                      (aref fs jy (- jx 1))))
                             (* c1 (+ (aref fs (+ jy 1) jx)
