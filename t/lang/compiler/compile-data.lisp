@@ -61,4 +61,10 @@
   (is (compile-double 1.0d0) "1.0")
   (is (compile-double 1.23456789012345d0) "1.23456789012345"))
 
+;;; test COMPILE-STRING function
+
+(subtest "compile-string"
+  (is (compile-string "unittest compile-string")
+      "\"unittest compile-string\""))
+
 (finalize)
