@@ -53,6 +53,9 @@
   (is (built-in-function-c-name '+ '(int int)) "+")
   (is (built-in-function-c-name '+ '(float3 float3)) "+")
   (is (built-in-function-c-name '- '(int int)) "-")
-  (is (built-in-function-c-name 'mod '(int int)) "%"))
+  (is (built-in-function-c-name 'mod '(int int)) "%")
+  (subtest "printf"
+    (is (built-in-function-c-name 'printf '(string)) "printf")
+    (is (built-in-function-c-name 'printf '(string int)) "printf")))
 
 (finalize)
