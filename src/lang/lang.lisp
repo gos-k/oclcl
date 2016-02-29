@@ -254,4 +254,6 @@
                           :atomic-xor
 
                           :vec-step
-                          :shuffle))
+                          :shuffle
+
+                          :printf))

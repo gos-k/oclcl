@@ -175,6 +175,8 @@
            :vec-step
            :shuffle
 
+           :printf
+
            ;; Interfaces
            :built-in-function-return-type
            :built-in-function-infix-p
@@ -575,7 +577,10 @@
                                              (mapcar #'cons +vector-unsigned-integer-types+ +vector-unsigned-integer-types+)
                                              (mapcar #'cons +vector-single-float-types+ +vector-uint-types+)
                                              (mapcar #'cons +vector-double-float-types+ +vector-ulong-types+))
-                   collecting `((,x ,mask) x nil "shuffle"))))
+                   collecting `((,x ,mask) x nil "shuffle"))
+
+    ;; OpenCL v.1.2 dr19: 6.12.13 printf
+    printf ((,#'allow-any-types int nil "printf"))))
 
 (defun inferred-function-candidates (name)
   (or (getf +built-in-functions+ name)
