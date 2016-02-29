@@ -579,7 +579,11 @@
 
 (defun inferred-function (name argument-types)
   (let ((candidates (inferred-function-candidates name)))
-    (or (assoc argument-types candidates :test #'equal)
+    (or (assoc argument-types candidates :test #'(lambda (args params)
+                                                   (typecase params
+                                                     (function (funcall params args))
+                                                     (list (equal args params))
+                                                     (t nil))))
         (error "The function ~S with ~S is type mismatch." name argument-types))))
 
 (defun built-in-function-return-type (name argument-types)
