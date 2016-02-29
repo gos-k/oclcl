@@ -281,6 +281,10 @@
         collecting (list (list argument-type argument-type) 'bool t operator)
         appending (vector-relational-operator operator argument-type result-type)))
 
+(defun allow-any-types (_)
+  (declare (ignore _))
+  t)
+
 ;;;
 ;;; Built-in functions
 ;;;
