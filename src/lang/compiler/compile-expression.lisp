@@ -73,6 +73,7 @@
     ((int-literal-p form) (compile-int-literal form))
     ((float-literal-p form) (compile-float-literal form))
     ((double-literal-p form) (compile-double-literal form))
+    ((string-literal-p form) (compile-string-literal form))
     (t (error "The value ~S is an invalid expression." form))))
 
 (defun compile-bool-literal (form)
@@ -86,6 +87,9 @@
 
 (defun compile-double-literal (form)
   (compile-double form))
+
+(defun compile-string-literal (form)
+  (compile-string form))
 
 ;;; OpenCL literal
 ;;;;

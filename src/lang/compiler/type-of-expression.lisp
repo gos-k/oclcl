@@ -73,6 +73,7 @@
     ((int-literal-p form) 'int)
     ((float-literal-p form) 'float)
     ((double-literal-p form) 'double)
+    ((string-literal-p form) 'string)
     (t (error "The value ~S is an invalid expression." form))))
 
 (defun type-of-opencl-literal (form)
