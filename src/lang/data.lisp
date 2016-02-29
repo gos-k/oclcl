@@ -18,6 +18,8 @@
            :oclcl-float-p
            ;; Double
            :oclcl-double-p
+           ;; String
+           :oclcl-string-p
            ;; Float3
            :float3
            :make-float3
@@ -97,6 +99,11 @@
 (defun oclcl-double-p (object)
   (typep object 'double-float))
 
+;;; String
+;;;
+
+(defun oclcl-string-p (object)
+  (stringp object))
 
 ;;;
 ;;; Float3
