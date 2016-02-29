@@ -54,7 +54,9 @@
   (is (literal-p 1.0) t
       "basic case 4")
   (is (literal-p 1.0d0) t
-      "basic case 5"))
+      "basic case 5")
+  (is (literal-p "literal") t
+      "string literal"))
 
 ;;; test OpenCL literal
 ;;;
