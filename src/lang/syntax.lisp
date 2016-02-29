@@ -21,6 +21,7 @@
            :int-literal-p
            :float-literal-p
            :double-literal-p
+           :string-literal-p
            ;; OpenCL literal
            :opencl-literal-p
            :cl-mem-fence-flags-literal-p
@@ -147,7 +148,8 @@
   (or (bool-literal-p form)
       (int-literal-p form)
       (float-literal-p form)
-      (double-literal-p form)))
+      (double-literal-p form)
+      (string-literal-p form)))
 
 (defun bool-literal-p (form)
   (oclcl-bool-p form))
@@ -160,6 +162,9 @@
 
 (defun double-literal-p (form)
   (oclcl-double-p form))
+
+(defun string-literal-p (form)
+  (oclcl-string-p form))
 
 ;;; OpenCL literal
 ;;;
