@@ -79,7 +79,10 @@
       "basic case 4")
 
   (is (compile-literal 1.0d0) "1.0"
-      "basic case 5"))
+      "basic case 5")
+
+  (is (compile-literal "literal") "\"literal\""
+      "string literal"))
 
 ;;; test COMPILE-OPENCL-LITERAL function
 
