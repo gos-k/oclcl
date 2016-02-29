@@ -587,7 +587,10 @@
         (error "The function ~S with ~S is type mismatch." name argument-types))))
 
 (defun built-in-function-return-type (name argument-types)
-  (cadr (inferred-function name argument-types)))
+  (let ((return-type (cadr (inferred-function name argument-types))))
+    (typecase return-type
+      (function (funcall return-type argument-types))
+      (t return-type))))
 
 (defun built-in-function-infix-p (name argument-types)
   (caddr (inferred-function name argument-types)))
