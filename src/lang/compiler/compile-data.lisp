@@ -13,7 +13,8 @@
            :compile-bool
            :compile-int
            :compile-float
-           :compile-double))
+           :compile-double
+           :compile-string))
 (in-package :oclcl.lang.compiler.compile-data)
 
 
@@ -65,3 +66,10 @@
   (unless (oclcl-double-p expr)
     (error "The value ~S is an invalid expression." expr))
   (format nil "~F" (float expr 0.0d0)))
+
+;;; String
+
+(defun compile-string (expr)
+  (unless (oclcl-string-p expr)
+    (error "The value ~S is an invalid expression." expr))
+  (format nil "~S" expr))
