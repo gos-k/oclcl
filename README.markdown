@@ -49,11 +49,11 @@ oclcl is verified to work in following environments:
 
 ### Environment 2
 
-* Ubuntu 15.10 x86\_64
+* Ubuntu 16.04 x86\_64
 * NVIDIA GeForce GTX 660
-* OpenCL 1.2 CUDA 7.5.23
-* SBCL 1.3.2 64-bit
-* Roswell 0.0.3.52
+* OpenCL 1.2 CUDA 8.0.20
+* SBCL 1.3.4 64-bit
+* Roswell 0.0.5.59
 
 ## Kernel Description Language
 
