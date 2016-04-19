@@ -33,7 +33,7 @@ oclcl requires following:
 or
 
     $ ros install prove
-    $ prove-run oclcl/oclcl-test.asd
+    $ run-prove oclcl/oclcl-test.asd
 
 ## Verification environments
 
