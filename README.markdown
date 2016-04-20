@@ -55,6 +55,14 @@ oclcl is verified to work in following environments:
 * SBCL 1.3.4 64-bit
 * Roswell 0.0.5.59
 
+### Environment 3
+
+* Ubuntu 14.04 x86\_64
+* AMD Radeon HD 5700 Series
+* OpenCL C 1.2
+* SBCL 1.3.2 64-bit
+* Roswell 0.0.5.58
+
 ## Kernel Description Language
 
 ### Types
