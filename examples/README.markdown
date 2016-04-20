@@ -2,6 +2,7 @@
 
 ```
 git clone https://github.com/cffi/cffi.git ~/.roswell/local-projects/cffi
+git clone https://github.com/guicho271828/eazy-opencl ~/.roswell/local-projects/eazy-opencl
 ros install cffi
 ros install cffi-grovel
 ros install eazy-opencl
