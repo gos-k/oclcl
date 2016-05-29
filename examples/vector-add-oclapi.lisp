@@ -89,49 +89,49 @@ __kernel void oclcl_examples_vector_add_vec_add_kernel( __global float* a, __glo
                 (random-init a-host elements)
                 (random-init b-host elements)
                 (zero-init c-host elements)
-                (with-buffer (a-device context +cl-mem-read-only+ data-bytes)
-                  (with-buffer (b-device context +cl-mem-read-only+ data-bytes)
-                    (with-buffer (c-device context +cl-mem-write-only+ data-bytes)
-                      (with-command-queue (command-queue context device 0)
-                        (with-foreign-objects ((offset 'cl-size)
-                                               (size 'cl-size))
-                          (setf (mem-aref offset 'cl-size) 0
-                                (mem-aref size 'cl-size) data-bytes)
-                          (enqueue-write-buffer command-queue
-                                                a-device
-                                                +cl-true+
-                                                (mem-aref offset 'cl-size)
-                                                (mem-aref size 'cl-size)
-                                                a-host)
-                          (enqueue-write-buffer command-queue
-                                                b-device
-                                                +cl-true+
-                                                (mem-aref offset 'cl-size)
-                                                (mem-aref size 'cl-size)
-                                                b-host)
-                          (finish command-queue))
-                        (with-work-size (global-work-size elements)
-                          (with-work-size (local-work-size 1)
-                            (with-kernel (kernel program "oclcl_examples_vector_add_oclapi_vec_add_kernel")
-                              (with-foreign-objects ((a-pointer :pointer)
-                                                     (b-pointer :pointer)
-                                                     (c-pointer :pointer))
-                                (setf (mem-aref a-pointer :pointer) a-device)
-                                (setf (mem-aref b-pointer :pointer) b-device)
-                                (setf (mem-aref c-pointer :pointer) c-device)
-                                (set-kernel-arg kernel 0 8 a-pointer)
-                                (set-kernel-arg kernel 1 8 b-pointer)
-                                (set-kernel-arg kernel 2 8 c-pointer)
-                                (enqueue-ndrange-kernel command-queue
-                                                        kernel
-                                                        1
-                                                        global-work-size
-                                                        (null-pointer))
-                                (enqueue-read-buffer command-queue
-                                                     c-device
-                                                     +cl-true+
-                                                     0
-                                                     data-bytes
-                                                     c-host)
-                                (finish command-queue)
-                                (verify-result a-host b-host c-host elements)))))))))))))))))
+                (with-buffers ((a-device context +cl-mem-read-only+ data-bytes)
+                               (b-device context +cl-mem-read-only+ data-bytes)
+                               (c-device context +cl-mem-write-only+ data-bytes))
+                  (with-command-queue (command-queue context device 0)
+                    (with-foreign-objects ((offset 'cl-size)
+                                           (size 'cl-size))
+                      (setf (mem-aref offset 'cl-size) 0
+                            (mem-aref size 'cl-size) data-bytes)
+                      (enqueue-write-buffer command-queue
+                                            a-device
+                                            +cl-true+
+                                            (mem-aref offset 'cl-size)
+                                            (mem-aref size 'cl-size)
+                                            a-host)
+                      (enqueue-write-buffer command-queue
+                                            b-device
+                                            +cl-true+
+                                            (mem-aref offset 'cl-size)
+                                            (mem-aref size 'cl-size)
+                                            b-host)
+                      (finish command-queue))
+                    (with-work-size (global-work-size elements)
+                      (with-work-size (local-work-size 1)
+                        (with-kernel (kernel program "oclcl_examples_vector_add_oclapi_vec_add_kernel")
+                          (with-foreign-objects ((a-pointer :pointer)
+                                                 (b-pointer :pointer)
+                                                 (c-pointer :pointer))
+                            (setf (mem-aref a-pointer :pointer) a-device)
+                            (setf (mem-aref b-pointer :pointer) b-device)
+                            (setf (mem-aref c-pointer :pointer) c-device)
+                            (set-kernel-arg kernel 0 8 a-pointer)
+                            (set-kernel-arg kernel 1 8 b-pointer)
+                            (set-kernel-arg kernel 2 8 c-pointer)
+                            (enqueue-ndrange-kernel command-queue
+                                                    kernel
+                                                    1
+                                                    global-work-size
+                                                    (null-pointer))
+                            (enqueue-read-buffer command-queue
+                                                 c-device
+                                                 +cl-true+
+                                                 0
+                                                 data-bytes
+                                                 c-host)
+                            (finish command-queue)
+                            (verify-result a-host b-host c-host elements)))))))))))))))
