@@ -23,6 +23,7 @@
                 :with-buffers
                 :with-work-size
                 :with-kernel
+                :with-pointers
                 :cl-size
                 :cl-device-id
                 :enqueue-read-buffer
@@ -108,12 +109,9 @@ __kernel void oclcl_examples_vector_add_vec_add_kernel( __global float* a, __glo
                     (finish command-queue)
                     (with-work-size (global-work-size elements)
                       (with-kernel (kernel program "oclcl_examples_vector_add_oclapi_vec_add_kernel")
-                        (with-foreign-objects ((a-pointer :pointer)
-                                               (b-pointer :pointer)
-                                               (c-pointer :pointer))
-                          (setf (mem-aref a-pointer :pointer) a-device)
-                          (setf (mem-aref b-pointer :pointer) b-device)
-                          (setf (mem-aref c-pointer :pointer) c-device)
+                        (with-pointers ((a-pointer a-device)
+                                        (b-pointer b-device)
+                                        (c-pointer c-device))
                           (set-kernel-arg kernel 0 8 a-pointer)
                           (set-kernel-arg kernel 1 8 b-pointer)
                           (set-kernel-arg kernel 2 8 c-pointer)
