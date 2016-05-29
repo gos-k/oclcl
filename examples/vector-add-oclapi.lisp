@@ -111,27 +111,26 @@ __kernel void oclcl_examples_vector_add_vec_add_kernel( __global float* a, __glo
                                             b-host)
                       (finish command-queue))
                     (with-work-size (global-work-size elements)
-                      (with-work-size (local-work-size 1)
-                        (with-kernel (kernel program "oclcl_examples_vector_add_oclapi_vec_add_kernel")
-                          (with-foreign-objects ((a-pointer :pointer)
-                                                 (b-pointer :pointer)
-                                                 (c-pointer :pointer))
-                            (setf (mem-aref a-pointer :pointer) a-device)
-                            (setf (mem-aref b-pointer :pointer) b-device)
-                            (setf (mem-aref c-pointer :pointer) c-device)
-                            (set-kernel-arg kernel 0 8 a-pointer)
-                            (set-kernel-arg kernel 1 8 b-pointer)
-                            (set-kernel-arg kernel 2 8 c-pointer)
-                            (enqueue-ndrange-kernel command-queue
-                                                    kernel
-                                                    1
-                                                    global-work-size
-                                                    (null-pointer))
-                            (enqueue-read-buffer command-queue
-                                                 c-device
-                                                 +cl-true+
-                                                 0
-                                                 data-bytes
-                                                 c-host)
-                            (finish command-queue)
-                            (verify-result a-host b-host c-host elements)))))))))))))))
+                      (with-kernel (kernel program "oclcl_examples_vector_add_oclapi_vec_add_kernel")
+                        (with-foreign-objects ((a-pointer :pointer)
+                                               (b-pointer :pointer)
+                                               (c-pointer :pointer))
+                          (setf (mem-aref a-pointer :pointer) a-device)
+                          (setf (mem-aref b-pointer :pointer) b-device)
+                          (setf (mem-aref c-pointer :pointer) c-device)
+                          (set-kernel-arg kernel 0 8 a-pointer)
+                          (set-kernel-arg kernel 1 8 b-pointer)
+                          (set-kernel-arg kernel 2 8 c-pointer)
+                          (enqueue-ndrange-kernel command-queue
+                                                  kernel
+                                                  1
+                                                  global-work-size
+                                                  (null-pointer))
+                          (enqueue-read-buffer command-queue
+                                               c-device
+                                               +cl-true+
+                                               0
+                                               data-bytes
+                                               c-host)
+                          (finish command-queue)
+                          (verify-result a-host b-host c-host elements))))))))))))))
