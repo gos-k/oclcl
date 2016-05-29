@@ -4,7 +4,7 @@
 [![TravisCI Status](https://travis-ci.org/gos-k/oclcl.svg?branch=master)](https://travis-ci.org/gos-k/oclcl)
 [![Quicklisp](http://quickdocs.org/badge/oclcl.svg)](http://quickdocs.org/oclcl/)
 
-oclcl is a library to use OpenCL in Common Lisp programs.
+oclcl is a library to use [OpenCL](https://www.khronos.org/opencl/) in Common Lisp programs.
 It provides the kernel description language with which users can define OpenCL kernel functions in S-expression.
 The kernel description language also provides facilities to define kernel macros and kernel symbol macros in addition to kernel functions.
 oclcl's kernel macro and kernel symbol macro offer powerful abstraction that OpenCL C itself does not have and provide enormous advantage in resource-limited GPU programming.
