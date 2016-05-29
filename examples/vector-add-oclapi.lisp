@@ -93,23 +93,19 @@ __kernel void oclcl_examples_vector_add_vec_add_kernel( __global float* a, __glo
                                (b-device context +cl-mem-read-only+ data-bytes)
                                (c-device context +cl-mem-write-only+ data-bytes))
                   (with-command-queue (command-queue context device 0)
-                    (with-foreign-objects ((offset 'cl-size)
-                                           (size 'cl-size))
-                      (setf (mem-aref offset 'cl-size) 0
-                            (mem-aref size 'cl-size) data-bytes)
-                      (enqueue-write-buffer command-queue
-                                            a-device
-                                            +cl-true+
-                                            (mem-aref offset 'cl-size)
-                                            (mem-aref size 'cl-size)
-                                            a-host)
-                      (enqueue-write-buffer command-queue
-                                            b-device
-                                            +cl-true+
-                                            (mem-aref offset 'cl-size)
-                                            (mem-aref size 'cl-size)
-                                            b-host)
-                      (finish command-queue))
+                    (enqueue-write-buffer command-queue
+                                          a-device
+                                          +cl-true+
+                                          0
+                                          data-bytes
+                                          a-host)
+                    (enqueue-write-buffer command-queue
+                                          b-device
+                                          +cl-true+
+                                          0
+                                          data-bytes
+                                          b-host)
+                    (finish command-queue)
                     (with-work-size (global-work-size elements)
                       (with-kernel (kernel program "oclcl_examples_vector_add_oclapi_vec_add_kernel")
                         (with-foreign-objects ((a-pointer :pointer)
