@@ -14,10 +14,12 @@
   :license "LLGPL"
   :depends-on (:oclcl
                :eazy-opencl
+               :cl-oclapi
                :imago)
   :components ((:module "examples"
                 :components
                 ((:file "vector-add")
+                 (:file "vector-add-oclapi")
                  (:file "diffuse0")
                  (:file "diffuse1"))))
   :defsystem-depends-on (:prove-asdf)
