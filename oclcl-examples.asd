@@ -21,6 +21,7 @@
                 ((:file "vector-add")
                  (:file "vector-add-oclapi")
                  (:file "diffuse0")
+                 (:file "diffuse0-oclapi")
                  (:file "diffuse1"))))
   :defsystem-depends-on (:prove-asdf)
   :perform (test-op :after (op c)
