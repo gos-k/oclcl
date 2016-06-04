@@ -19,10 +19,11 @@
   :components ((:module "examples"
                 :components
                 ((:file "vector-add")
-                 (:file "vector-add-oclapi")
                  (:file "diffuse0")
+                 (:file "diffuse1")
+                 (:file "vector-add-oclapi")
                  (:file "diffuse0-oclapi")
-                 (:file "diffuse1"))))
+                 (:file "diffuse1-oclapi"))))
   :defsystem-depends-on (:prove-asdf)
   :perform (test-op :after (op c)
                     (funcall (intern #.(string :run-test-system) :prove.asdf) c)
