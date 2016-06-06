@@ -16,7 +16,7 @@
            :kernel-manager-function-handles-empty-p
            :kernel-manager-function-handle
            :kernel-manager-memory-objects-empty-p
-           :kernel-manager-global-device-ptr
+           :kernel-manager-memory-object
            :kernel-manager-memory-qualifiers
            :kernel-manager-define-function
            :kernel-manager-define-macro
@@ -88,7 +88,7 @@
   (let ((global-device-ptrs (kernel-manager-%memory-objects manager)))
     (zerop (hash-table-count global-device-ptrs))))
 
-(defun kernel-manager-global-device-ptr (manager name)
+(defun kernel-manager-memory-object (manager name)
   (kernel-manager-%memory-object manager name))
 
 (defun kernel-manager-memory-qualifiers (manager name)
@@ -179,7 +179,7 @@
 
 (defun ensure-kernel-global-loaded (manager name)
   (ensure-kernel-module-loaded manager)
-  (or (kernel-manager-global-device-ptr manager name)
+  (or (kernel-manager-memory-object manager name)
       (kernel-manager-load-global manager name)))
 
 (defun expand-macro-1 (form manager)
