@@ -15,7 +15,7 @@
            :kernel-manager-module-handle
            :kernel-manager-function-handles-empty-p
            :kernel-manager-function-handle
-           :kernel-manager-global-device-ptrs-empty-p
+           :kernel-manager-memory-objects-empty-p
            :kernel-manager-global-device-ptr
            :kernel-manager-memory-qualifiers
            :kernel-manager-define-function
@@ -84,7 +84,7 @@
 (defun kernel-manager-function-handle (manager name)
   (kernel-manager-%function-handle manager name))
 
-(defun kernel-manager-global-device-ptrs-empty-p (manager)
+(defun kernel-manager-memory-objects-empty-p (manager)
   (let ((global-device-ptrs (kernel-manager-%memory-objects manager)))
     (zerop (hash-table-count global-device-ptrs))))
 

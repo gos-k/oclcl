@@ -30,7 +30,7 @@
         "basic case 2")
     (is (kernel-manager-function-handles-empty-p mgr) t
         "basic case 3")
-    (is (kernel-manager-global-device-ptrs-empty-p mgr) t
+    (is (kernel-manager-memory-objects-empty-p mgr) t
         "basic case 4")
     ;; I - initial state
     (kernel-manager-define-function mgr 'bar 'void '() '())
