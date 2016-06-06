@@ -101,10 +101,13 @@
 (subtest "COMPILE-REFERENCE - VARIABLE"
   (let* ((add-var (variable-environment-add-variable 'x 'int (empty-variable-environment)))
          (add-symbol-macro (variable-environment-add-symbol-macro 'y 'y-expansion add-var))
-         (var-env (variable-environment-add-variable 'y-expansion 'float add-symbol-macro))
+         (var-env (variable-environment-add-global 'z 'int 1 (variable-environment-add-variable 'y-expansion 'float add-symbol-macro)))
          (func-env (empty-function-environment)))
     (is (compile-reference 'x var-env func-env) "x"
         "basic case 1")
+    (is (compile-reference 'z var-env func-env)
+        "oclcl_test_lang_compiler_compile_expression_z"
+        "basic case 2")
     (is-error (compile-reference 'y var-env func-env) simple-error
               "FORM which is a variable not found.")
     (is-error (compile-reference 'a var-env func-env) simple-error
