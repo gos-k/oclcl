@@ -11,6 +11,7 @@
         :oclcl.lang.type
         :oclcl.api.kernel-manager)
   (:export :defkernel
+           :defglobal
            :defkernelmacro
            :expand-macro-1
            :expand-macro
@@ -34,6 +35,15 @@
                                    ',return-type
                                    ',arguments
                                    ',body))
+
+;;; DEFGLOBAL
+;;;
+
+(defmacro defglobal (name expression &optional qualifiers)
+  `(kernel-manager-define-global *kernel-manager*
+                                 ',name
+                                 ',(or qualifiers :global)
+                                 ',expression))
 
 ;;;
 ;;; DEFKERNELMACRO
