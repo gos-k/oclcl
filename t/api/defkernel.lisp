@@ -187,6 +187,36 @@
 |#
 
 
+;;; test DEFGLOBAL macro
+;;;
+
+(subtest "DEFGLOBAL"
+  (with-stub-kernel-manager
+    (defglobal a 42 :constant)
+    (defglobal b 0)
+    (is (kernel-manager-translate *kernel-manager*)
+"
+
+/**
+ *  Kernel globals
+ */
+
+__constant int oclcl_test_api_defkernel_a = 42;
+__global int oclcl_test_api_defkernel_b = 0;
+
+
+/**
+ *  Kernel function prototypes
+ */
+
+
+
+/**
+ *  Kernel function definitions
+ */
+
+" "work defglobal")))
+
 ;;;
 ;;; test DEFKERNELMACRO macro
 ;;;
