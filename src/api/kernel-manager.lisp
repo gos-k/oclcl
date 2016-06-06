@@ -17,7 +17,7 @@
            :kernel-manager-function-handle
            :kernel-manager-global-device-ptrs-empty-p
            :kernel-manager-global-device-ptr
-           :kernel-manager-global-qualifiers
+           :kernel-manager-memory-qualifiers
            :kernel-manager-define-function
            :kernel-manager-define-macro
            :kernel-manager-define-symbol-macro
@@ -91,7 +91,7 @@
 (defun kernel-manager-global-device-ptr (manager name)
   (kernel-manager-%global-device-ptr manager name))
 
-(defun kernel-manager-global-qualifiers (manager name)
+(defun kernel-manager-memory-qualifiers (manager name)
   (let ((kernel (kernel-manager-kernel manager)))
     (kernel-global-qualifiers kernel name)))
 
