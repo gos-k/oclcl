@@ -109,7 +109,6 @@
     (t
      (error "The variable ~S not found." form))))
 
-
 ;;;
 ;;; Reference - Structure
 ;;;
