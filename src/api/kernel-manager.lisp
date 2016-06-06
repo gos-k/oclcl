@@ -15,19 +15,27 @@
            :kernel-manager-module-handle
            :kernel-manager-function-handles-empty-p
            :kernel-manager-function-handle
+           :kernel-manager-global-device-ptrs-empty-p
+           :kernel-manager-global-device-ptr
+           :kernel-manager-global-qualifiers
            :kernel-manager-define-function
            :kernel-manager-define-macro
            :kernel-manager-define-symbol-macro
+           :kernel-manager-define-global
+           :kernel-manager-load-global
            :kernel-manager-translate
            :kernel-manager-unload
            :ensure-kernel-module-compiled
            :ensure-kernel-module-loaded
            :ensure-kernel-function-loaded
+           :ensure-kernel-global-loaded
            :expand-macro-1
            :expand-macro
            :*kernel-manager*)
   (:shadow :expand-macro-1
-           :expand-macro))
+           :expand-macro)
+  (:import-from :alexandria
+                :ensure-list))
 (in-package :oclcl.api.kernel-manager)
 
 
@@ -39,12 +47,14 @@
   module-path
   module-handle
   %function-handles
+  %global-device-ptrs
   kernel)
 
 (defun make-kernel-manager ()
   (%make-kernel-manager :module-path nil
                         :module-handle nil
                         :%function-handles (make-hash-table)
+                        :%global-device-ptrs (make-hash-table)
                         :kernel (make-kernel)))
 
 (defun kernel-manager-%function-handle (manager name)
@@ -55,16 +65,35 @@
   (let ((function-handles (kernel-manager-%function-handles manager)))
     (setf (gethash name function-handles) value)))
 
+(defun kernel-manager-%global-device-ptr (manager name)
+  (let ((global-device-ptrs (kernel-manager-%global-device-ptrs manager)))
+    (gethash name global-device-ptrs)))
+
+(defun (setf kernel-manager-%global-device-ptr) (value manager name)
+  (let ((global-device-ptrs (kernel-manager-%global-device-ptrs manager)))
+    (setf (gethash name global-device-ptrs) value)))
+
 (defun kernel-manager-compiled-p (manager)
   (and (kernel-manager-module-path manager)
        t))
 
 (defun kernel-manager-function-handles-empty-p (manager)
   (let ((function-handles (kernel-manager-%function-handles manager)))
-    (= (hash-table-count function-handles) 0)))
+    (zerop (hash-table-count function-handles))))
 
 (defun kernel-manager-function-handle (manager name)
   (kernel-manager-%function-handle manager name))
+
+(defun kernel-manager-global-device-ptrs-empty-p (manager)
+  (let ((global-device-ptrs (kernel-manager-%global-device-ptrs manager)))
+    (zerop (hash-table-count global-device-ptrs))))
+
+(defun kernel-manager-global-device-ptr (manager name)
+  (kernel-manager-%global-device-ptr manager name))
+
+(defun kernel-manager-global-qualifiers (manager name)
+  (let ((kernel (kernel-manager-kernel manager)))
+    (kernel-global-qualifiers kernel name)))
 
 (defun kernel-manager-define-function (manager name return-type arguments body)
   (unless (not (kernel-manager-module-handle manager))
@@ -108,8 +137,25 @@
   name)
 
 (defun symbol-macro-modified-p (kernel name expansion)
-    (not (and (kernel-symbol-macro-exists-p kernel name)
-              (equal expansion (kernel-symbol-macro-expansion kernel name)))))
+  (not (and (kernel-symbol-macro-exists-p kernel name)
+            (equal expansion (kernel-symbol-macro-expansion kernel name)))))
+
+(defun kernel-manager-define-global (manager name qualifiers
+                                     &optional expression)
+  (unless (not (kernel-manager-module-handle manager))
+    (error "The kernel manager has already loaded the kernel module."))
+  (symbol-macrolet ((module-path (kernel-manager-module-path manager))
+                    (kernel (kernel-manager-kernel manager)))
+    (when (global-modified-p kernel name qualifiers expression)
+      (kernel-define-global kernel name qualifiers expression)
+      (setf module-path nil)))
+  name)
+
+(defun global-modified-p (kernel name qualifiers expression)
+  (not (and (kernel-global-exists-p kernel name)
+            (equal (ensure-list qualifiers)
+                   (kernel-global-qualifiers kernel name))
+            (equal expression (kernel-global-expression kernel name)))))
 
 (defun kernel-manager-translate (manager)
   (unless (not (kernel-manager-compiled-p manager))
@@ -130,6 +176,11 @@
   (ensure-kernel-module-loaded manager)
   (or (kernel-manager-function-handle manager name)
       (kernel-manager-load-function manager name)))
+
+(defun ensure-kernel-global-loaded (manager name)
+  (ensure-kernel-module-loaded manager)
+  (or (kernel-manager-global-device-ptr manager name)
+      (kernel-manager-load-global manager name)))
 
 (defun expand-macro-1 (form manager)
   (let ((kernel (kernel-manager-kernel manager)))

@@ -22,6 +22,7 @@
   (let* ((mgr (make-kernel-manager))
          (*kernel-manager* mgr))
     ;; I - initial state
+    (kernel-manager-define-global mgr 'a :global 1)
     (kernel-manager-define-function mgr 'foo 'void '() '())
     (is (kernel-manager-compiled-p mgr) nil
         "basic case 1")
@@ -29,6 +30,8 @@
         "basic case 2")
     (is (kernel-manager-function-handles-empty-p mgr) t
         "basic case 3")
+    (is (kernel-manager-global-device-ptrs-empty-p mgr) t
+        "basic case 4")
     ;; I - initial state
     (kernel-manager-define-function mgr 'bar 'void '() '())
     (is (kernel-manager-compiled-p mgr) nil
