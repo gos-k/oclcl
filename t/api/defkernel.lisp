@@ -206,6 +206,12 @@
 "
 
 /**
+ *  Kernel globals
+ */
+
+
+
+/**
  *  Kernel function prototypes
  */
 
@@ -240,6 +246,12 @@ __kernel void oclcl_test_api_defkernel_test_when()
 
     (is (kernel-manager-translate *kernel-manager*)
 "
+
+/**
+ *  Kernel globals
+ */
+
+
 
 /**
  *  Kernel function prototypes

@@ -16,6 +16,14 @@
            :kernel-function-names
            :kernel-macro-names
            :kernel-symbol-macro-names
+           :kernel-global-names
+           ;; Global
+           :kernel-define-global
+           :kernel-global-exists-p
+           :kernel-global-name
+           :kernel-global-c-name
+           :kernel-global-qualifiers
+           :kernel-global-expression
            ;; Function
            :kernel-define-function
            :kernel-function-exists-p
@@ -40,11 +48,13 @@
            :kernel-symbol-macro-exists-p
            :kernel-symbol-macro-name
            :kernel-symbol-macro-expansion)
+  ;; Shadow symbols in oclcl.lang.syntax.
   (:shadow :macro-p
            :symbol-macro-p
            :function-p)
   (:import-from :alexandria
-                :with-gensyms))
+                :with-gensyms
+                :ensure-list))
 (in-package :oclcl.lang.kernel)
 
 
@@ -66,6 +76,13 @@
        when (function-p object)
        collect name)))
 
+(defun kernel-global-names (kernel)
+  (let ((namespace (kernel-variable-namespace kernel)))
+    (nreverse
+     (loop for (name object) on namespace by #'cddr
+        when (global-p object)
+        collect name))))
+
 (defun kernel-macro-names (kernel)
   (let ((namespace (kernel-function-namespace kernel)))
     (loop for (name object) on namespace by #'cddr
@@ -78,6 +95,37 @@
        when (symbol-macro-p object)
        collect name)))
 
+;;; Kernel definition - global
+;;;
+
+(defun kernel-define-global (kernel name qualifiers expression)
+  (symbol-macrolet ((namespace (kernel-variable-namespace kernel)))
+    (let ((global (make-global name qualifiers expression)))
+      (setf (getf namespace name) global)))
+  name)
+
+(defun kernel-global-exists-p (kernel name)
+  (check-type name oclcl-symbol)
+  (let ((namespace (kernel-variable-namespace kernel)))
+    (global-p (getf namespace name))))
+
+(defun %lookup-global (kernel name)
+  (unless (kernel-global-exists-p kernel name)
+    (error "The global ~S not found." name))
+  (let ((namespace (kernel-variable-namespace kernel)))
+    (getf namespace name)))
+
+(defun kernel-global-name (kernel name)
+  (global-name (%lookup-global kernel name)))
+
+(defun kernel-global-c-name (kernel name)
+  (global-c-name (%lookup-global kernel name)))
+
+(defun kernel-global-qualifiers (kernel name)
+  (global-qualifiers (%lookup-global kernel name)))
+
+(defun kernel-global-expression (kernel name)
+  (global-expression (%lookup-global kernel name)))
 
 ;;;
 ;;; Kernel definition - function
@@ -289,3 +337,33 @@
     (error 'type-error :datum name :expected-type 'oclcl-symbol))
   (%make-symbol-macro :name name
                       :expansion expansion))
+
+;;; Global
+;;;
+
+(deftype variable-qualifier ()
+  `(satisfies variable-qualifier-p))
+
+(defun variable-qualifier-p (object)
+  (and (member object '(:global :local :constant :private))
+       t))
+
+(defstruct (global (:constructor %make-global))
+  (name :name :read-only t)
+  (qualifiers :qualifiers :read-only t)
+  (expression :expression :read-only t))
+
+(defun make-global (name qualifiers expression)
+  (let ((qualifiers1 (ensure-list qualifiers)))
+    ;; Check type of name.
+    (check-type name oclcl-symbol)
+    ;; Check type of qualifiers.
+    (loop for qualifier in qualifiers1
+       do (check-type qualifier variable-qualifier))
+    ;; Make global.
+    (%make-global :name name
+                  :qualifiers qualifiers1
+                  :expression expression)))
+
+(defun global-c-name (global)
+  (c-identifier (global-name global) t))

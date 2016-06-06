@@ -50,6 +50,12 @@
         "
 
 /**
+ *  Kernel globals
+ */
+
+
+
+/**
  *  Kernel function prototypes
  */
 

@@ -22,6 +22,8 @@
 (subtest "COMPILE-KERNEL"
 
   (let ((kernel (make-kernel)))
+    (kernel-define-global kernel 'a :constant 1)
+    (kernel-define-global kernel 'b :global 1.0)
     (kernel-define-function kernel 'foo 'void '((x int*))
                             '((set (aref x 0) (bar 1))
                               (return)))
@@ -29,6 +31,14 @@
     (kernel-define-function kernel 'baz 'void '() '((return)))
     (is (compile-kernel kernel)
         "
+
+/**
+ *  Kernel globals
+ */
+
+__constant int oclcl_test_lang_compiler_compile_kernel_a = 1;
+__global float oclcl_test_lang_compiler_compile_kernel_b = 1.0f;
+
 
 /**
  *  Kernel function prototypes
