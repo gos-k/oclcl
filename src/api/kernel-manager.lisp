@@ -47,14 +47,14 @@
   module-path
   module-handle
   %function-handles
-  %global-device-ptrs
+  %memory-objects
   kernel)
 
 (defun make-kernel-manager ()
   (%make-kernel-manager :module-path nil
                         :module-handle nil
                         :%function-handles (make-hash-table)
-                        :%global-device-ptrs (make-hash-table)
+                        :%memory-objects (make-hash-table)
                         :kernel (make-kernel)))
 
 (defun kernel-manager-%function-handle (manager name)
@@ -66,11 +66,11 @@
     (setf (gethash name function-handles) value)))
 
 (defun kernel-manager-%global-device-ptr (manager name)
-  (let ((global-device-ptrs (kernel-manager-%global-device-ptrs manager)))
+  (let ((global-device-ptrs (kernel-manager-%memory-objects manager)))
     (gethash name global-device-ptrs)))
 
 (defun (setf kernel-manager-%global-device-ptr) (value manager name)
-  (let ((global-device-ptrs (kernel-manager-%global-device-ptrs manager)))
+  (let ((global-device-ptrs (kernel-manager-%memory-objects manager)))
     (setf (gethash name global-device-ptrs) value)))
 
 (defun kernel-manager-compiled-p (manager)
@@ -85,7 +85,7 @@
   (kernel-manager-%function-handle manager name))
 
 (defun kernel-manager-global-device-ptrs-empty-p (manager)
-  (let ((global-device-ptrs (kernel-manager-%global-device-ptrs manager)))
+  (let ((global-device-ptrs (kernel-manager-%memory-objects manager)))
     (zerop (hash-table-count global-device-ptrs))))
 
 (defun kernel-manager-global-device-ptr (manager name)
