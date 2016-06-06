@@ -65,11 +65,11 @@
   (let ((function-handles (kernel-manager-%function-handles manager)))
     (setf (gethash name function-handles) value)))
 
-(defun kernel-manager-%global-device-ptr (manager name)
+(defun kernel-manager-%memory-object (manager name)
   (let ((global-device-ptrs (kernel-manager-%memory-objects manager)))
     (gethash name global-device-ptrs)))
 
-(defun (setf kernel-manager-%global-device-ptr) (value manager name)
+(defun (setf kernel-manager-%memory-object) (value manager name)
   (let ((global-device-ptrs (kernel-manager-%memory-objects manager)))
     (setf (gethash name global-device-ptrs) value)))
 
@@ -89,7 +89,7 @@
     (zerop (hash-table-count global-device-ptrs))))
 
 (defun kernel-manager-global-device-ptr (manager name)
-  (kernel-manager-%global-device-ptr manager name))
+  (kernel-manager-%memory-object manager name))
 
 (defun kernel-manager-memory-qualifiers (manager name)
   (let ((kernel (kernel-manager-kernel manager)))
