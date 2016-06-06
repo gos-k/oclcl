@@ -31,6 +31,13 @@
            :function-environment-function-c-name
            :function-environment-function-return-type
            :function-environment-function-argument-types
+           ;; Variable environment - Global
+           :variable-environment-add-global
+           :variable-environment-global-exists-p
+           :variable-environment-global-name
+           :variable-environment-global-c-name
+           :variable-environment-global-type
+           :variable-environment-global-expression
            ;; Function environment - Macro
            :function-environment-add-macro
            :function-environment-macro-exists-p
@@ -38,6 +45,7 @@
            :function-environment-macro-expander
            ;; Other
            :empty-environment)
+  (:shadow :variable)
   (:import-from :alexandria
                 :with-gensyms))
 (in-package :oclcl.lang.environment)
@@ -96,6 +104,34 @@
 (defun variable-environment-symbol-macro-expansion (var-env name)
   (symbol-macro-expansion (%lookup-symbol-macro var-env name)))
 
+;;; Variable environment - Global
+;;;
+
+(defun variable-environment-add-global (name type expression var-env)
+  (check-type var-env list)
+  (let ((elem (make-global name type expression)))
+    (acons name elem var-env)))
+
+(defun variable-environment-global-exists-p (var-env name)
+  (check-type name oclcl-symbol)
+  (global-p (cdr (assoc name var-env))))
+
+(defun %lookup-global (var-env name)
+  (unless (variable-environment-global-exists-p var-env name)
+    (error "The variable ~S not found." name))
+  (cdr (assoc name var-env)))
+
+(defun variable-environment-global-name (var-env name)
+  (global-name (%lookup-global var-env name)))
+
+(defun variable-environment-global-c-name (var-env name)
+  (global-c-name (%lookup-global var-env name)))
+
+(defun variable-environment-global-type (var-env name)
+  (global-type (%lookup-global var-env name)))
+
+(defun variable-environment-global-expression (var-env name)
+  (global-expression (%lookup-global var-env name)))
 
 ;;;
 ;;; Function environment
@@ -162,10 +198,7 @@
 ;;; Variable
 ;;;
 
-;; use name begining with '%' to avoid package locking
-(defstruct (%variable (:constructor %make-variable)
-                      (:conc-name variable-)
-                      (:predicate variable-p))
+(defstruct (variable (:constructor %make-variable))
   (name :name :read-only t)
   (type :type :read-only t))
 
@@ -190,6 +223,22 @@
     (error 'type-error :datum name :expected-type 'oclcl-symbol))
   (%make-symbol-macro :name name :expansion expansion))
 
+
+;;; Global
+;;;
+
+(defstruct (global (:constructor %make-global))
+  (name :name :read-only t)
+  (type :type :read-only t)
+  (expression :expression :read-only t))
+
+(defun make-global (name type expression)
+  (check-type name oclcl-symbol)
+  (check-type type oclcl-type)
+  (%make-global :name name :type type :expression expression))
+
+(defun global-c-name (global)
+  (c-identifier (global-name global) t))
 
 ;;;
 ;;; Function
