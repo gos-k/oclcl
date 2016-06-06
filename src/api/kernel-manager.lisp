@@ -66,12 +66,12 @@
     (setf (gethash name function-handles) value)))
 
 (defun kernel-manager-%memory-object (manager name)
-  (let ((global-device-ptrs (kernel-manager-%memory-objects manager)))
-    (gethash name global-device-ptrs)))
+  (let ((memory-objects (kernel-manager-%memory-objects manager)))
+    (gethash name memory-objects)))
 
 (defun (setf kernel-manager-%memory-object) (value manager name)
-  (let ((global-device-ptrs (kernel-manager-%memory-objects manager)))
-    (setf (gethash name global-device-ptrs) value)))
+  (let ((memory-objects (kernel-manager-%memory-objects manager)))
+    (setf (gethash name memory-objects) value)))
 
 (defun kernel-manager-compiled-p (manager)
   (and (kernel-manager-module-path manager)
