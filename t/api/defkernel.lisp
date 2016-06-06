@@ -187,13 +187,13 @@
 |#
 
 
-;;; test DEFGLOBAL macro
+;;; test DEFMEMORY macro
 ;;;
 
-(subtest "DEFGLOBAL"
+(subtest "DEFMEMORY"
   (with-stub-kernel-manager
-    (defglobal a 42 :constant)
-    (defglobal b 0)
+    (defmemory a 42 :constant)
+    (defmemory b 0 :global)
     (is (kernel-manager-translate *kernel-manager*)
 "
 
@@ -215,7 +215,7 @@ __global int oclcl_test_api_defkernel_b = 0;
  *  Kernel function definitions
  */
 
-" "work defglobal")))
+" "work defmemory")))
 
 ;;;
 ;;; test DEFKERNELMACRO macro

@@ -11,7 +11,7 @@
         :oclcl.lang.type
         :oclcl.api.kernel-manager)
   (:export :defkernel
-           :defglobal
+           :defmemory
            :defkernelmacro
            :expand-macro-1
            :expand-macro
@@ -39,7 +39,7 @@
 ;;; DEFGLOBAL
 ;;;
 
-(defmacro defglobal (name expression &optional qualifiers)
+(defmacro defmemory (name expression &optional qualifiers)
   `(kernel-manager-define-memory *kernel-manager*
                                  ',name
                                  ',(or qualifiers :global)
