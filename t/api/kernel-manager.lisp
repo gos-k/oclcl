@@ -22,7 +22,7 @@
   (let* ((mgr (make-kernel-manager))
          (*kernel-manager* mgr))
     ;; I - initial state
-    (kernel-manager-define-global mgr 'a :global 1)
+    (kernel-manager-define-memory mgr 'a :global 1)
     (kernel-manager-define-function mgr 'foo 'void '() '())
     (is (kernel-manager-compiled-p mgr) nil
         "basic case 1")

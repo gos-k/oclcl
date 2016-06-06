@@ -21,7 +21,7 @@
            :kernel-manager-define-function
            :kernel-manager-define-macro
            :kernel-manager-define-symbol-macro
-           :kernel-manager-define-global
+           :kernel-manager-define-memory
            :kernel-manager-load-global
            :kernel-manager-translate
            :kernel-manager-unload
@@ -140,7 +140,7 @@
   (not (and (kernel-symbol-macro-exists-p kernel name)
             (equal expansion (kernel-symbol-macro-expansion kernel name)))))
 
-(defun kernel-manager-define-global (manager name qualifiers
+(defun kernel-manager-define-memory (manager name qualifiers
                                      &optional expression)
   (unless (not (kernel-manager-module-handle manager))
     (error "The kernel manager has already loaded the kernel module."))

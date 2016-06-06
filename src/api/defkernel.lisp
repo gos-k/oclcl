@@ -40,7 +40,7 @@
 ;;;
 
 (defmacro defglobal (name expression &optional qualifiers)
-  `(kernel-manager-define-global *kernel-manager*
+  `(kernel-manager-define-memory *kernel-manager*
                                  ',name
                                  ',(or qualifiers :global)
                                  ',expression))
