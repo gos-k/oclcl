@@ -87,10 +87,6 @@ __global int oclcl_test_api_defkernel_b = 0;
 
 
 
-/**
- *  Kernel function definitions
- */
-
 " "work defmemory")))
 
 ;;;

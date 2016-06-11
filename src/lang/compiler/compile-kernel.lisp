@@ -183,11 +183,13 @@
   (flet ((aux (name)
            (compile-definition kernel name)))
     (let ((definitions (mapcar #'aux (kernel-function-names kernel))))
-      (format nil "/**
+      (if (null definitions)
+          ""
+          (format nil "/**
  *  Kernel function definitions
  */
 
-~{~A~^~%~}" definitions))))
+~{~A~^~%~}" definitions)))))
 
 (defun compile-kernel (kernel)
   (let ((includes (compile-includes))
