@@ -42,8 +42,16 @@
         "basic case 18")))
 
 (subtest "KERNEL-MANAGER-TRANSLATE"
-  (let* ((mgr (make-kernel-manager))
-         (*kernel-manager* mgr))
+  (is (kernel-manager-translate (make-kernel-manager))
+      "
+
+
+
+
+
+" "empty")
+
+  (let ((mgr (make-kernel-manager)))
     (kernel-manager-define-function mgr
                                     'one
                                     'float
