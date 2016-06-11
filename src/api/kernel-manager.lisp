@@ -85,8 +85,8 @@
   (kernel-manager-%function-handle manager name))
 
 (defun kernel-manager-memory-objects-empty-p (manager)
-  (let ((global-device-ptrs (kernel-manager-%memory-objects manager)))
-    (zerop (hash-table-count global-device-ptrs))))
+  (let ((memory-objects (kernel-manager-%memory-objects manager)))
+    (zerop (hash-table-count memory-objects))))
 
 (defun kernel-manager-memory-object (manager name)
   (kernel-manager-%memory-object manager name))
