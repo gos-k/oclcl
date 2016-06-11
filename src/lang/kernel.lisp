@@ -80,7 +80,7 @@
   (let ((namespace (kernel-variable-namespace kernel)))
     (nreverse
      (loop for (name object) on namespace by #'cddr
-        when (global-p object)
+        when (memory-p object)
         collect name))))
 
 (defun kernel-macro-names (kernel)
@@ -95,19 +95,49 @@
        when (symbol-macro-p object)
        collect name)))
 
+;;; Global
+;;;
+
+(deftype variable-qualifier ()
+  `(satisfies variable-qualifier-p))
+
+(defun variable-qualifier-p (object)
+  (and (member object '(:global :local :constant :private))
+       t))
+
+(defstruct (memory (:constructor %make-memory))
+  (name :name :read-only t)
+  (qualifiers :qualifiers :read-only t)
+  (expression :expression :read-only t))
+
+(defun make-memory (name qualifiers expression)
+  (let ((qualifiers1 (ensure-list qualifiers)))
+    ;; Check type of name.
+    (check-type name oclcl-symbol)
+    ;; Check type of qualifiers.
+    (loop for qualifier in qualifiers1
+       do (check-type qualifier variable-qualifier))
+    ;; Make global.
+    (%make-memory :name name
+                  :qualifiers qualifiers1
+                  :expression expression)))
+
+(defun global-c-name (global)
+  (c-identifier (memory-name global) t))
+
 ;;; Kernel definition - global
 ;;;
 
 (defun kernel-define-global (kernel name qualifiers expression)
   (symbol-macrolet ((namespace (kernel-variable-namespace kernel)))
-    (let ((global (make-global name qualifiers expression)))
+    (let ((global (make-memory name qualifiers expression)))
       (setf (getf namespace name) global)))
   name)
 
 (defun kernel-global-exists-p (kernel name)
   (check-type name oclcl-symbol)
   (let ((namespace (kernel-variable-namespace kernel)))
-    (global-p (getf namespace name))))
+    (memory-p (getf namespace name))))
 
 (defun %lookup-global (kernel name)
   (unless (kernel-global-exists-p kernel name)
@@ -116,16 +146,16 @@
     (getf namespace name)))
 
 (defun kernel-global-name (kernel name)
-  (global-name (%lookup-global kernel name)))
+  (memory-name (%lookup-global kernel name)))
 
 (defun kernel-global-c-name (kernel name)
   (global-c-name (%lookup-global kernel name)))
 
 (defun kernel-address-space-qualifiers (kernel name)
-  (global-qualifiers (%lookup-global kernel name)))
+  (memory-qualifiers (%lookup-global kernel name)))
 
 (defun kernel-global-expression (kernel name)
-  (global-expression (%lookup-global kernel name)))
+  (memory-expression (%lookup-global kernel name)))
 
 ;;;
 ;;; Kernel definition - function
@@ -337,33 +367,3 @@
     (error 'type-error :datum name :expected-type 'oclcl-symbol))
   (%make-symbol-macro :name name
                       :expansion expansion))
-
-;;; Global
-;;;
-
-(deftype variable-qualifier ()
-  `(satisfies variable-qualifier-p))
-
-(defun variable-qualifier-p (object)
-  (and (member object '(:global :local :constant :private))
-       t))
-
-(defstruct (global (:constructor %make-global))
-  (name :name :read-only t)
-  (qualifiers :qualifiers :read-only t)
-  (expression :expression :read-only t))
-
-(defun make-global (name qualifiers expression)
-  (let ((qualifiers1 (ensure-list qualifiers)))
-    ;; Check type of name.
-    (check-type name oclcl-symbol)
-    ;; Check type of qualifiers.
-    (loop for qualifier in qualifiers1
-       do (check-type qualifier variable-qualifier))
-    ;; Make global.
-    (%make-global :name name
-                  :qualifiers qualifiers1
-                  :expression expression)))
-
-(defun global-c-name (global)
-  (c-identifier (global-name global) t))
