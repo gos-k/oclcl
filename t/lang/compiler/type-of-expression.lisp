@@ -20,7 +20,9 @@
                 :type-of-reference
                 :type-of-inline-if
                 :type-of-arithmetic
-                :type-of-function))
+                :type-of-function)
+  (:import-from :arrow-macros
+                :->>))
 (in-package :oclcl-test.lang.compiler.type-of-expression)
 
 (plan nil)
@@ -72,11 +74,11 @@
 ;;;
 
 (subtest "TYPE-OF-REFERENCE - VARIABLE"
-  (let ((var-env (variable-environment-add-global 'z 'int 1
-                                                  (variable-environment-add-variable 'y-expansion 'float
-                                                                                     (variable-environment-add-symbol-macro 'y 'y-expansion
-                                                                                                                            (variable-environment-add-variable 'x 'int
-                                                                                                                                                               (empty-variable-environment))))))
+  (let ((var-env (->> (empty-variable-environment)
+                   (variable-environment-add-variable 'x 'int)
+                   (variable-environment-add-symbol-macro 'y 'y-expansion)
+                   (variable-environment-add-variable 'y-expansion 'float)
+                   (variable-environment-add-global 'z 'int 1)))
         (func-env (empty-function-environment)))
     (is (type-of-reference 'x var-env func-env) 'int
         "basic case 1")
