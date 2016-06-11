@@ -52,10 +52,6 @@
     (is (kernel-manager-translate mgr)
         "
 
-/**
- *  Kernel globals
- */
-
 
 
 /**

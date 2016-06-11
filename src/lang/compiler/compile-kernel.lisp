@@ -117,11 +117,13 @@
   (flet ((aux (name)
            (compile-global kernel name)))
     (let ((globals (mapcar #'aux (kernel-global-names kernel))))
-      (format nil "/**
- *  Kernel globals
+      (if (null globals)
+          ""
+          (format nil "/**
+ *  Memory objects
  */
 
-~{~A~}" globals))))
+~{~A~}" globals)))))
 
 (defun compile-argument (argument)
   (let ((var (argument-var argument))

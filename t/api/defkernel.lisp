@@ -198,7 +198,7 @@
 "
 
 /**
- *  Kernel globals
+ *  Memory objects
  */
 
 __constant int oclcl_test_api_defkernel_a = 42;
@@ -234,10 +234,6 @@ __global int oclcl_test_api_defkernel_b = 0;
 
     (is (kernel-manager-translate *kernel-manager*)
 "
-
-/**
- *  Kernel globals
- */
 
 
 
@@ -276,10 +272,6 @@ __kernel void oclcl_test_api_defkernel_test_when()
 
     (is (kernel-manager-translate *kernel-manager*)
 "
-
-/**
- *  Kernel globals
- */
 
 
 

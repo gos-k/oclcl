@@ -33,7 +33,7 @@
         "
 
 /**
- *  Kernel globals
+ *  Memory objects
  */
 
 __constant int oclcl_test_lang_compiler_compile_kernel_a = 1;
