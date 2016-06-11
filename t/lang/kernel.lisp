@@ -313,7 +313,7 @@
         'foo)
     (is (kernel-global-c-name kernel 'foo)
         "oclcl_test_lang_kernel_foo")
-    (is (kernel-global-qualifiers kernel 'foo)
+    (is (kernel-address-space-qualifiers kernel 'foo)
         '(:global))
     (is (kernel-global-expression kernel 'foo)
         42))
@@ -330,7 +330,7 @@
   (let ((kernel (make-kernel)))
     ;; Give multiple qualifiers.
     (kernel-define-global kernel 'foo '(:global :constant) 42)
-    (is (kernel-global-qualifiers kernel 'foo)
+    (is (kernel-address-space-qualifiers kernel 'foo)
         '(:global :constant)))
 
   (is-error (kernel-define-global :foo 'foo :global 42)
@@ -407,23 +407,23 @@
               type-error
               "Invalid name.")))
 
-(subtest "kernel-global-qualifiers"
+(subtest "kernel-address-space-qualifiers"
   (let ((kernel (make-kernel)))
     (kernel-define-global kernel 'foo :global 42)
-    (is (kernel-global-qualifiers kernel 'foo)
+    (is (kernel-address-space-qualifiers kernel 'foo)
         '(:global)))
 
   (let ((kernel (make-kernel)))
-    (is-error (kernel-global-qualifiers kernel 'foo)
+    (is-error (kernel-address-space-qualifiers kernel 'foo)
               simple-error
               "Global not found."))
 
-  (is-error (kernel-global-qualifiers :foo 'foo)
+  (is-error (kernel-address-space-qualifiers :foo 'foo)
             type-error
             "Invalid kernel.")
 
   (let ((kernel (make-kernel)))
-    (is-error (kernel-global-qualifiers kernel "foo")
+    (is-error (kernel-address-space-qualifiers kernel "foo")
               type-error
               "Invalid name.")))
 

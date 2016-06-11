@@ -102,7 +102,7 @@
 
 (defun compile-global (kernel name)
   (let ((c-name (kernel-global-c-name kernel name))
-        (qualifiers (kernel-global-qualifiers kernel name))
+        (qualifiers (kernel-address-space-qualifiers kernel name))
         (expression (kernel-global-expression kernel name)))
     (let ((type1 (compile-type
                   (type-of-expression expression nil nil)))

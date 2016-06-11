@@ -22,7 +22,7 @@
            :kernel-global-exists-p
            :kernel-global-name
            :kernel-global-c-name
-           :kernel-global-qualifiers
+           :kernel-address-space-qualifiers
            :kernel-global-expression
            ;; Function
            :kernel-define-function
@@ -121,7 +121,7 @@
 (defun kernel-global-c-name (kernel name)
   (global-c-name (%lookup-global kernel name)))
 
-(defun kernel-global-qualifiers (kernel name)
+(defun kernel-address-space-qualifiers (kernel name)
   (global-qualifiers (%lookup-global kernel name)))
 
 (defun kernel-global-expression (kernel name)

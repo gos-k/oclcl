@@ -93,7 +93,7 @@
 
 (defun kernel-manager-memory-qualifiers (manager name)
   (let ((kernel (kernel-manager-kernel manager)))
-    (kernel-global-qualifiers kernel name)))
+    (kernel-address-space-qualifiers kernel name)))
 
 (defun kernel-manager-define-function (manager name return-type arguments body)
   (unless (not (kernel-manager-module-handle manager))
@@ -154,7 +154,7 @@
 (defun memory-modified-p (kernel name qualifiers expression)
   (not (and (kernel-global-exists-p kernel name)
             (equal (ensure-list qualifiers)
-                   (kernel-global-qualifiers kernel name))
+                   (kernel-address-space-qualifiers kernel name))
             (equal expression (kernel-global-expression kernel name)))))
 
 (defun kernel-manager-translate (manager)
