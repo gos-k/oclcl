@@ -85,10 +85,6 @@ __constant int oclcl_test_api_defkernel_a = 42;
 __global int oclcl_test_api_defkernel_b = 0;
 
 
-/**
- *  Kernel function prototypes
- */
-
 
 
 /**

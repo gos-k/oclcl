@@ -157,11 +157,13 @@
   (flet ((aux (name)
            (compile-prototype kernel name)))
     (let ((prototypes (mapcar #'aux (kernel-function-names kernel))))
-      (format nil "/**
+      (if (null prototypes)
+          ""
+          (format nil "/**
  *  Kernel function prototypes
  */
 
-~{~A~}" prototypes))))
+~{~A~}" prototypes)))))
 
 (defun compile-statements (kernel name)
   (let ((var-env (kernel->variable-environment kernel name))
