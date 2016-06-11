@@ -97,7 +97,7 @@
       "__kernel"
       nil))
 
-(defun compile-variable-qualifier (qualifier)
+(defun compile-address-space-qualifier (qualifier)
   (format nil "__~A" (string-downcase (princ-to-string qualifier))))
 
 (defun compile-global (kernel name)
@@ -106,7 +106,7 @@
         (expression (kernel-global-expression kernel name)))
     (let ((type1 (compile-type
                   (type-of-expression expression nil nil)))
-          (qualifiers1 (mapcar #'compile-variable-qualifier qualifiers))
+          (qualifiers1 (mapcar #'compile-address-space-qualifier qualifiers))
           (expression1 (compile-expression expression
                         (kernel->variable-environment kernel nil)
                         (kernel->function-environment kernel))))
