@@ -307,7 +307,7 @@
 (subtest "kernel-define-memory"
   (let ((kernel (make-kernel)))
     (kernel-define-memory kernel 'foo :global 42)
-    (is (kernel-global-exists-p kernel 'foo)
+    (is (kernel-memory-exists-p kernel 'foo)
         t)
     (is (kernel-global-name kernel 'foo)
         'foo)
@@ -322,7 +322,7 @@
     ;; Name in variable namespace should be overwrited.
     (kernel-define-symbol-macro kernel 'foo 42)
     (kernel-define-memory kernel 'foo :global 42)
-    (is (kernel-global-exists-p kernel 'foo)
+    (is (kernel-memory-exists-p kernel 'foo)
         t)
     (is (kernel-symbol-macro-exists-p kernel 'foo)
         nil))
@@ -347,23 +347,23 @@
               type-error
               "Invalid qualifier.")))
 
-(subtest "kernel-global-exists-p"
+(subtest "kernel-memory-exists-p"
   (let ((kernel (make-kernel)))
     (kernel-define-memory kernel 'foo :global 42)
     (kernel-define-symbol-macro kernel 'bar 42)
-    (is (kernel-global-exists-p kernel 'foo)
+    (is (kernel-memory-exists-p kernel 'foo)
         t)
-    (is (kernel-global-exists-p kernel 'bar)
+    (is (kernel-memory-exists-p kernel 'bar)
         nil)
-    (is (kernel-global-exists-p kernel 'baz)
+    (is (kernel-memory-exists-p kernel 'baz)
         nil))
 
-  (is-error (kernel-global-exists-p :foo 'foo)
+  (is-error (kernel-memory-exists-p :foo 'foo)
             type-error
             "Invalid kernel.")
 
   (let ((kernel (make-kernel)))
-    (is-error (kernel-global-exists-p kernel "foo")
+    (is-error (kernel-memory-exists-p kernel "foo")
               type-error
               "Invalid name.")))
 

@@ -152,7 +152,7 @@
   name)
 
 (defun memory-modified-p (kernel name qualifiers expression)
-  (not (and (kernel-global-exists-p kernel name)
+  (not (and (kernel-memory-exists-p kernel name)
             (equal (ensure-list qualifiers)
                    (kernel-address-space-qualifiers kernel name))
             (equal expression (kernel-global-expression kernel name)))))

@@ -19,7 +19,7 @@
            :kernel-global-names
            ;; Global
            :kernel-define-memory
-           :kernel-global-exists-p
+           :kernel-memory-exists-p
            :kernel-global-name
            :kernel-global-c-name
            :kernel-address-space-qualifiers
@@ -134,13 +134,13 @@
       (setf (getf namespace name) global)))
   name)
 
-(defun kernel-global-exists-p (kernel name)
+(defun kernel-memory-exists-p (kernel name)
   (check-type name oclcl-symbol)
   (let ((namespace (kernel-variable-namespace kernel)))
     (memory-p (getf namespace name))))
 
 (defun %lookup-global (kernel name)
-  (unless (kernel-global-exists-p kernel name)
+  (unless (kernel-memory-exists-p kernel name)
     (error "The global ~S not found." name))
   (let ((namespace (kernel-variable-namespace kernel)))
     (getf namespace name)))
