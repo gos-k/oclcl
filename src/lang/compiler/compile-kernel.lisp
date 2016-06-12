@@ -113,7 +113,7 @@
       (format nil "~{~A~^ ~} ~A ~A~@[ = ~A~];~%"
               qualifiers1 type1 c-name expression1))))
 
-(defun compile-globals (kernel)
+(defun compile-memories (kernel)
   (flet ((aux (name)
            (compile-global kernel name)))
     (let ((globals (mapcar #'aux (kernel-memory-names kernel))))
@@ -193,10 +193,10 @@
 
 (defun compile-kernel (kernel)
   (let ((includes (compile-includes))
-        (globals (compile-globals kernel))
+        (memories (compile-memories kernel))
         (prototypes (compile-prototypes kernel))
         (definitions (compile-definitions kernel)))
     (format nil "~A~%~%~A~%~%~A~%~%~A" includes
-                                       globals
+                                       memories
                                        prototypes
                                        definitions)))
