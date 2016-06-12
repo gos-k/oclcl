@@ -116,14 +116,14 @@
 (defun compile-memories (kernel)
   (flet ((aux (name)
            (compile-memory kernel name)))
-    (let ((globals (mapcar #'aux (kernel-memory-names kernel))))
-      (if (null globals)
+    (let ((memories (mapcar #'aux (kernel-memory-names kernel))))
+      (if (null memories)
           ""
           (format nil "/**
  *  Memory objects
  */
 
-~{~A~}" globals)))))
+~{~A~}" memories)))))
 
 (defun compile-argument (argument)
   (let ((var (argument-var argument))
