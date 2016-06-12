@@ -23,7 +23,7 @@
            :kernel-memory-name
            :kernel-memory-c-name
            :kernel-address-space-qualifiers
-           :kernel-global-expression
+           :kernel-memory-expression
            ;; Function
            :kernel-define-function
            :kernel-function-exists-p
@@ -154,7 +154,7 @@
 (defun kernel-address-space-qualifiers (kernel name)
   (memory-qualifiers (%lookup-global kernel name)))
 
-(defun kernel-global-expression (kernel name)
+(defun kernel-memory-expression (kernel name)
   (memory-expression (%lookup-global kernel name)))
 
 ;;;

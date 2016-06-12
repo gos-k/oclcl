@@ -315,7 +315,7 @@
         "oclcl_test_lang_kernel_foo")
     (is (kernel-address-space-qualifiers kernel 'foo)
         '(:global))
-    (is (kernel-global-expression kernel 'foo)
+    (is (kernel-memory-expression kernel 'foo)
         42))
 
   (let ((kernel (make-kernel)))
@@ -427,23 +427,23 @@
               type-error
               "Invalid name.")))
 
-(subtest "kernel-global-expression"
+(subtest "kernel-memory-expression"
   (let ((kernel (make-kernel)))
     (kernel-define-memory kernel 'foo :global 42)
-    (is (kernel-global-expression kernel 'foo)
+    (is (kernel-memory-expression kernel 'foo)
         42))
 
   (let ((kernel (make-kernel)))
-    (is-error (kernel-global-expression kernel 'foo)
+    (is-error (kernel-memory-expression kernel 'foo)
               simple-error
               "Global not found."))
 
-  (is-error (kernel-global-expression :foo 'foo)
+  (is-error (kernel-memory-expression :foo 'foo)
             type-error
             "Invalid kernel.")
 
   (let ((kernel (make-kernel)))
-    (is-error (kernel-global-expression kernel "foo")
+    (is-error (kernel-memory-expression kernel "foo")
               type-error
               "Invalid name.")))
 

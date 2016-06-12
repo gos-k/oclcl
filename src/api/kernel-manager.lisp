@@ -155,7 +155,7 @@
   (not (and (kernel-memory-exists-p kernel name)
             (equal (ensure-list qualifiers)
                    (kernel-address-space-qualifiers kernel name))
-            (equal expression (kernel-global-expression kernel name)))))
+            (equal expression (kernel-memory-expression kernel name)))))
 
 (defun kernel-manager-translate (manager)
   (unless (not (kernel-manager-compiled-p manager))

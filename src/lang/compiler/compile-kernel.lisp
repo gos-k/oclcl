@@ -43,7 +43,7 @@
 
 (defun %add-globals (kernel var-env)
   (flet ((aux (var-env0 name)
-           (let* ((expression (kernel-global-expression kernel name))
+           (let* ((expression (kernel-memory-expression kernel name))
                   (type (type-of-expression expression nil nil)))
              (variable-environment-add-global name type expression var-env0))))
     (reduce #'aux (kernel-memory-names kernel)
@@ -103,7 +103,7 @@
 (defun compile-global (kernel name)
   (let ((c-name (kernel-memory-c-name kernel name))
         (qualifiers (kernel-address-space-qualifiers kernel name))
-        (expression (kernel-global-expression kernel name)))
+        (expression (kernel-memory-expression kernel name)))
     (let ((type1 (compile-type
                   (type-of-expression expression nil nil)))
           (qualifiers1 (mapcar #'compile-address-space-qualifier qualifiers))
