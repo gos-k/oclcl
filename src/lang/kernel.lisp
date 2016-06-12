@@ -20,7 +20,7 @@
            ;; Global
            :kernel-define-memory
            :kernel-memory-exists-p
-           :kernel-global-name
+           :kernel-memory-name
            :kernel-global-c-name
            :kernel-address-space-qualifiers
            :kernel-global-expression
@@ -145,7 +145,7 @@
   (let ((namespace (kernel-variable-namespace kernel)))
     (getf namespace name)))
 
-(defun kernel-global-name (kernel name)
+(defun kernel-memory-name (kernel name)
   (memory-name (%lookup-global kernel name)))
 
 (defun kernel-global-c-name (kernel name)
