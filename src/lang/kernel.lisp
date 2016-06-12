@@ -21,7 +21,7 @@
            :kernel-define-memory
            :kernel-memory-exists-p
            :kernel-memory-name
-           :kernel-global-c-name
+           :kernel-memory-c-name
            :kernel-address-space-qualifiers
            :kernel-global-expression
            ;; Function
@@ -148,7 +148,7 @@
 (defun kernel-memory-name (kernel name)
   (memory-name (%lookup-global kernel name)))
 
-(defun kernel-global-c-name (kernel name)
+(defun kernel-memory-c-name (kernel name)
   (global-c-name (%lookup-global kernel name)))
 
 (defun kernel-address-space-qualifiers (kernel name)

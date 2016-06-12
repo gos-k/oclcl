@@ -101,7 +101,7 @@
   (format nil "__~A" (string-downcase (princ-to-string qualifier))))
 
 (defun compile-global (kernel name)
-  (let ((c-name (kernel-global-c-name kernel name))
+  (let ((c-name (kernel-memory-c-name kernel name))
         (qualifiers (kernel-address-space-qualifiers kernel name))
         (expression (kernel-global-expression kernel name)))
     (let ((type1 (compile-type
