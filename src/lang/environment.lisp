@@ -31,7 +31,7 @@
            :function-environment-function-c-name
            :function-environment-function-return-type
            :function-environment-function-argument-types
-           ;; Variable environment - Global
+           ;; Variable environment - Memory
            :variable-environment-add-memory
            :variable-environment-memory-exists-p
            :variable-environment-memory-name
@@ -104,17 +104,17 @@
 (defun variable-environment-symbol-macro-expansion (var-env name)
   (symbol-macro-expansion (%lookup-symbol-macro var-env name)))
 
-;;; Variable environment - Global
+;;; Variable environment - Memory
 ;;;
 
 (defun variable-environment-add-memory (name type expression var-env)
   (check-type var-env list)
-  (let ((elem (make-global name type expression)))
+  (let ((elem (make-memory name type expression)))
     (acons name elem var-env)))
 
 (defun variable-environment-memory-exists-p (var-env name)
   (check-type name oclcl-symbol)
-  (global-p (cdr (assoc name var-env))))
+  (memory-p (cdr (assoc name var-env))))
 
 (defun %lookup-memory (var-env name)
   (unless (variable-environment-memory-exists-p var-env name)
@@ -122,16 +122,16 @@
   (cdr (assoc name var-env)))
 
 (defun variable-environment-memory-name (var-env name)
-  (global-name (%lookup-memory var-env name)))
+  (memory-name (%lookup-memory var-env name)))
 
 (defun variable-environment-memory-c-name (var-env name)
-  (global-c-name (%lookup-memory var-env name)))
+  (memory-c-name (%lookup-memory var-env name)))
 
 (defun variable-environment-memory-type (var-env name)
-  (global-type (%lookup-memory var-env name)))
+  (memory-type (%lookup-memory var-env name)))
 
 (defun variable-environment-memory-expression (var-env name)
-  (global-expression (%lookup-memory var-env name)))
+  (memory-expression (%lookup-memory var-env name)))
 
 ;;;
 ;;; Function environment
@@ -224,21 +224,21 @@
   (%make-symbol-macro :name name :expansion expansion))
 
 
-;;; Global
+;;; Memory
 ;;;
 
-(defstruct (global (:constructor %make-global))
+(defstruct (memory (:constructor %make-memory))
   (name :name :read-only t)
   (type :type :read-only t)
   (expression :expression :read-only t))
 
-(defun make-global (name type expression)
+(defun make-memory (name type expression)
   (check-type name oclcl-symbol)
   (check-type type oclcl-type)
-  (%make-global :name name :type type :expression expression))
+  (%make-memory :name name :type type :expression expression))
 
-(defun global-c-name (global)
-  (c-identifier (global-name global) t))
+(defun memory-c-name (memory)
+  (c-identifier (memory-name memory) t))
 
 ;;;
 ;;; Function
