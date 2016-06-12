@@ -16,7 +16,7 @@
            :kernel-function-names
            :kernel-macro-names
            :kernel-symbol-macro-names
-           :kernel-global-names
+           :kernel-memory-names
            ;; Global
            :kernel-define-memory
            :kernel-memory-exists-p
@@ -76,7 +76,7 @@
        when (function-p object)
        collect name)))
 
-(defun kernel-global-names (kernel)
+(defun kernel-memory-names (kernel)
   (let ((namespace (kernel-variable-namespace kernel)))
     (nreverse
      (loop for (name object) on namespace by #'cddr

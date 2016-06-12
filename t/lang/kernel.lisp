@@ -27,14 +27,14 @@
         "basic case 2")))
 
 
-;;; test KERNEL-GLOBAL-NAMES function
+;;; test KERNEL-MEMORY-NAMES function
 ;;;
 
-(subtest "KERNEL-GLOBAL-NAMES"
+(subtest "KERNEL-MEMORY-NAMES"
   (let ((kernel (make-kernel)))
     (kernel-define-memory kernel 'x :global 42)
     (kernel-define-symbol-macro kernel 'y 42)
-    (is (kernel-global-names kernel) '(x)
+    (is (kernel-memory-names kernel) '(x)
         "kernel basic 1")))
 ;;;
 ;;; test KERNEL-FUNCTION-NAMES function

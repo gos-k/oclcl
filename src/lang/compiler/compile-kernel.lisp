@@ -46,7 +46,7 @@
            (let* ((expression (kernel-global-expression kernel name))
                   (type (type-of-expression expression nil nil)))
              (variable-environment-add-global name type expression var-env0))))
-    (reduce #'aux (kernel-global-names kernel)
+    (reduce #'aux (kernel-memory-names kernel)
             :initial-value var-env)))
 
 (defun kernel->variable-environment (kernel name)
@@ -116,7 +116,7 @@
 (defun compile-globals (kernel)
   (flet ((aux (name)
            (compile-global kernel name)))
-    (let ((globals (mapcar #'aux (kernel-global-names kernel))))
+    (let ((globals (mapcar #'aux (kernel-memory-names kernel))))
       (if (null globals)
           ""
           (format nil "/**
