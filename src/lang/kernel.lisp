@@ -17,7 +17,7 @@
            :kernel-macro-names
            :kernel-symbol-macro-names
            :kernel-memory-names
-           ;; Global
+           ;; Memory
            :kernel-define-memory
            :kernel-memory-exists-p
            :kernel-memory-name
@@ -95,7 +95,7 @@
        when (symbol-macro-p object)
        collect name)))
 
-;;; Global
+;;; Memory
 ;;;
 
 (deftype variable-qualifier ()
@@ -117,7 +117,7 @@
     ;; Check type of qualifiers.
     (loop for qualifier in qualifiers1
        do (check-type qualifier variable-qualifier))
-    ;; Make global.
+    ;; Make memory.
     (%make-memory :name name
                   :qualifiers qualifiers1
                   :expression expression)))
@@ -125,7 +125,7 @@
 (defun memory-c-name (memory)
   (c-identifier (memory-name memory) t))
 
-;;; Kernel definition - global
+;;; Kernel definition - memory
 ;;;
 
 (defun kernel-define-memory (kernel name qualifiers expression)
