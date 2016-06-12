@@ -130,8 +130,8 @@
 
 (defun kernel-define-memory (kernel name qualifiers expression)
   (symbol-macrolet ((namespace (kernel-variable-namespace kernel)))
-    (let ((global (make-memory name qualifiers expression)))
-      (setf (getf namespace name) global)))
+    (let ((memory (make-memory name qualifiers expression)))
+      (setf (getf namespace name) memory)))
   name)
 
 (defun kernel-memory-exists-p (kernel name)
