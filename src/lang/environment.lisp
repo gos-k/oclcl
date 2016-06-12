@@ -116,22 +116,22 @@
   (check-type name oclcl-symbol)
   (global-p (cdr (assoc name var-env))))
 
-(defun %lookup-global (var-env name)
+(defun %lookup-memory (var-env name)
   (unless (variable-environment-memory-exists-p var-env name)
     (error "The variable ~S not found." name))
   (cdr (assoc name var-env)))
 
 (defun variable-environment-memory-name (var-env name)
-  (global-name (%lookup-global var-env name)))
+  (global-name (%lookup-memory var-env name)))
 
 (defun variable-environment-memory-c-name (var-env name)
-  (global-c-name (%lookup-global var-env name)))
+  (global-c-name (%lookup-memory var-env name)))
 
 (defun variable-environment-memory-type (var-env name)
-  (global-type (%lookup-global var-env name)))
+  (global-type (%lookup-memory var-env name)))
 
 (defun variable-environment-memory-expression (var-env name)
-  (global-expression (%lookup-global var-env name)))
+  (global-expression (%lookup-memory var-env name)))
 
 ;;;
 ;;; Function environment
