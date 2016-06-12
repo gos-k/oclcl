@@ -141,7 +141,7 @@
 
 (defun %lookup-memory (kernel name)
   (unless (kernel-memory-exists-p kernel name)
-    (error "The global ~S not found." name))
+    (error "The memory ~S not found." name))
   (let ((namespace (kernel-variable-namespace kernel)))
     (getf namespace name)))
 
