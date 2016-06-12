@@ -122,7 +122,7 @@
                   :qualifiers qualifiers1
                   :expression expression)))
 
-(defun global-c-name (global)
+(defun memory-c-name (global)
   (c-identifier (memory-name global) t))
 
 ;;; Kernel definition - global
@@ -149,7 +149,7 @@
   (memory-name (%lookup-global kernel name)))
 
 (defun kernel-memory-c-name (kernel name)
-  (global-c-name (%lookup-global kernel name)))
+  (memory-c-name (%lookup-global kernel name)))
 
 (defun kernel-address-space-qualifiers (kernel name)
   (memory-qualifiers (%lookup-global kernel name)))
