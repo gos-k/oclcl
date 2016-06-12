@@ -139,23 +139,23 @@
   (let ((namespace (kernel-variable-namespace kernel)))
     (memory-p (getf namespace name))))
 
-(defun %lookup-global (kernel name)
+(defun %lookup-memory (kernel name)
   (unless (kernel-memory-exists-p kernel name)
     (error "The global ~S not found." name))
   (let ((namespace (kernel-variable-namespace kernel)))
     (getf namespace name)))
 
 (defun kernel-memory-name (kernel name)
-  (memory-name (%lookup-global kernel name)))
+  (memory-name (%lookup-memory kernel name)))
 
 (defun kernel-memory-c-name (kernel name)
-  (memory-c-name (%lookup-global kernel name)))
+  (memory-c-name (%lookup-memory kernel name)))
 
 (defun kernel-address-space-qualifiers (kernel name)
-  (memory-qualifiers (%lookup-global kernel name)))
+  (memory-qualifiers (%lookup-memory kernel name)))
 
 (defun kernel-memory-expression (kernel name)
-  (memory-expression (%lookup-global kernel name)))
+  (memory-expression (%lookup-memory kernel name)))
 
 ;;;
 ;;; Kernel definition - function
