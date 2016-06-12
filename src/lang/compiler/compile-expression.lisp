@@ -120,8 +120,8 @@
   (cond
     ((variable-environment-variable-exists-p var-env form)
      (compile-symbol form))
-    ((variable-environment-global-exists-p var-env form)
-     (variable-environment-global-c-name var-env form))
+    ((variable-environment-memory-exists-p var-env form)
+     (variable-environment-memory-c-name var-env form))
     (t
      (error "The variable ~S not found." form))))
 

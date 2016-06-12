@@ -33,11 +33,11 @@
            :function-environment-function-argument-types
            ;; Variable environment - Global
            :variable-environment-add-memory
-           :variable-environment-global-exists-p
-           :variable-environment-global-name
-           :variable-environment-global-c-name
-           :variable-environment-global-type
-           :variable-environment-global-expression
+           :variable-environment-memory-exists-p
+           :variable-environment-memory-name
+           :variable-environment-memory-c-name
+           :variable-environment-memory-type
+           :variable-environment-memory-expression
            ;; Function environment - Macro
            :function-environment-add-macro
            :function-environment-macro-exists-p
@@ -112,25 +112,25 @@
   (let ((elem (make-global name type expression)))
     (acons name elem var-env)))
 
-(defun variable-environment-global-exists-p (var-env name)
+(defun variable-environment-memory-exists-p (var-env name)
   (check-type name oclcl-symbol)
   (global-p (cdr (assoc name var-env))))
 
 (defun %lookup-global (var-env name)
-  (unless (variable-environment-global-exists-p var-env name)
+  (unless (variable-environment-memory-exists-p var-env name)
     (error "The variable ~S not found." name))
   (cdr (assoc name var-env)))
 
-(defun variable-environment-global-name (var-env name)
+(defun variable-environment-memory-name (var-env name)
   (global-name (%lookup-global var-env name)))
 
-(defun variable-environment-global-c-name (var-env name)
+(defun variable-environment-memory-c-name (var-env name)
   (global-c-name (%lookup-global var-env name)))
 
-(defun variable-environment-global-type (var-env name)
+(defun variable-environment-memory-type (var-env name)
   (global-type (%lookup-global var-env name)))
 
-(defun variable-environment-global-expression (var-env name)
+(defun variable-environment-memory-expression (var-env name)
   (global-expression (%lookup-global var-env name)))
 
 ;;;

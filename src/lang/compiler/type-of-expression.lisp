@@ -104,8 +104,8 @@
   (cond
     ((variable-environment-variable-exists-p var-env form)
      (variable-environment-variable-type var-env form))
-    ((variable-environment-global-exists-p var-env form)
-     (variable-environment-global-type var-env form))
+    ((variable-environment-memory-exists-p var-env form)
+     (variable-environment-memory-type var-env form))
     (t
      (error "The variable ~S not found." form))))
 
