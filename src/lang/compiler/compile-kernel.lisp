@@ -41,7 +41,7 @@
     (reduce #'aux (kernel-symbol-macro-names kernel)
             :initial-value var-env)))
 
-(defun %add-globals (kernel var-env)
+(defun %add-memories (kernel var-env)
   (flet ((aux (var-env0 name)
            (let* ((expression (kernel-memory-expression kernel name))
                   (type (type-of-expression expression nil nil)))
@@ -53,10 +53,10 @@
   (if name
       (%add-function-arguments kernel name
                                (%add-symbol-macros kernel
-                                                   (%add-globals kernel
+                                                   (%add-memories kernel
                                                                  (empty-variable-environment))))
       (%add-symbol-macros kernel
-                          (%add-globals kernel
+                          (%add-memories kernel
                                         (empty-variable-environment)))))
 
 (defun %add-functions (kernel func-env)
