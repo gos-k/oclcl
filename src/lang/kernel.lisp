@@ -122,8 +122,8 @@
                   :qualifiers qualifiers1
                   :expression expression)))
 
-(defun memory-c-name (global)
-  (c-identifier (memory-name global) t))
+(defun memory-c-name (memory)
+  (c-identifier (memory-name memory) t))
 
 ;;; Kernel definition - global
 ;;;
