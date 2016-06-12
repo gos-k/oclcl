@@ -22,8 +22,8 @@
 (subtest "COMPILE-KERNEL"
 
   (let ((kernel (make-kernel)))
-    (kernel-define-global kernel 'a :constant 1)
-    (kernel-define-global kernel 'b :global 1.0)
+    (kernel-define-memory kernel 'a :constant 1)
+    (kernel-define-memory kernel 'b :global 1.0)
     (kernel-define-function kernel 'foo 'void '((x int*))
                             '((set (aref x 0) (bar 1))
                               (return)))

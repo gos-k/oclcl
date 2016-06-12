@@ -18,7 +18,7 @@
            :kernel-symbol-macro-names
            :kernel-global-names
            ;; Global
-           :kernel-define-global
+           :kernel-define-memory
            :kernel-global-exists-p
            :kernel-global-name
            :kernel-global-c-name
@@ -128,7 +128,7 @@
 ;;; Kernel definition - global
 ;;;
 
-(defun kernel-define-global (kernel name qualifiers expression)
+(defun kernel-define-memory (kernel name qualifiers expression)
   (symbol-macrolet ((namespace (kernel-variable-namespace kernel)))
     (let ((global (make-memory name qualifiers expression)))
       (setf (getf namespace name) global)))

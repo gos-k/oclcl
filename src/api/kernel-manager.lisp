@@ -147,7 +147,7 @@
   (symbol-macrolet ((module-path (kernel-manager-module-path manager))
                     (kernel (kernel-manager-kernel manager)))
     (when (memory-modified-p kernel name qualifiers expression)
-      (kernel-define-global kernel name qualifiers expression)
+      (kernel-define-memory kernel name qualifiers expression)
       (setf module-path nil)))
   name)
 

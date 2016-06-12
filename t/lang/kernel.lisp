@@ -32,7 +32,7 @@
 
 (subtest "KERNEL-GLOBAL-NAMES"
   (let ((kernel (make-kernel)))
-    (kernel-define-global kernel 'x :global 42)
+    (kernel-define-memory kernel 'x :global 42)
     (kernel-define-symbol-macro kernel 'y 42)
     (is (kernel-global-names kernel) '(x)
         "kernel basic 1")))
@@ -304,9 +304,9 @@
 ;;; Global
 ;;;
 
-(subtest "kernel-define-global"
+(subtest "kernel-define-memory"
   (let ((kernel (make-kernel)))
-    (kernel-define-global kernel 'foo :global 42)
+    (kernel-define-memory kernel 'foo :global 42)
     (is (kernel-global-exists-p kernel 'foo)
         t)
     (is (kernel-global-name kernel 'foo)
@@ -321,7 +321,7 @@
   (let ((kernel (make-kernel)))
     ;; Name in variable namespace should be overwrited.
     (kernel-define-symbol-macro kernel 'foo 42)
-    (kernel-define-global kernel 'foo :global 42)
+    (kernel-define-memory kernel 'foo :global 42)
     (is (kernel-global-exists-p kernel 'foo)
         t)
     (is (kernel-symbol-macro-exists-p kernel 'foo)
@@ -329,27 +329,27 @@
 
   (let ((kernel (make-kernel)))
     ;; Give multiple qualifiers.
-    (kernel-define-global kernel 'foo '(:global :constant) 42)
+    (kernel-define-memory kernel 'foo '(:global :constant) 42)
     (is (kernel-address-space-qualifiers kernel 'foo)
         '(:global :constant)))
 
-  (is-error (kernel-define-global :foo 'foo :global 42)
+  (is-error (kernel-define-memory :foo 'foo :global 42)
             type-error
             "Invalid kernel.")
 
   (let ((kernel (make-kernel)))
-    (is-error (kernel-define-global kernel "foo" :global 42)
+    (is-error (kernel-define-memory kernel "foo" :global 42)
               type-error
               "Invalid name."))
 
   (let ((kernel (make-kernel)))
-    (is-error (kernel-define-global kernel 'foo :foo 42)
+    (is-error (kernel-define-memory kernel 'foo :foo 42)
               type-error
               "Invalid qualifier.")))
 
 (subtest "kernel-global-exists-p"
   (let ((kernel (make-kernel)))
-    (kernel-define-global kernel 'foo :global 42)
+    (kernel-define-memory kernel 'foo :global 42)
     (kernel-define-symbol-macro kernel 'bar 42)
     (is (kernel-global-exists-p kernel 'foo)
         t)
@@ -369,7 +369,7 @@
 
 (subtest "kernel-global-name"
   (let ((kernel (make-kernel)))
-    (kernel-define-global kernel 'foo :global 42)
+    (kernel-define-memory kernel 'foo :global 42)
     (is (kernel-global-name kernel 'foo)
         'foo))
 
@@ -389,7 +389,7 @@
 
 (subtest "kernel-global-c-name"
   (let ((kernel (make-kernel)))
-    (kernel-define-global kernel 'foo :global 42)
+    (kernel-define-memory kernel 'foo :global 42)
     (is (kernel-global-c-name kernel 'foo)
         "oclcl_test_lang_kernel_foo"))
 
@@ -409,7 +409,7 @@
 
 (subtest "kernel-address-space-qualifiers"
   (let ((kernel (make-kernel)))
-    (kernel-define-global kernel 'foo :global 42)
+    (kernel-define-memory kernel 'foo :global 42)
     (is (kernel-address-space-qualifiers kernel 'foo)
         '(:global)))
 
@@ -429,7 +429,7 @@
 
 (subtest "kernel-global-expression"
   (let ((kernel (make-kernel)))
-    (kernel-define-global kernel 'foo :global 42)
+    (kernel-define-memory kernel 'foo :global 42)
     (is (kernel-global-expression kernel 'foo)
         42))
 
