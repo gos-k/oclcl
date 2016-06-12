@@ -95,88 +95,87 @@
         "basic case 7")))
 
 
-;;; test Variable environment - Global
+;;; test Variable environment - Memory
 ;;;
 
-(diag "Variable environment - Global")
+(subtest "Variable environment - Memory"
+  (let ((var-env (variable-environment-add-variable 'z 'int
+                                                    (variable-environment-add-memory 'y 'int nil
+                                                                                     (variable-environment-add-memory 'x 'int 1
+                                                                                                                      (empty-variable-environment))))))
+    (is (variable-environment-memory-exists-p var-env 'x) t
+        "basic case 1")
+    (is (variable-environment-memory-exists-p var-env 'y) t
+        "basic case 2")
+    (is (variable-environment-memory-exists-p var-env 'z) nil
+        "basic case 3")
+    (is (variable-environment-memory-name var-env 'x) 'x
+        "basic case 4")
+    (is (variable-environment-memory-c-name var-env 'x)
+        "oclcl_test_lang_environment_x"
+        "basic case 5")
+    (is (variable-environment-memory-type var-env 'x) 'int
+        "basic case 6")
+    (is (variable-environment-memory-expression var-env 'x) 1
+        "basic case 7")
+    (is (variable-environment-memory-expression var-env 'y) nil
+        "basic case 8"))
 
-(let ((var-env (variable-environment-add-variable 'z 'int
-                (variable-environment-add-memory 'y 'int nil
-                 (variable-environment-add-memory 'x 'int 1
-                  (empty-variable-environment))))))
-  (is (variable-environment-memory-exists-p var-env 'x) t
-      "basic case 1")
-  (is (variable-environment-memory-exists-p var-env 'y) t
-      "basic case 2")
-  (is (variable-environment-memory-exists-p var-env 'z) nil
-      "basic case 3")
-  (is (variable-environment-memory-name var-env 'x) 'x
-      "basic case 4")
-  (is (variable-environment-memory-c-name var-env 'x)
-      "oclcl_test_lang_environment_x"
-      "basic case 5")
-  (is (variable-environment-memory-type var-env 'x) 'int
-      "basic case 6")
-  (is (variable-environment-memory-expression var-env 'x) 1
-      "basic case 7")
-  (is (variable-environment-memory-expression var-env 'y) nil
-      "basic case 8"))
+  (is-error (variable-environment-add-memory 1 'int 1
+                                             (empty-variable-environment))
+            type-error
+            "Invalid name.")
 
-(is-error (variable-environment-add-memory 1 'int 1
-           (empty-variable-environment))
-          type-error
-          "Invalid name.")
+  (is-error (variable-environment-add-memory 'x :foo 1
+                                             (empty-variable-environment))
+            type-error
+            "Invalid cl-cuda type.")
 
-(is-error (variable-environment-add-memory 'x :foo 1
-           (empty-variable-environment))
-          type-error
-          "Invalid cl-cuda type.")
+  (is-error (variable-environment-add-memory 'x 'int 1
+                                             :foo)
+            type-error
+            "Invalid variable environment.")
 
-(is-error (variable-environment-add-memory 'x 'int 1
-           :foo)
-          type-error
-          "Invalid variable environment.")
+  (is-error (variable-environment-memory-exists-p :foo 'x)
+            type-error
+            "Invalid variable environment.")
 
-(is-error (variable-environment-memory-exists-p :foo 'x)
-          type-error
-          "Invalid variable environment.")
+  (is-error (variable-environment-memory-exists-p (empty-variable-environment) 1)
+            type-error
+            "Invalid name.")
 
-(is-error (variable-environment-memory-exists-p (empty-variable-environment) 1)
-          type-error
-          "Invalid name.")
+  (is-error (variable-environment-memory-name :foo 'x)
+            type-error
+            "Invalid variable environment.")
 
-(is-error (variable-environment-memory-name :foo 'x)
-          type-error
-          "Invalid variable environment.")
+  (is-error (variable-environment-memory-name (empty-variable-environment) 1)
+            type-error
+            "Invalid name.")
 
-(is-error (variable-environment-memory-name (empty-variable-environment) 1)
-          type-error
-          "Invalid name.")
+  (is-error (variable-environment-memory-c-name :foo 'x)
+            type-error
+            "Invalid variable environment.")
 
-(is-error (variable-environment-memory-c-name :foo 'x)
-          type-error
-          "Invalid variable environment.")
+  (is-error (variable-environment-memory-c-name (empty-variable-environment) 1)
+            type-error
+            "Invalid name.")
 
-(is-error (variable-environment-memory-c-name (empty-variable-environment) 1)
-          type-error
-          "Invalid name.")
+  (is-error (variable-environment-memory-type :foo 'x)
+            type-error
+            "Invalid variable environment.")
 
-(is-error (variable-environment-memory-type :foo 'x)
-          type-error
-          "Invalid variable environment.")
+  (is-error (variable-environment-memory-type (empty-variable-environment) 1)
+            type-error
+            "Invalid name.")
 
-(is-error (variable-environment-memory-type (empty-variable-environment) 1)
-          type-error
-          "Invalid name.")
+  (is-error (variable-environment-memory-expression :foo 'x)
+            type-error
+            "Invalid variable environment.")
 
-(is-error (variable-environment-memory-expression :foo 'x)
-          type-error
-          "Invalid variable environment.")
-
-(is-error (variable-environment-memory-expression (empty-variable-environment)
-                                                  1)
-          type-error
-          "Invalid name.")
+  (is-error (variable-environment-memory-expression (empty-variable-environment)
+                                                    1)
+            type-error
+            "Invalid name."))
 
 ;;;
 ;;; test Function environment - Macro
