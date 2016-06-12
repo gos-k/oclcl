@@ -100,7 +100,7 @@
 (defun compile-address-space-qualifier (qualifier)
   (format nil "__~A" (string-downcase (princ-to-string qualifier))))
 
-(defun compile-global (kernel name)
+(defun compile-memory (kernel name)
   (let ((c-name (kernel-memory-c-name kernel name))
         (qualifiers (kernel-address-space-qualifiers kernel name))
         (expression (kernel-memory-expression kernel name)))
@@ -115,7 +115,7 @@
 
 (defun compile-memories (kernel)
   (flet ((aux (name)
-           (compile-global kernel name)))
+           (compile-memory kernel name)))
     (let ((globals (mapcar #'aux (kernel-memory-names kernel))))
       (if (null globals)
           ""
