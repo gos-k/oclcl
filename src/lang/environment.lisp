@@ -32,7 +32,7 @@
            :function-environment-function-return-type
            :function-environment-function-argument-types
            ;; Variable environment - Global
-           :variable-environment-add-global
+           :variable-environment-add-memory
            :variable-environment-global-exists-p
            :variable-environment-global-name
            :variable-environment-global-c-name
@@ -107,7 +107,7 @@
 ;;; Variable environment - Global
 ;;;
 
-(defun variable-environment-add-global (name type expression var-env)
+(defun variable-environment-add-memory (name type expression var-env)
   (check-type var-env list)
   (let ((elem (make-global name type expression)))
     (acons name elem var-env)))

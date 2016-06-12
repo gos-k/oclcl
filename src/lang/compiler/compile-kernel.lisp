@@ -45,7 +45,7 @@
   (flet ((aux (var-env0 name)
            (let* ((expression (kernel-memory-expression kernel name))
                   (type (type-of-expression expression nil nil)))
-             (variable-environment-add-global name type expression var-env0))))
+             (variable-environment-add-memory name type expression var-env0))))
     (reduce #'aux (kernel-memory-names kernel)
             :initial-value var-env)))
 

@@ -101,7 +101,7 @@
 (subtest "COMPILE-REFERENCE - VARIABLE"
   (let* ((add-var (variable-environment-add-variable 'x 'int (empty-variable-environment)))
          (add-symbol-macro (variable-environment-add-symbol-macro 'y 'y-expansion add-var))
-         (var-env (variable-environment-add-global 'z 'int 1 (variable-environment-add-variable 'y-expansion 'float add-symbol-macro)))
+         (var-env (variable-environment-add-memory 'z 'int 1 (variable-environment-add-variable 'y-expansion 'float add-symbol-macro)))
          (func-env (empty-function-environment)))
     (is (compile-reference 'x var-env func-env) "x"
         "basic case 1")

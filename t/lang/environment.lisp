@@ -101,8 +101,8 @@
 (diag "Variable environment - Global")
 
 (let ((var-env (variable-environment-add-variable 'z 'int
-                (variable-environment-add-global 'y 'int nil
-                 (variable-environment-add-global 'x 'int 1
+                (variable-environment-add-memory 'y 'int nil
+                 (variable-environment-add-memory 'x 'int 1
                   (empty-variable-environment))))))
   (is (variable-environment-global-exists-p var-env 'x) t
       "basic case 1")
@@ -122,17 +122,17 @@
   (is (variable-environment-global-expression var-env 'y) nil
       "basic case 8"))
 
-(is-error (variable-environment-add-global 1 'int 1
+(is-error (variable-environment-add-memory 1 'int 1
            (empty-variable-environment))
           type-error
           "Invalid name.")
 
-(is-error (variable-environment-add-global 'x :foo 1
+(is-error (variable-environment-add-memory 'x :foo 1
            (empty-variable-environment))
           type-error
           "Invalid cl-cuda type.")
 
-(is-error (variable-environment-add-global 'x 'int 1
+(is-error (variable-environment-add-memory 'x 'int 1
            :foo)
           type-error
           "Invalid variable environment.")

@@ -78,7 +78,7 @@
                    (variable-environment-add-variable 'x 'int)
                    (variable-environment-add-symbol-macro 'y 'y-expansion)
                    (variable-environment-add-variable 'y-expansion 'float)
-                   (variable-environment-add-global 'z 'int 1)))
+                   (variable-environment-add-memory 'z 'int 1)))
         (func-env (empty-function-environment)))
     (is (type-of-reference 'x var-env func-env) 'int
         "basic case 1")
