@@ -9,7 +9,10 @@
   (:use :cl
         :oclcl.lang.type
         :oclcl.lang.data)
-  (:export ;; Built-in work-item functions
+  (:export ;; address-of operator
+           :pointer
+
+           ;; Built-in work-item functions
            :get-work-dim
            :get-global-size
            :get-global-id
