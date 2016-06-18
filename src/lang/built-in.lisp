@@ -20,7 +20,8 @@
            :get-global-offset
 
            ;; Built-in type casting
-           :size-t-to-int
+           :to-int
+           :to-float
 
            ;; Built-in math functions
            :acos
@@ -323,7 +324,8 @@
     double4 (((double double double double) double4 nil "(double4)"))
     ;; type casting intrinsics
     double-to-int-rn (((double) int nil "__double2int_rn"))
-    size-t-to-int (((size-t) int nil "(int)"))
+    to-int ((,#'allow-any-types int nil "(int)"))
+    to-float ((,#'allow-any-types float nil "(float)"))
 
     ;; OpenCL v1.2 dr19: 6.12.1 Work-Item Functions
     get-work-dim ((() uint nil "get_work_dim"))
