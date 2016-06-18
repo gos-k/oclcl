@@ -297,7 +297,9 @@
     + ,(arithmetic-binary-operator "+" +scalar-number-types+)
     - ,(append '(((int) int nil "-"))
                (arithmetic-binary-operator "-" +scalar-number-types+))
-    * ,(arithmetic-binary-operator "*" +scalar-number-types+)
+    * ,(append '(((float4 float) float4 nil "*")
+                 ((float float4) float4 nil "*"))
+               (arithmetic-binary-operator "*" +scalar-number-types+))
     / ,(arithmetic-binary-operator "/" +scalar-number-types+)
     mod ,(arithmetic-binary-operator "%" +scalar-integer-types+)
 
