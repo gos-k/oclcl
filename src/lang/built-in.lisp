@@ -229,31 +229,30 @@
   (loop for type-symbol in (cons type (generate-vector-type-symbols type))
         collecting (list (make-list size :initial-element type-symbol) type-symbol infix function)))
 
-(defun float-types-function (function size)
-  (loop for type in +scalar-float-types+
+(defun types-function (function size types)
+  (loop for type in types
         appending (same-type-function function size type nil)))
 
 (defun float-types-unary-function (function)
-  (float-types-function function 1))
+  (types-function function 1 +scalar-float-types+))
 
 (defun float-types-binary-function (function)
-  (float-types-function function 2))
+  (types-function function 2 +scalar-float-types+))
 
 (defun float-types-ternary-function (function)
-  (float-types-function function 3))
-
-(defun integer-types-function (function size)
-  (loop for type in +scalar-integer-types+
-        appending (same-type-function function size type nil)))
+  (types-function function 3 +scalar-float-types+))
 
 (defun integer-types-unary-function (function)
-  (integer-types-function function 1))
+  (types-function function 1 +scalar-integer-types+))
 
 (defun integer-types-binary-function (function)
-  (integer-types-function function 2))
+  (types-function function 2 +scalar-integer-types+))
 
 (defun integer-types-ternary-function (function)
-  (integer-types-function function 3))
+  (types-function function 3 +scalar-integer-types+))
+
+(defun signed-integer-types-unary-function (function)
+  (types-function function 1 +scalar-signed-integer-types+))
 
 (defun same-types-binary-operator (operator types)
   (loop for type in types
@@ -295,7 +294,8 @@
 (defparameter +built-in-functions+
   `(;; arithmetic operators
     + ,(arithmetic-binary-operator "+" +scalar-number-types+)
-    - ,(append '(((int) int nil "-"))
+    - ,(append (signed-integer-types-unary-function "-")
+               (float-types-unary-function "-")
                (arithmetic-binary-operator "-" +scalar-number-types+))
     * ,(append '(((float4 float) float4 nil "*")
                  ((float float4) float4 nil "*"))
