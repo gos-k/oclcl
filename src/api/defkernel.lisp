@@ -36,7 +36,7 @@
                                    ',arguments
                                    ',body))
 
-;;; DEFGLOBAL
+;;; DEFMEMORY
 ;;;
 
 (defmacro defmemory (name expression &optional qualifiers)
