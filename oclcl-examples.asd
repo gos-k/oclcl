@@ -18,7 +18,8 @@
                :imago)
   :components ((:module "examples"
                 :components
-                ((:file "vector-add")
+                ((:file "sph-cpu")
+                 (:file "vector-add")
                  (:file "diffuse0")
                  (:file "diffuse1")
                  (:file "vector-add-oclapi")

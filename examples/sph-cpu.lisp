@@ -1,16 +1,16 @@
 #|
-  This file is a part of cl-cuda project.
+  This file is a part of oclcl project.
   Copyright (c) 2013 Masayuki Takagi (kamonama@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage cl-cuda-examples.sph-cpu
+(defpackage oclcl-examples.sph-cpu
   (:use :cl)
   (:import-from :alexandria
                 :with-gensyms
                 :once-only)
   (:export :main))
-(in-package :cl-cuda-examples.sph-cpu)
+(in-package :oclcl-examples.sph-cpu)
 
 
 ;;
