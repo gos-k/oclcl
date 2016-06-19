@@ -70,12 +70,15 @@
           (then-stmt1 (compile-statement then-stmt var-env func-env))
           (else-stmt1 (if else-stmt
                           (compile-statement else-stmt var-env func-env))))
-      (let ((then-stmt2 (indent 2 then-stmt1))
+      (let ((test-expr2 (if (char/= #\( (char test-expr1 0))
+                            (setf test-expr1 (format nil "(~A)" test-expr1))
+                            test-expr1))
+            (then-stmt2 (indent 2 then-stmt1))
             (else-stmt2 (if else-stmt1
                             (indent 2 else-stmt1))))
-        (format nil "if (~A) {~%~A}~@[ else {~%~A}~]~%" test-expr1
-                                                        then-stmt2
-                                                        else-stmt2)))))
+        (format nil "if ~A {~%~A}~@[ else {~%~A}~]~%" test-expr2
+                                                      then-stmt2
+                                                      else-stmt2)))))
 
 
 ;;;
