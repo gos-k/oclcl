@@ -7,11 +7,13 @@ env:
   matrix:
     - LISP=sbcl-bin
     - LISP=ccl-bin
+    - LISP=ecl
     - LISP=abcl
     - LISP=clisp
 
 matrix:
   allow_failures:
+    - env: LISP=ecl
     - env: LISP=abcl
     - env: LISP=clisp
 
