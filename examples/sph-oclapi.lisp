@@ -389,7 +389,7 @@ light_source { <0, 30, -30> color White }
     (with-open-file (out filename :direction :output :if-exists :supersede)
       (output-header out)
       (loop for i from 0 below n
-         do (output-sphere (memory-block-aref pos i) out)))))
+         do (output-sphere (mem-aref pos i) out)))))
 
 
 ;;
@@ -408,14 +408,14 @@ light_source { <0, 30, -30> color White }
 (defun initialize (pos vel particles)
   (loop for p in particles
         for i from 0
-     do (setf (memory-block-aref pos i) p)
-        (setf (memory-block-aref vel i) (list 0.0 0.0 0.0 0.0))))
+     do (setf (mem-aref pos i) p)
+        (setf (mem-aref vel i) (list 0.0 0.0 0.0 0.0))))
 
 (defun peek-memory-block (memory-block)
   (sync-memory-block memory-block :device-to-host)
   (loop repeat 10
         for i from 0
-     do (print (memory-block-aref memory-block i))))
+     do (print (mem-aref memory-block i))))
 
 (defun main ()
   (let* (;; Grid and block dims.
