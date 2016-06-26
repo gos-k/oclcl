@@ -109,32 +109,34 @@
                              (sx int)
                              (sy int)
                              (sz int)))
+
   (set box-min (float4 box-min-0
                        box-min-1
                        box-min-2
-                       box-min-3)
-       box-max (float4 box-max-0
+                       box-min-3))
+
+  (set box-max (float4 box-max-0
                        box-max-1
                        box-max-2
-                       box-max-3)
-       origin (float4 origin-0
+                       box-max-3))
+  (set origin (float4 origin-0
                       origin-1
                       origin-2
-                      origin-3)
-       delta d
-       capacity c
-       size-x sx
-       size-y sy
-       size-z sz))
+                      origin-3))
+  (set delta d)
+  (set capacity c)
+  (set size-x sx)
+  (set size-y sy)
+  (set size-z sz))
 
 ;;
 ;; Neighbor map
 
 (defkernelmacro with-cell-index (((i j k) x) &body body)
   (once-only (x)
-    `(let ((,i (floor (/ (- (float4-x ,x) (float4-x origin)) delta)))
-           (,j (floor (/ (- (float4-y ,x) (float4-y origin)) delta)))
-           (,k (floor (/ (- (float4-z ,x) (float4-z origin)) delta))))
+    `(let ((,i (to-int (floor (/ (- (float4-x ,x) (float4-x origin)) delta))))
+           (,j (to-int (floor (/ (- (float4-y ,x) (float4-y origin)) delta))))
+           (,k (to-int (floor (/ (- (float4-z ,x) (float4-z origin)) delta)))))
        ,@body)))
 
 (defkernel offset (int ((i int) (j int) (k int) (l int)))
