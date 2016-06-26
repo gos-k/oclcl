@@ -672,7 +672,32 @@ light_source { <0, 30, -30> color White }
                                  (update-pressure prs rho n
                                                   :grid-dim particle-grid-dim
                                                   :block-dim particle-block-dim)
+
+
                                  ;; Update force.
+                                 #+nil
+                                 (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_force")
+                                   (with-pointers ((force-pointer force-device)
+                                                   (pos-pointer pos-device)
+                                                   (vel-pointer vel-device)
+                                                   (rho-pointer rho-device)
+                                                   (prs-pointer prs-device)
+                                                   (neighbor-map-pointer neighbor-map-device))
+                                     (with-foreign-object (n-pointer 'cl-int)
+                                       (setf (mem-aref n-pointer 'cl-int) n)
+                                       (set-kernel-arg kernel 0 8 force-pointer)
+                                       (set-kernel-arg kernel 1 8 prs-pointer)
+                                       (set-kernel-arg kernel 2 8 vel-pointer)
+                                       (set-kernel-arg kernel 3 8 rho-pointer)
+                                       (set-kernel-arg kernel 4 8 prs-pointer)
+                                       (set-kernel-arg kernel 5 4 n-pointer)
+                                       (set-kernel-arg kernel 6 8 neighbor-map-pointer)
+                                       (enqueue-ndrange-kernel command-queue
+                                                               kernel
+                                                               1
+                                                               particle-global-work-size
+                                                               particle-local-work-size)
+                                       (finish command-queue))))
                                  #+nil
                                  (update-force force pos vel rho prs n neighbor-map
                                                :grid-dim particle-grid-dim
