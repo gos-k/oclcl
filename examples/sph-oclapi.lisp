@@ -629,7 +629,25 @@ light_source { <0, 30, -30> color White }
                                  (update-neighbor-map neighbor-map pos n
                                                       :grid-dim particle-grid-dim
                                                       :block-dim particle-block-dim)
+
                                  ;; Update density.
+                                 #+nil
+                                 (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_density")
+                                   (with-pointers ((rho-pointer rho-device)
+                                                   (pos-pointer pos-device)
+                                                   (neighbor-map-pointer neighbor-map-device))
+                                     (with-foreign-object (n-pointer 'cl-int)
+                                       (setf (mem-aref n-pointer 'cl-int) n)
+                                       (set-kernel-arg kernel 0 8 rho-pointer)
+                                       (set-kernel-arg kernel 1 8 pos-pointer)
+                                       (set-kernel-arg kernel 2 4 n-pointer)
+                                       (set-kernel-arg kernel 3 8 neighbor-map-pointer)
+                                       (enqueue-ndrange-kernel command-queue
+                                                               kernel
+                                                               1
+                                                               particle-global-work-size
+                                                               particle-local-work-size)
+                                       (finish command-queue))))
                                  #+nil
                                  (update-density rho pos n neighbor-map
                                                  :grid-dim particle-grid-dim
