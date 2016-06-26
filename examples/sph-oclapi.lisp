@@ -7,6 +7,7 @@
 (in-package :cl-user)
 (defpackage oclcl-examples.sph
   (:use :cl
+        :cffi
         :oclcl
         :cl-oclapi)
   (:import-from :alexandria
@@ -69,14 +70,14 @@
 (defkernel-symbol-macro restdensity 600.0)
 (defkernel-symbol-macro g (float4 0.0 -9.8 0.0 0.0))
 
-(defmemory box-min (float4 0.0 0.0 0.0 0.0) :constant)
-(defmemory box-max (float4 0.0 0.0 0.0 0.0) :constant)
-(defmemory origin (float4 0.0 0.0 0.0 0.0) :constant)
-(defmemory delta 0.0 :constant)
-(defmemory capacity 0 :constant)
-(defmemory size-x 0 :constant)
-(defmemory size-y 0 :constant)
-(defmemory size-z 0 :constant)
+(defmemory box-min (float4 0.0 0.0 0.0 0.0))
+(defmemory box-max (float4 0.0 0.0 0.0 0.0))
+(defmemory origin (float4 0.0 0.0 0.0 0.0))
+(defmemory delta 0.0)
+(defmemory capacity 0)
+(defmemory size-x 0)
+(defmemory size-y 0)
+(defmemory size-z 0)
 
 (defparameter h           0.005)
 (defparameter pmass       (/ 0.00020543 8.0))
@@ -91,6 +92,40 @@
 (defparameter init-max    '(0.0 40.0  30.0 0.0))
 (defparameter capacity    400)  ; # of particles contained in one cell
 
+(defkernel set-params (void ((box-min-0 float)
+                             (box-min-1 float)
+                             (box-min-2 float)
+                             (box-min-3 float)
+                             (box-max-0 float)
+                             (box-max-1 float)
+                             (box-max-2 float)
+                             (box-max-3 float)
+                             (origin-0 float)
+                             (origin-1 float)
+                             (origin-2 float)
+                             (origin-3 float)
+                             (d float)
+                             (c int)
+                             (sx int)
+                             (sy int)
+                             (sz int)))
+  (set box-min (float4 box-min-0
+                       box-min-1
+                       box-min-2
+                       box-min-3)
+       box-max (float4 box-max-0
+                       box-max-1
+                       box-max-2
+                       box-max-3)
+       origin (float4 origin-0
+                      origin-1
+                      origin-2
+                      origin-3)
+       delta d
+       capacity c
+       size-x sx
+       size-y sy
+       size-z sz))
 
 ;;
 ;; Neighbor map
@@ -417,8 +452,10 @@ light_source { <0, 30, -30> color White }
         for i from 0
      do (print (mem-aref memory-block i))))
 
+#+nil
 (defun main ()
-  (let* (;; Grid and block dims.
+  (let* (
+         ;; Grid and block dims.
          (neighbor-map-grid-dim '(45 37 1))
          (neighbor-map-block-dim '(37 1 1))
          (particle-grid-dim '(512 1 1))
@@ -432,76 +469,137 @@ light_source { <0, 30, -30> color White }
     ;; Compute neighbor map size.
     (multiple-value-bind (size-x size-y size-z size)
         (compute-size box-min box-max delta capacity)
-      (with-cuda (0)
-        ;; Set boundary condition globals.
-        (setf (global-ref 'box-min 'float4) box-min)
-        (setf (global-ref 'box-max 'float4) box-max)
-        ;; Set neighbor map globals.
-        (setf (global-ref 'origin 'float4) origin)
-        (setf (global-ref 'delta 'float) delta)
-        (setf (global-ref 'capacity 'int) capacity)
-        (setf (global-ref 'size-x 'int) size-x)
-        (setf (global-ref 'size-y 'int) size-y)
-        (setf (global-ref 'size-z 'int) size-z)
-        ;; With memory blocks.
-        (with-memory-blocks ((pos 'float4 n)
-                             (vel 'float4 n)
-                             (acc 'float4 n)
-                             (force 'float4 n)
-                             (rho 'float n)
-                             (prs 'float n)
-                             (neighbor-map 'int size))
-          ;; Print number of particles.
-          (format t "~A particles~%" n)
-          ;; Apply initial condition.
-          (initialize pos vel particles)
-          (sync-memory-block pos :host-to-device)
-          (sync-memory-block vel :host-to-device)
-          ;(output 0 pos)
-          ;; Do simulation.
-          (time
-           (loop repeat 300
-                 for i from 1
-              do ;; Clear neighbor map.
-                 (clear-neighbor-map neighbor-map
-                                     :grid-dim neighbor-map-grid-dim
-                                     :block-dim neighbor-map-block-dim)
-                 ;; Update neighbor map.
-                 (update-neighbor-map neighbor-map pos n
+      ;; Set boundary condition and neighbor map.
+      ;; With memory blocks.
+      ; set-params kernel
+    #+nil
+      (with-memory-blocks ((pos 'float4 n)
+                           (vel 'float4 n)
+                           (acc 'float4 n)
+                           (force 'float4 n)
+                           (rho 'float n)
+                           (prs 'float n)
+                           (neighbor-map 'int size))
+        ;; Print number of particles.
+        (format t "~A particles~%" n)
+        ;; Apply initial condition.
+        (initialize pos vel particles)
+        (sync-memory-block pos :host-to-device)
+        (sync-memory-block vel :host-to-device)
+                                        ;(output 0 pos)
+        ;; Do simulation.
+        (time
+         (loop repeat 300
+               for i from 1
+               do ;; Clear neighbor map.
+                  (clear-neighbor-map neighbor-map
+                                      :grid-dim neighbor-map-grid-dim
+                                      :block-dim neighbor-map-block-dim)
+                  ;; Update neighbor map.
+                  (update-neighbor-map neighbor-map pos n
+                                       :grid-dim particle-grid-dim
+                                       :block-dim particle-block-dim)
+                  ;; Update density.
+                  (update-density rho pos n neighbor-map
+                                  :grid-dim particle-grid-dim
+                                  :block-dim particle-block-dim)
+                  ;; Update pressure.
+                  (update-pressure prs rho n
+                                   :grid-dim particle-grid-dim
+                                   :block-dim particle-block-dim)
+                  ;; Update force.
+                  (update-force force pos vel rho prs n neighbor-map
+                                :grid-dim particle-grid-dim
+                                :block-dim particle-block-dim)
+                  ;; Update acceleration.
+                  (update-acceleration acc force rho n
+                                       :grid-dim particle-grid-dim
+                                       :block-dim particle-block-dim)
+                  ;; Apply boundary condition.
+                  (boundary-condition acc pos vel n
                                       :grid-dim particle-grid-dim
                                       :block-dim particle-block-dim)
-                 ;; Update density.
-                 (update-density rho pos n neighbor-map
-                                 :grid-dim particle-grid-dim
-                                 :block-dim particle-block-dim)
-                 ;; Update pressure.
-                 (update-pressure prs rho n
-                                  :grid-dim particle-grid-dim
-                                  :block-dim particle-block-dim)
-                 ;; Update force.
-                 (update-force force pos vel rho prs n neighbor-map
-                               :grid-dim particle-grid-dim
-                               :block-dim particle-block-dim)
-                 ;; Update acceleration.
-                 (update-acceleration acc force rho n
-                                      :grid-dim particle-grid-dim
-                                      :block-dim particle-block-dim)
-                 ;; Apply boundary condition.
-                 (boundary-condition acc pos vel n
-                                     :grid-dim particle-grid-dim
-                                     :block-dim particle-block-dim)
-                 ;; Update velocity.
-                 (update-velocity vel acc n
-                                  :grid-dim particle-grid-dim
-                                  :block-dim particle-block-dim)
-                 ;; Update position.
-                 (update-position pos vel n
-                                  :grid-dim particle-grid-dim
-                                  :block-dim particle-block-dim)
-                 ;; Synchronize CUDA context.
-                 (synchronize-context)
-                 ;; Output POV file.
-                 ;(when (= (mod i 10) 0)
-                 ;  (sync-memory-block pos :device-to-host)
-                 ;  (output (/ i 10) pos))
-                 )))))))
+                  ;; Update velocity.
+                  (update-velocity vel acc n
+                                   :grid-dim particle-grid-dim
+                                   :block-dim particle-block-dim)
+                  ;; Update position.
+                  (update-position pos vel n
+                                   :grid-dim particle-grid-dim
+                                   :block-dim particle-block-dim)
+                  ;; Synchronize CUDA context.
+                  (synchronize-context)
+                  ;; Output POV file.
+                                        ;(when (= (mod i 10) 0)
+                                        ;  (sync-memory-block pos :device-to-host)
+                                        ;  (output (/ i 10) pos))
+               ))))))
+
+(defun main ()
+  (with-platform-id (platform)
+    (with-device-ids (devices num-devices platform)
+      (with-context (context (null-pointer) 1 devices)
+        (let ((c-source-code (kernel-manager-translate *kernel-manager*))
+              (device (mem-aref devices 'cl-device-id)))
+          (with-program-with-source (program context 1 c-source-code)
+            (build-program program 1 devices)
+            (let* (;; Grid and block dims.
+                   (neighbor-map-grid-dim '(45 37 1))
+                   (neighbor-map-block-dim '(37 1 1))
+                   (particle-grid-dim '(512 1 1))
+                   (particle-block-dim '(64 1 1))
+                   ;; Get initial condition.
+                   (particles (initial-condition init-min init-max (/ pdist simscale)))
+                   ;; Get number of particles.
+                   (n (length particles))
+                   ;; Compute neighbor map origin.
+                   (origin (compute-origin box-min delta)))
+              (multiple-value-bind (size-x size-y size-z size)
+                  (compute-size box-min box-max delta capacity)
+                (with-foreign-objects ((pos 'float4 n)
+                                       (vel 'float4 n)
+                                       (acc 'float4 n)
+                                       (force 'float4 n)
+                                       (rho :float n)
+                                       (prs :float n)
+                                       (neighbor-map :int size))
+                  
+                  #+nil
+                  (with-buffers ((a-device context +cl-mem-read-only+ data-bytes)
+                                 (b-device context +cl-mem-read-only+ data-bytes)
+                                 (c-device context +cl-mem-write-only+ data-bytes))
+                    (with-command-queue (command-queue context device 0)
+                      (enqueue-write-buffer command-queue
+                                            a-device
+                                            +cl-true+
+                                            0
+                                            data-bytes
+                                            a-host)
+                      (enqueue-write-buffer command-queue
+                                            b-device
+                                            +cl-true+
+                                            0
+                                            data-bytes
+                                            b-host)
+                      (finish command-queue)
+                      (with-work-size (global-work-size elements)
+                        (with-kernel (kernel program "oclcl_examples_vector_add_oclapi_vec_add_kernel")
+                          (with-pointers ((a-pointer a-device)
+                                          (b-pointer b-device)
+                                          (c-pointer c-device))
+                            (set-kernel-arg kernel 0 8 a-pointer)
+                            (set-kernel-arg kernel 1 8 b-pointer)
+                            (set-kernel-arg kernel 2 8 c-pointer)
+                            (enqueue-ndrange-kernel command-queue
+                                                    kernel
+                                                    1
+                                                    global-work-size
+                                                    (null-pointer))
+                            (enqueue-read-buffer command-queue
+                                                 c-device
+                                                 +cl-true+
+                                                 0
+                                                 data-bytes
+                                                 c-host)
+                            (finish command-queue)
+                            (verify-result a-host b-host c-host elements)))))))))))))))
