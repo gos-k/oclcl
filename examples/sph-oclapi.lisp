@@ -566,7 +566,6 @@ light_source { <0, 30, -30> color White }
                                        (rho :float n)
                                        (prs :float n)
                                        (neighbor-map :int size))
-                  
                   (with-buffers ((pos-device context +cl-mem-read-only+ (* 4 4 n))
                                  (vel-device context +cl-mem-read-only+ (* 4 4 n))
                                  (acc-device context +cl-mem-read-only+ (* 4 4 n))
@@ -574,21 +573,51 @@ light_source { <0, 30, -30> color White }
                                  (rho-device context +cl-mem-read-only+ (* 4 n))
                                  (prs-device context +cl-mem-read-only+ (* 4 n))
                                  (neighbor-map-device context +cl-mem-read-only+ (* 4 size)))
-                    #+nil
                     (with-command-queue (command-queue context device 0)
                       (enqueue-write-buffer command-queue
-                                            a-device
+                                            pos-device
                                             +cl-true+
                                             0
-                                            data-bytes
-                                            a-host)
+                                            (* 4 4 n)
+                                            pos)
                       (enqueue-write-buffer command-queue
-                                            b-device
+                                            vel-device
                                             +cl-true+
                                             0
-                                            data-bytes
-                                            b-host)
+                                            (* 4 4 n)
+                                            vel)
+                      (enqueue-write-buffer command-queue
+                                            acc-device
+                                            +cl-true+
+                                            0
+                                            (* 4 4 n)
+                                            acc)
+                      (enqueue-write-buffer command-queue
+                                            force-device
+                                            +cl-true+
+                                            0
+                                            (* 4 4 n)
+                                            force)
+                      (enqueue-write-buffer command-queue
+                                            rho-device
+                                            +cl-true+
+                                            0
+                                            (* 4 n)
+                                            rho)
+                      (enqueue-write-buffer command-queue
+                                            prs-device
+                                            +cl-true+
+                                            0
+                                            (* 4 n)
+                                            prs)
+                      (enqueue-write-buffer command-queue
+                                            neighbor-map-device
+                                            +cl-true+
+                                            0
+                                            (* 4 size)
+                                            neighbor-map)
                       (finish command-queue)
+                      #+nil
                       (with-work-size (global-work-size elements)
                         (with-kernel (kernel program "oclcl_examples_vector_add_oclapi_vec_add_kernel")
                           (with-pointers ((a-pointer a-device)
