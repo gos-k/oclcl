@@ -596,6 +596,15 @@ light_source { <0, 30, -30> color White }
                         (loop repeat 300
                               for i from 1
                               do ;; Clear neighbor map.
+                                 (with-kernel (kernel program "oclcl_examples_sph_oclapi_clear_neighbor_map")
+                                   (with-pointers ((neighbor-map-pointer neighbor-map-device))
+                                     (set-kernel-arg kernel 0 8 neighbor-map-pointer)
+                                     (enqueue-ndrange-kernel command-queue
+                                                             kernel
+                                                             1
+                                                             neighbor-map-global-work-size
+                                                             neighbor-map-local-work-size)
+                                     (finish command-queue)))
                                  #+nil
                                  (clear-neighbor-map neighbor-map
                                                      :grid-dim neighbor-map-grid-dim
