@@ -70,14 +70,14 @@
 (defkernel-symbol-macro restdensity 600.0)
 (defkernel-symbol-macro g (float4 0.0 -9.8 0.0 0.0))
 
-(defmemory box-min (float4 0.0 0.0 0.0 0.0))
-(defmemory box-max (float4 0.0 0.0 0.0 0.0))
-(defmemory origin (float4 0.0 0.0 0.0 0.0))
-(defmemory delta 0.0)
-(defmemory capacity 0)
-(defmemory size-x 0)
-(defmemory size-y 0)
-(defmemory size-z 0)
+(defmemory box-min (float4 0.0 0.0 0.0 0.0) :constant)
+(defmemory box-max (float4 0.0 0.0 0.0 0.0) :constant)
+(defmemory origin (float4 0.0 0.0 0.0 0.0) :constant)
+(defmemory delta 0.0 :constant)
+(defmemory capacity 0 :constant)
+(defmemory size-x 0 :constant)
+(defmemory size-y 0 :constant)
+(defmemory size-z 0 :constant)
 
 (defparameter h           0.005)
 (defparameter pmass       (/ 0.00020543 8.0))
@@ -92,6 +92,7 @@
 (defparameter init-max    '(0.0 40.0  30.0 0.0))
 (defparameter capacity    400)  ; # of particles contained in one cell
 
+#+nil
 (defkernel set-params (void ((box-min-0 float)
                              (box-min-1 float)
                              (box-min-2 float)
