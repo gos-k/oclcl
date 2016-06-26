@@ -184,7 +184,7 @@
 (defun compute-size (box-min box-max delta capacity)
   (assert (and (< (nth 0 box-min) (nth 0 box-max))
                (< (nth 1 box-min) (nth 1 box-max))
-               (< (nth box-min) (nth 2 box-max))))
+               (< (nth 2 box-min) (nth 2 box-max))))
   (assert (< 0.0 delta))
   (assert (< 0 capacity))
   (flet ((compute-size1 (x0 x1)
