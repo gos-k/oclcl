@@ -443,11 +443,20 @@ light_source { <0, 30, -30> color White }
                        do (push (list x y z 0.0) result))))
         result))))
 
+(defun set-float4 (forign-array index value0 value1 value2 value3)
+  (labels ((set-element (offset value)
+             (setf (mem-aref forign-array :float (+ (* 4 index) offset))
+                   value)))
+    (set-element 0 value0)
+    (set-element 1 value1)
+    (set-element 2 value2)
+    (set-element 3 value3)))
+
 (defun initialize (pos vel particles)
   (loop for p in particles
         for i from 0
-     do (setf (mem-aref pos i) p)
-        (setf (mem-aref vel i) (list 0.0 0.0 0.0 0.0))))
+        do (set-float4 pos i (nth 0 p) (nth 1 p) (nth 2 p) (nth 3 p))
+           (set-float4 vel i 0.0 0.0 0.0 0.0)))
 
 (defun peek-memory-block (memory-block)
   (sync-memory-block memory-block :device-to-host)
@@ -552,15 +561,14 @@ light_source { <0, 30, -30> color White }
                    (n (length particles))
                    ;; Compute neighbor map origin.
                    (origin (compute-origin box-min delta)))
+
+              ;; Print number of particles.
+              (format t "~A particles~%" n)
               (multiple-value-bind (size-x size-y size-z size)
                   (compute-size box-min box-max delta capacity)
                 (with-foreign-objects ((pos :float (* 4 n))
-                                       (vel :float (* 4 n))
-                                       (acc :float (* 4 n))
-                                       (force :float (* 4 n))
-                                       (rho :float n)
-                                       (prs :float n)
-                                       (neighbor-map :int size))
+                                       (vel :float (* 4 n)))
+                  (initialize pos vel particles)
                   (with-buffers ((pos-device context +cl-mem-read-write+ (* 4 4 n))
                                  (vel-device context +cl-mem-read-write+ (* 4 4 n))
                                  (acc-device context +cl-mem-read-write+ (* 4 4 n))
@@ -568,8 +576,6 @@ light_source { <0, 30, -30> color White }
                                  (rho-device context +cl-mem-read-write+ (* 4 n))
                                  (prs-device context +cl-mem-read-write+ (* 4 n))
                                  (neighbor-map-device context +cl-mem-read-write+ (* 4 size)))
-                    ;; Print number of particles.
-                    (format t "~A particles~%" n)
                     (with-command-queue (command-queue context device 0)
                       (labels ((write-buffer (device size host)
                                  (enqueue-write-buffer command-queue
@@ -580,11 +586,6 @@ light_source { <0, 30, -30> color White }
                                                        host)))
                         (write-buffer pos-device (* 4 4 n) pos)
                         (write-buffer vel-device (* 4 4 n) vel)
-                        (write-buffer acc-device (* 4 4 n) acc)
-                        (write-buffer force-device (* 4 4 n) force)
-                        (write-buffer rho-device (* 4 n) rho)
-                        (write-buffer prs-device (* 4 n) prs)
-                        (write-buffer neighbor-map-device (* 4 size) neighbor-map)
                         (finish command-queue))
 
                       ;; Grid and block dims.
