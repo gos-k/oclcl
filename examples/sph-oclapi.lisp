@@ -725,7 +725,25 @@ light_source { <0, 30, -30> color White }
                                  (update-acceleration acc force rho n
                                                       :grid-dim particle-grid-dim
                                                       :block-dim particle-block-dim)
+
                                  ;; Apply boundary condition.
+                                 #+nil
+                                 (with-kernel (kernel program "oclcl_examples_sph_oclapi_boundary_condition")
+                                   (with-pointers ((acc-pointer acc-device)
+                                                   (pos-pointer pos-device)
+                                                   (vel-pointer vel-device))
+                                     (with-foreign-object (n-pointer 'cl-int)
+                                       (setf (mem-aref n-pointer 'cl-int) n)
+                                       (set-kernel-arg kernel 0 8 acc-pointer)
+                                       (set-kernel-arg kernel 1 8 pos-pointer)
+                                       (set-kernel-arg kernel 2 8 vel-pointer)
+                                       (set-kernel-arg kernel 3 4 n-pointer)
+                                       (enqueue-ndrange-kernel command-queue
+                                                               kernel
+                                                               1
+                                                               particle-global-work-size
+                                                               particle-local-work-size)
+                                       (finish command-queue))))
                                  #+nil
                                  (boundary-condition acc pos vel n
                                                      :grid-dim particle-grid-dim
