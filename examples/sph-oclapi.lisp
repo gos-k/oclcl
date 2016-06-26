@@ -574,48 +574,20 @@ light_source { <0, 30, -30> color White }
                                  (prs-device context +cl-mem-read-only+ (* 4 n))
                                  (neighbor-map-device context +cl-mem-read-only+ (* 4 size)))
                     (with-command-queue (command-queue context device 0)
-                      (enqueue-write-buffer command-queue
-                                            pos-device
+                      (labels ((write-buffer (device size host)
+                                 (enqueue-write-buffer command-queue
+                                            device
                                             +cl-true+
                                             0
-                                            (* 4 4 n)
-                                            pos)
-                      (enqueue-write-buffer command-queue
-                                            vel-device
-                                            +cl-true+
-                                            0
-                                            (* 4 4 n)
-                                            vel)
-                      (enqueue-write-buffer command-queue
-                                            acc-device
-                                            +cl-true+
-                                            0
-                                            (* 4 4 n)
-                                            acc)
-                      (enqueue-write-buffer command-queue
-                                            force-device
-                                            +cl-true+
-                                            0
-                                            (* 4 4 n)
-                                            force)
-                      (enqueue-write-buffer command-queue
-                                            rho-device
-                                            +cl-true+
-                                            0
-                                            (* 4 n)
-                                            rho)
-                      (enqueue-write-buffer command-queue
-                                            prs-device
-                                            +cl-true+
-                                            0
-                                            (* 4 n)
-                                            prs)
-                      (enqueue-write-buffer command-queue
-                                            neighbor-map-device
-                                            +cl-true+
-                                            0
-                                            (* 4 size)
-                                            neighbor-map)
+                                            size
+                                            host)))
+                        (write-buffer pos-device (* 4 4 n) pos)
+                        (write-buffer vel-device (* 4 4 n) vel)
+                        (write-buffer acc-device (* 4 4 n) acc)
+                        (write-buffer force-device (* 4 4 n) force)
+                        (write-buffer rho-device (* 4 n) rho)
+                        (write-buffer prs-device (* 4 n) prs)
+                        (write-buffer neighbor-map-device (* 4 size) neighbor-map))
                       (finish command-queue)
                       #+nil
                       (with-work-size (global-work-size elements)
