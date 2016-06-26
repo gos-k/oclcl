@@ -702,7 +702,25 @@ light_source { <0, 30, -30> color White }
                                  (update-force force pos vel rho prs n neighbor-map
                                                :grid-dim particle-grid-dim
                                                :block-dim particle-block-dim)
+
                                  ;; Update acceleration.
+                                 #+nil
+                                 (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_acceleration")
+                                   (with-pointers ((acc-pointer acc-device)
+                                                   (force-pointer force-device)
+                                                   (rho-pointer rho-device))
+                                     (with-foreign-object (n-pointer 'cl-int)
+                                       (setf (mem-aref n-pointer 'cl-int) n)
+                                       (set-kernel-arg kernel 0 8 acc-pointer)
+                                       (set-kernel-arg kernel 1 8 force-pointer)
+                                       (set-kernel-arg kernel 2 8 rho-pointer)
+                                       (set-kernel-arg kernel 3 4 n-pointer)
+                                       (enqueue-ndrange-kernel command-queue
+                                                               kernel
+                                                               1
+                                                               particle-global-work-size
+                                                               particle-local-work-size)
+                                       (finish command-queue))))
                                  #+nil
                                  (update-acceleration acc force rho n
                                                       :grid-dim particle-grid-dim
