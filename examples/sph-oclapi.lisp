@@ -561,13 +561,13 @@ light_source { <0, 30, -30> color White }
                                        (rho :float n)
                                        (prs :float n)
                                        (neighbor-map :int size))
-                  (with-buffers ((pos-device context +cl-mem-read-only+ (* 4 4 n))
-                                 (vel-device context +cl-mem-read-only+ (* 4 4 n))
-                                 (acc-device context +cl-mem-read-only+ (* 4 4 n))
-                                 (force-device context +cl-mem-read-only+ (* 4 4 n))
-                                 (rho-device context +cl-mem-read-only+ (* 4 n))
-                                 (prs-device context +cl-mem-read-only+ (* 4 n))
-                                 (neighbor-map-device context +cl-mem-read-only+ (* 4 size)))
+                  (with-buffers ((pos-device context +cl-mem-read-write+ (* 4 4 n))
+                                 (vel-device context +cl-mem-read-write+ (* 4 4 n))
+                                 (acc-device context +cl-mem-read-write+ (* 4 4 n))
+                                 (force-device context +cl-mem-read-write+ (* 4 4 n))
+                                 (rho-device context +cl-mem-read-write+ (* 4 n))
+                                 (prs-device context +cl-mem-read-write+ (* 4 n))
+                                 (neighbor-map-device context +cl-mem-read-write+ (* 4 size)))
                     ;; Print number of particles.
                     (format t "~A particles~%" n)
                     (with-command-queue (command-queue context device 0)
@@ -788,6 +788,7 @@ light_source { <0, 30, -30> color White }
                                  (update-position pos vel n
                                                   :grid-dim particle-grid-dim
                                                   :block-dim particle-block-dim)
+
                                  ;; Synchronize CUDA context.
                                  #+nil
                                  (synchronize-context)
