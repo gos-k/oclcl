@@ -652,7 +652,22 @@ light_source { <0, 30, -30> color White }
                                  (update-density rho pos n neighbor-map
                                                  :grid-dim particle-grid-dim
                                                  :block-dim particle-block-dim)
+
                                  ;; Update pressure.
+                                 (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_pressure")
+                                   (with-pointers ((rho-pointer rho-device)
+                                                   (prs-pointer prs-device))
+                                     (with-foreign-object (n-pointer 'cl-int)
+                                       (setf (mem-aref n-pointer 'cl-int) n)
+                                       (set-kernel-arg kernel 0 8 prs-pointer)
+                                       (set-kernel-arg kernel 1 8 rho-pointer)
+                                       (set-kernel-arg kernel 2 4 n-pointer)
+                                       (enqueue-ndrange-kernel command-queue
+                                                               kernel
+                                                               1
+                                                               particle-global-work-size
+                                                               particle-local-work-size)
+                                       (finish command-queue))))
                                  #+nil
                                  (update-pressure prs rho n
                                                   :grid-dim particle-grid-dim
