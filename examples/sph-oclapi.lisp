@@ -609,7 +609,22 @@ light_source { <0, 30, -30> color White }
                                  (clear-neighbor-map neighbor-map
                                                      :grid-dim neighbor-map-grid-dim
                                                      :block-dim neighbor-map-block-dim)
+
                                  ;; Update neighbor map.
+                                 (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_neighbor_map")
+                                   (with-pointers ((neighbor-map-pointer neighbor-map-device)
+                                                   (pos-pointer pos-device))
+                                     (with-foreign-object (n-pointer 'cl-int)
+                                       (setf (mem-aref n-pointer 'cl-int) n)
+                                       (set-kernel-arg kernel 0 8 neighbor-map-pointer)
+                                       (set-kernel-arg kernel 1 8 pos-pointer)
+                                       (set-kernel-arg kernel 2 4 n-pointer)
+                                       (enqueue-ndrange-kernel command-queue
+                                                               kernel
+                                                               1
+                                                               particle-global-work-size
+                                                               particle-local-work-size)
+                                       (finish command-queue))))
                                  #+nil
                                  (update-neighbor-map neighbor-map pos n
                                                       :grid-dim particle-grid-dim
