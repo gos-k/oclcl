@@ -70,14 +70,23 @@
 (defkernel-symbol-macro restdensity 600.0)
 (defkernel-symbol-macro g (float4 0.0 -9.8 0.0 0.0))
 
-(defmemory box-min (float4 0.0 0.0 0.0 0.0) :constant)
-(defmemory box-max (float4 0.0 0.0 0.0 0.0) :constant)
+;(defmemory box-min (float4 0.0 0.0 0.0 0.0) :constant)
+;(defmemory box-max (float4 0.0 0.0 0.0 0.0) :constant)
+;(defmemory origin (float4 0.0 0.0 0.0 0.0) :constant)
+;(defmemory delta 0.0 :constant)
+;(defmemory capacity 0 :constant)
+;(defmemory size-x 0 :constant)
+;(defmemory size-y 0 :constant)
+;(defmemory size-z 0 :constant)
+
+(defmemory box-min (float4 -10.0  0.0 -10.0 0.0) :constant)
+(defmemory box-max (float4 30.0 50.0  30.0 0.0) :constant)
 (defmemory origin (float4 0.0 0.0 0.0 0.0) :constant)
-(defmemory delta 0.0 :constant)
-(defmemory capacity 0 :constant)
-(defmemory size-x 0 :constant)
-(defmemory size-y 0 :constant)
-(defmemory size-z 0 :constant)
+(defmemory delta (/ 0.005 0.004) :constant)
+(defmemory capacity 400 :constant)
+(defmemory size-x 37 :constant)
+(defmemory size-y 45 :constant)
+(defmemory size-z 37 :constant)
 
 (defparameter h           0.005)
 (defparameter pmass       (/ 0.00020543 8.0))
@@ -91,44 +100,6 @@
 (defparameter init-min    '(-10.0  0.0 -10.0 0.0))
 (defparameter init-max    '(0.0 40.0  30.0 0.0))
 (defparameter capacity    400)  ; # of particles contained in one cell
-
-#+nil
-(defkernel set-params (void ((box-min-0 float)
-                             (box-min-1 float)
-                             (box-min-2 float)
-                             (box-min-3 float)
-                             (box-max-0 float)
-                             (box-max-1 float)
-                             (box-max-2 float)
-                             (box-max-3 float)
-                             (origin-0 float)
-                             (origin-1 float)
-                             (origin-2 float)
-                             (origin-3 float)
-                             (d float)
-                             (c int)
-                             (sx int)
-                             (sy int)
-                             (sz int)))
-
-  (set box-min (float4 box-min-0
-                       box-min-1
-                       box-min-2
-                       box-min-3))
-
-  (set box-max (float4 box-max-0
-                       box-max-1
-                       box-max-2
-                       box-max-3))
-  (set origin (float4 origin-0
-                      origin-1
-                      origin-2
-                      origin-3))
-  (set delta d)
-  (set capacity c)
-  (set size-x sx)
-  (set size-y sy)
-  (set size-z sz))
 
 ;;
 ;; Neighbor map
@@ -573,6 +544,7 @@ light_source { <0, 30, -30> color White }
       (with-context (context (null-pointer) 1 devices)
         (let ((c-source-code (kernel-manager-translate *kernel-manager*))
               (device (mem-aref devices 'cl-device-id)))
+          (pprint c-source-code)
           (with-program-with-source (program context 1 c-source-code)
             (build-program program 1 devices)
             (let* (;; Get initial condition.
