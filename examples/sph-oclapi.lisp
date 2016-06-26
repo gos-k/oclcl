@@ -546,12 +546,7 @@ light_source { <0, 30, -30> color White }
               (device (mem-aref devices 'cl-device-id)))
           (with-program-with-source (program context 1 c-source-code)
             (build-program program 1 devices)
-            (let* (;; Grid and block dims.
-                   (neighbor-map-grid-dim '(45 37 1))
-                   (neighbor-map-block-dim '(37 1 1))
-                   (particle-grid-dim '(512 1 1))
-                   (particle-block-dim '(64 1 1))
-                   ;; Get initial condition.
+            (let* (;; Get initial condition.
                    (particles (initial-condition init-min init-max (/ pdist simscale)))
                    ;; Get number of particles.
                    (n (length particles))
@@ -573,41 +568,106 @@ light_source { <0, 30, -30> color White }
                                  (rho-device context +cl-mem-read-only+ (* 4 n))
                                  (prs-device context +cl-mem-read-only+ (* 4 n))
                                  (neighbor-map-device context +cl-mem-read-only+ (* 4 size)))
+                    ;; Print number of particles.
+                    (format t "~A particles~%" n)
                     (with-command-queue (command-queue context device 0)
                       (labels ((write-buffer (device size host)
                                  (enqueue-write-buffer command-queue
-                                            device
-                                            +cl-true+
-                                            0
-                                            size
-                                            host)))
+                                                       device
+                                                       +cl-true+
+                                                       0
+                                                       size
+                                                       host)))
                         (write-buffer pos-device (* 4 4 n) pos)
                         (write-buffer vel-device (* 4 4 n) vel)
                         (write-buffer acc-device (* 4 4 n) acc)
                         (write-buffer force-device (* 4 4 n) force)
                         (write-buffer rho-device (* 4 n) rho)
                         (write-buffer prs-device (* 4 n) prs)
-                        (write-buffer neighbor-map-device (* 4 size) neighbor-map))
-                      (finish command-queue)
-                      #+nil
-                      (with-work-size (global-work-size elements)
-                        (with-kernel (kernel program "oclcl_examples_vector_add_oclapi_vec_add_kernel")
-                          (with-pointers ((a-pointer a-device)
-                                          (b-pointer b-device)
-                                          (c-pointer c-device))
-                            (set-kernel-arg kernel 0 8 a-pointer)
-                            (set-kernel-arg kernel 1 8 b-pointer)
-                            (set-kernel-arg kernel 2 8 c-pointer)
-                            (enqueue-ndrange-kernel command-queue
-                                                    kernel
-                                                    1
-                                                    global-work-size
-                                                    (null-pointer))
-                            (enqueue-read-buffer command-queue
-                                                 c-device
-                                                 +cl-true+
-                                                 0
-                                                 data-bytes
-                                                 c-host)
-                            (finish command-queue)
-                            (verify-result a-host b-host c-host elements)))))))))))))))
+                        (write-buffer neighbor-map-device (* 4 size) neighbor-map)
+                        (finish command-queue))
+
+                      ;; Grid and block dims.
+                      (with-work-sizes ((neighbor-map-global-work-size (* 45 37) 37)
+                                        (neighbor-map-local-work-size 37)
+                                        (particle-global-work-size (* 512 64))
+                                        (particle-local-work-size 64))
+                        ;; Do simulation.(time
+                        (loop repeat 300
+                              for i from 1
+                              do ;; Clear neighbor map.
+                                 #+nil
+                                 (clear-neighbor-map neighbor-map
+                                                     :grid-dim neighbor-map-grid-dim
+                                                     :block-dim neighbor-map-block-dim)
+                                 ;; Update neighbor map.
+                                 #+nil
+                                 (update-neighbor-map neighbor-map pos n
+                                                      :grid-dim particle-grid-dim
+                                                      :block-dim particle-block-dim)
+                                 ;; Update density.
+                                 #+nil
+                                 (update-density rho pos n neighbor-map
+                                                 :grid-dim particle-grid-dim
+                                                 :block-dim particle-block-dim)
+                                 ;; Update pressure.
+                                 #+nil
+                                 (update-pressure prs rho n
+                                                  :grid-dim particle-grid-dim
+                                                  :block-dim particle-block-dim)
+                                 ;; Update force.
+                                 #+nil
+                                 (update-force force pos vel rho prs n neighbor-map
+                                               :grid-dim particle-grid-dim
+                                               :block-dim particle-block-dim)
+                                 ;; Update acceleration.
+                                 #+nil
+                                 (update-acceleration acc force rho n
+                                                      :grid-dim particle-grid-dim
+                                                      :block-dim particle-block-dim)
+                                 ;; Apply boundary condition.
+                                 #+nil
+                                 (boundary-condition acc pos vel n
+                                                     :grid-dim particle-grid-dim
+                                                     :block-dim particle-block-dim)
+                                 ;; Update velocity.
+                                 #+nil
+                                 (update-velocity vel acc n
+                                                  :grid-dim particle-grid-dim
+                                                  :block-dim particle-block-dim)
+                                 ;; Update position.
+                                 #+nil
+                                 (update-position pos vel n
+                                                  :grid-dim particle-grid-dim
+                                                  :block-dim particle-block-dim)
+                                 ;; Synchronize CUDA context.
+                                 #+nil
+                                 (synchronize-context)
+                                 ;; Output POV file.
+                                        ;(when (= (mod i 10) 0)
+                                        ;  (sync-memory-block pos :device-to-host)
+                                        ;  (output (/ i 10) pos))
+                              )))
+
+                    #+nil
+                    (with-work-size (global-work-size elements)
+                      (with-kernel (kernel program "oclcl_examples_vector_add_oclapi_vec_add_kernel")
+                        (with-pointers ((a-pointer a-device)
+                                        (b-pointer b-device)
+                                        (c-pointer c-device))
+                          (set-kernel-arg kernel 0 8 a-pointer)
+                          (set-kernel-arg kernel 1 8 b-pointer)
+                          (set-kernel-arg kernel 2 8 c-pointer)
+                          (enqueue-ndrange-kernel command-queue
+                                                  kernel
+                                                  1
+                                                  global-work-size
+                                                  (null-pointer))
+                          (enqueue-read-buffer command-queue
+                                               c-device
+                                               +cl-true+
+                                               0
+                                               data-bytes
+                                               c-host)
+                          (finish command-queue)
+                          (verify-result a-host b-host c-host elements))))))))))))))
