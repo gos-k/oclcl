@@ -547,6 +547,26 @@ light_source { <0, 30, -30> color White }
                                         ;  (output (/ i 10) pos))
                ))))))
 
+(defun foreign-float-to-lisp-float (foreign-array foreign-size)
+  (let ((n (if (< foreign-size 100)
+               foreign-size
+               100)))
+    (loop for i from 0 below n
+          collecting (mem-aref foreign-array 'cl-float i))))
+
+(defun pprint-foreign-float (foreign-array foreign-size)
+  (pprint (foreign-float-to-lisp-float foreign-array foreign-size)))
+
+(defun pprint-device-float (command-queue device size)
+  (with-foreign-objects ((foreign-array 'cl-float size))
+    (enqueue-read-buffer command-queue
+                         device
+                         +cl-true+
+                         0
+                         (* (foreign-type-size 'cl-float) size)
+                         foreign-array)
+    (pprint-foreign-float foreign-array size)))
+
 (defun main ()
   (with-platform-id (platform)
     (with-device-ids (devices num-devices platform)
@@ -610,6 +630,8 @@ light_source { <0, 30, -30> color White }
                                  (clear-neighbor-map neighbor-map
                                                      :grid-dim neighbor-map-grid-dim
                                                      :block-dim neighbor-map-block-dim)
+                                 #+nil
+                                 (pprint-device-float command-queue neighbor-map-device size)
 
                                  ;; Update neighbor map.
                                  (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_neighbor_map")
