@@ -567,10 +567,14 @@ light_source { <0, 30, -30> color White }
                                        (prs :float n)
                                        (neighbor-map :int size))
                   
-                  #+nil
-                  (with-buffers ((a-device context +cl-mem-read-only+ data-bytes)
-                                 (b-device context +cl-mem-read-only+ data-bytes)
-                                 (c-device context +cl-mem-write-only+ data-bytes))
+                  (with-buffers ((pos-device context +cl-mem-read-only+ (* 4 4 n))
+                                 (vel-device context +cl-mem-read-only+ (* 4 4 n))
+                                 (acc-device context +cl-mem-read-only+ (* 4 4 n))
+                                 (force-device context +cl-mem-read-only+ (* 4 4 n))
+                                 (rho-device context +cl-mem-read-only+ (* 4 n))
+                                 (prs-device context +cl-mem-read-only+ (* 4 n))
+                                 (neighbor-map-device context +cl-mem-read-only+ (* 4 size)))
+                    #+nil
                     (with-command-queue (command-queue context device 0)
                       (enqueue-write-buffer command-queue
                                             a-device
