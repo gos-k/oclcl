@@ -86,7 +86,7 @@
 (defparameter g           (make-float4 0.0 -9.8 0.0 0.0))
 (defparameter delta       (/ h simscale))
 (defparameter box-min     '(-10.0  0.0 -10.0 0.0))
-(defparameter box-max     (make-float4  30.0 50.0  30.0 0.0))
+(defparameter box-max     '(30.0 50.0  30.0 0.0))
 (defparameter init-min    (make-float4 -10.0  0.0 -10.0 0.0))
 (defparameter init-max    (make-float4   0.0 40.0  30.0 0.0))
 (defparameter capacity    400)  ; # of particles contained in one cell
@@ -144,17 +144,17 @@
                  0.0)))
 
 (defun compute-size (box-min box-max delta capacity)
-  (assert (and (< (nth 0 box-min) (float4-x box-max))
-               (< (nth 1 box-min) (float4-y box-max))
-               (< (nth box-min) (float4-z box-max))))
+  (assert (and (< (nth 0 box-min) (nth 0 box-max))
+               (< (nth 1 box-min) (nth 1 box-max))
+               (< (nth box-min) (nth 2 box-max))))
   (assert (< 0.0 delta))
   (assert (< 0 capacity))
   (flet ((compute-size1 (x0 x1)
            (+ (ceiling (/ (- x1 x0) delta))
               4)))
-    (let* ((size-x (compute-size1 (nth 0 box-min) (float4-x box-max)))
-           (size-y (compute-size1 (nth 1 box-min) (float4-y box-max)))
-           (size-z (compute-size1 (nth 2 box-min) (float4-z box-max)))
+    (let* ((size-x (compute-size1 (nth 0 box-min) (nth 0 box-max)))
+           (size-y (compute-size1 (nth 1 box-min) (nth 1 box-max)))
+           (size-z (compute-size1 (nth 2 box-min) (nth 2 box-max)))
            (size (* size-x
                     size-y
                     size-z
