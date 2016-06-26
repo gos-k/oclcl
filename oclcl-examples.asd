@@ -13,15 +13,15 @@
   :author "gos-k"
   :license "LLGPL"
   :depends-on (:oclcl
-               :eazy-opencl
+               ;:eazy-opencl
                :cl-oclapi
                :imago)
   :components ((:module "examples"
                 :components
                 ((:file "sph-cpu")
-                 (:file "vector-add")
-                 (:file "diffuse0")
-                 (:file "diffuse1")
+                 ;(:file "vector-add")
+                 ;(:file "diffuse0")
+                 ;(:file "diffuse1")
                  (:file "vector-add-oclapi")
                  (:file "diffuse0-oclapi")
                  (:file "diffuse1-oclapi")
