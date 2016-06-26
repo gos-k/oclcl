@@ -88,7 +88,7 @@
 (defparameter box-min     '(-10.0  0.0 -10.0 0.0))
 (defparameter box-max     '(30.0 50.0  30.0 0.0))
 (defparameter init-min    '(-10.0  0.0 -10.0 0.0))
-(defparameter init-max    (make-float4   0.0 40.0  30.0 0.0))
+(defparameter init-max    '(0.0 40.0  30.0 0.0))
 (defparameter capacity    400)  ; # of particles contained in one cell
 
 
@@ -397,7 +397,7 @@ light_source { <0, 30, -30> color White }
 
 (defun initial-condition (init-min init-max d)
   (multiple-value-bind (x0 y0 z0 w0) init-min
-    (with-float4 (x1 y1 z1 w1) init-max
+    (multiple-value-bind (x1 y1 z1 w1) init-max
       (let (result)
         (loop for x from (+ x0 d) below x1 by d
            do (loop for y from (+ y0 d) below y1 by d
