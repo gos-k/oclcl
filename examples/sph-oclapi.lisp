@@ -48,7 +48,7 @@
 ;;   (return (expt b p)))
 
 (defkernelmacro with-particle-index ((var) &body body)
-  `(let ((,var (+ (* block-idx-x block-dim-x) thread-idx-x)))
+  `(let ((,var (to-int (get-global-id 0))))
      ,@body))
 
 
@@ -156,9 +156,9 @@
             (set (aref neighbor-map (offset i j k (+ l 1))) p)))))))
 
 (defkernel clear-neighbor-map (void ((neighbor-map int*)))
-  (let ((i thread-idx-x)
-        (j block-idx-x)
-        (k block-idx-y))
+  (let ((i (to-int (get-local-id 0)))
+        (j (to-int (get-group-id 0)))
+        (k (to-int (get-group-id 1))))
     (set (aref neighbor-map (offset i j k 0)) 0)))
 
 (defkernelmacro do-neighbors ((var neighbor-map x) &body body)
