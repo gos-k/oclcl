@@ -83,7 +83,7 @@
 (defparameter simscale    0.004)
 (defparameter restdensity 600.0)
 (defparameter pdist       (expt (/ pmass restdensity) (/ 1.0 3.0)))
-(defparameter g           (make-float4 0.0 -9.8 0.0 0.0))
+(defparameter g           '(0.0 -9.8 0.0 0.0))
 (defparameter delta       (/ h simscale))
 (defparameter box-min     '(-10.0  0.0 -10.0 0.0))
 (defparameter box-max     '(30.0 50.0  30.0 0.0))
@@ -138,10 +138,10 @@
 
 (defun compute-origin (box-min delta)
   (let ((delta2 (* delta 2)))
-    (make-float4 (- (nth 0 box-min) delta2)
-                 (- (nth 1 box-min) delta2)
-                 (- (nth 2 box-min) delta2)
-                 0.0)))
+    (list (- (nth 0 box-min) delta2)
+          (- (nth 1 box-min) delta2)
+          (- (nth 2 box-min) delta2)
+          0.0)))
 
 (defun compute-size (box-min box-max delta capacity)
   (assert (and (< (nth 0 box-min) (nth 0 box-max))
@@ -402,14 +402,14 @@ light_source { <0, 30, -30> color White }
         (loop for x from (+ x0 d) below x1 by d
            do (loop for y from (+ y0 d) below y1 by d
                  do (loop for z from (+ z0 d) below z1 by d
-                       do (push (make-float4 x y z 0.0) result))))
+                       do (push (list x y z 0.0) result))))
         result))))
 
 (defun initialize (pos vel particles)
   (loop for p in particles
         for i from 0
      do (setf (memory-block-aref pos i) p)
-        (setf (memory-block-aref vel i) (make-float4 0.0 0.0 0.0 0.0))))
+        (setf (memory-block-aref vel i) (list 0.0 0.0 0.0 0.0))))
 
 (defun peek-memory-block (memory-block)
   (sync-memory-block memory-block :device-to-host)
