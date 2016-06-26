@@ -5,7 +5,7 @@
 |#
 
 (in-package :cl-user)
-(defpackage oclcl-examples.sph
+(defpackage oclcl-examples.sph-oclapi
   (:use :cl
         :cffi
         :oclcl
@@ -14,7 +14,7 @@
                 :with-gensyms
                 :once-only)
   (:export :main))
-(in-package :oclcl-examples.sph)
+(in-package :oclcl-examples.sph-oclapi)
 
 
 ;;
@@ -556,10 +556,10 @@ light_source { <0, 30, -30> color White }
                    (origin (compute-origin box-min delta)))
               (multiple-value-bind (size-x size-y size-z size)
                   (compute-size box-min box-max delta capacity)
-                (with-foreign-objects ((pos 'float4 n)
-                                       (vel 'float4 n)
-                                       (acc 'float4 n)
-                                       (force 'float4 n)
+                (with-foreign-objects ((pos :float (* 4 n))
+                                       (vel :float (* 4 n))
+                                       (acc :float (* 4 n))
+                                       (force :float (* 4 n))
                                        (rho :float n)
                                        (prs :float n)
                                        (neighbor-map :int size))
