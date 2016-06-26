@@ -796,27 +796,4 @@ light_source { <0, 30, -30> color White }
                                         ;(when (= (mod i 10) 0)
                                         ;  (sync-memory-block pos :device-to-host)
                                         ;  (output (/ i 10) pos))
-                              )))
-
-                    #+nil
-                    (with-work-size (global-work-size elements)
-                      (with-kernel (kernel program "oclcl_examples_vector_add_oclapi_vec_add_kernel")
-                        (with-pointers ((a-pointer a-device)
-                                        (b-pointer b-device)
-                                        (c-pointer c-device))
-                          (set-kernel-arg kernel 0 8 a-pointer)
-                          (set-kernel-arg kernel 1 8 b-pointer)
-                          (set-kernel-arg kernel 2 8 c-pointer)
-                          (enqueue-ndrange-kernel command-queue
-                                                  kernel
-                                                  1
-                                                  global-work-size
-                                                  (null-pointer))
-                          (enqueue-read-buffer command-queue
-                                               c-device
-                                               +cl-true+
-                                               0
-                                               data-bytes
-                                               c-host)
-                          (finish command-queue)
-                          (verify-result a-host b-host c-host elements))))))))))))))
+                              )))))))))))))
