@@ -112,9 +112,9 @@
        ,@body)))
 
 (defkernel offset (int ((i int) (j int) (k int) (l int)))
-  (return (+ (* capacity size-x size-y k)
-             (* capacity size-x j)
-             (* capacity i)
+  (return (+ (* (+ capacity 1) size-x size-y k)
+             (* (+ capacity 1) size-x j)
+             (* (+ capacity 1) i)
              l)))
 
 (defkernel update-neighbor-map (void ((neighbor-map int*)
