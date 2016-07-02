@@ -263,13 +263,17 @@
 
 (defun scalar-vector-binary-operator (operator scalar-type)
   (loop for vector-type in (generate-vector-type-symbols scalar-type)
-        collecting (list (list scalar-type vector-type) vector-type t operator)
+        collecting (list (list scalar-type vector-type) vector-type t operator)))
+
+(defun vector-scalar-binary-operator (operator scalar-type)
+  (loop for vector-type in (generate-vector-type-symbols scalar-type)
         collecting (list (list vector-type scalar-type) vector-type t operator)))
 
 (defun arithmetic-binary-operator (operator types)
   (loop for type in types
         appending (same-type-function operator 2 type t)
-        appending (scalar-vector-binary-operator operator type)))
+        appending (scalar-vector-binary-operator operator type)
+        appending (vector-scalar-binary-operator operator type)))
 
 (defun vector-relational-operator (operator argument-type result-type)
   (loop for n in '("2" "3" "4" "8" "16")

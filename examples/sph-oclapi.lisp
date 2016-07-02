@@ -106,9 +106,9 @@
 
 (defkernelmacro with-cell-index (((i j k) x) &body body)
   (once-only (x)
-    `(let ((,i (to-int (floor (/ (- (float4-x ,x) (float4-x origin)) delta))))
-           (,j (to-int (floor (/ (- (float4-y ,x) (float4-y origin)) delta))))
-           (,k (to-int (floor (/ (- (float4-z ,x) (float4-z origin)) delta)))))
+    `(let ((,i (max 0 (to-int (floor (/ (- (float4-x ,x) (float4-x origin)) delta)))))
+           (,j (max 0 (to-int (floor (/ (- (float4-y ,x) (float4-y origin)) delta)))))
+           (,k (max 0 (to-int (floor (/ (- (float4-z ,x) (float4-z origin)) delta))))))
        ,@body)))
 
 (defkernel offset (int ((i int) (j int) (k int) (l int)))
@@ -609,7 +609,6 @@ light_source { <0, 30, -30> color White }
                                  ;(pprint-device command-queue neighbor-map-device size 'cl-int)
 
                                  ;; Update neighbor map.
-                                 #+nil
                                  (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_neighbor_map")
                                    (with-pointers ((neighbor-map-pointer neighbor-map-device)
                                                    (pos-pointer pos-device))
