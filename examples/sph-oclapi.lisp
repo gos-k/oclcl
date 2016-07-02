@@ -518,17 +518,17 @@ light_source { <0, 30, -30> color White }
                                         ;  (output (/ i 10) pos))
                ))))))
 
-(defun foreign-to-lisp (foreign-array size type)
-  (let ((n (if (< size 100)
+(defun foreign-to-lisp (foreign-array size type &key (limit size) (step 1))
+  (let ((n (if (<= size limit)
                size
-               100)))
-    (loop for i from 0 below n
+               limit)))
+    (loop for i from 0 to (1- n) by step
           collecting (mem-aref foreign-array type i))))
 
-(defun pprint-foreign (foreign-array size type)
-  (pprint (foreign-to-lisp foreign-array size type)))
+(defun pprint-foreign (foreign-array size type &key (limit size) (step 1))
+  (pprint (foreign-to-lisp foreign-array size type :limit limit :step step)))
 
-(defun pprint-device (command-queue device size type)
+(defun pprint-device (command-queue device size type &key (limit size) (step 1))
   (with-foreign-objects ((foreign-array type size))
     (enqueue-read-buffer command-queue
                          device
@@ -536,7 +536,7 @@ light_source { <0, 30, -30> color White }
                          0
                          (* (foreign-type-size type) size)
                          foreign-array)
-    (pprint-foreign foreign-array size type)))
+    (pprint-foreign foreign-array size type :limit limit :step step)))
 
 (defun main ()
   (with-platform-id (platform)
@@ -563,8 +563,8 @@ light_source { <0, 30, -30> color White }
                 (with-foreign-objects ((pos :float (* 4 n))
                                        (vel :float (* 4 n)))
                   (initialize pos vel particles)
-                  ;(pprint-foreign pos (* 4 n) 'cl-float)
-                  ;(pprint-foreign vel (* 4 n) 'cl-float)
+                  ;(pprint-foreign pos (* 4 n) 'cl-float :limit 100)
+                  ;(pprint-foreign vel (* 4 n) 'cl-float :limit 100)
                   (with-buffers ((pos-device context +cl-mem-read-write+ (* 4 4 n))
                                  (vel-device context +cl-mem-read-write+ (* 4 4 n))
                                  (acc-device context +cl-mem-read-write+ (* 4 4 n))
@@ -606,7 +606,7 @@ light_source { <0, 30, -30> color White }
                                  (clear-neighbor-map neighbor-map
                                                      :grid-dim neighbor-map-grid-dim
                                                      :block-dim neighbor-map-block-dim)
-                                 ;(pprint-device command-queue neighbor-map-device size 'cl-int)
+                                 ;(pprint-device command-queue neighbor-map-device size 'cl-int :step (1+ capacity))
 
                                  ;; Update neighbor map.
                                  (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_neighbor_map")
