@@ -460,7 +460,9 @@
     clz ,(integer-types-unary-function "clz")
     mad-hi ,(integer-types-ternary-function "mad_hi")
     mad-sat ,(integer-types-ternary-function "mad_sat")
-    ;;max
+    max ,(append (integer-types-binary-function "max")
+                 (loop for type in +scalar-integer-types+
+                       collecting (vector-scalar-binary-operator "max" type)))
     ;;min
     mul-hi ,(integer-types-binary-function "mul_hi")
     rotate ,(integer-types-binary-function "rotate")
