@@ -542,7 +542,9 @@ light_source { <0, 30, -30> color White }
   (with-platform-id (platform)
     (with-device-ids (devices num-devices platform)
       (with-context (context (null-pointer) 1 devices)
-        (let ((c-source-code (kernel-manager-translate *kernel-manager*))
+        (let ((c-source-code (concatenate 'string
+                                          "#pragma OPENCL EXTENSION cl_khr_global_int32_base_atomics : enable"
+                                          (kernel-manager-translate *kernel-manager*)))
               (device (mem-aref devices 'cl-device-id)))
           (pprint c-source-code)
           (with-program-with-source (program context 1 c-source-code)
