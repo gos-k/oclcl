@@ -585,8 +585,8 @@ light_source { <0, 30, -30> color White }
                         (finish command-queue))
 
                       ;; Grid and block dims.
-                      (with-work-sizes ((neighbor-map-global-work-size (* 45 37) 37)
-                                        (neighbor-map-local-work-size 37)
+                      (with-work-sizes ((neighbor-map-global-work-size 37 45 37)
+                                        (neighbor-map-local-work-size 37 1 1)
                                         (particle-global-work-size (* 512 64))
                                         (particle-local-work-size 64))
                         ;; Do simulation.(time
@@ -598,7 +598,7 @@ light_source { <0, 30, -30> color White }
                                      (set-kernel-arg kernel 0 8 neighbor-map-pointer)
                                      (enqueue-ndrange-kernel command-queue
                                                              kernel
-                                                             1
+                                                             3
                                                              neighbor-map-global-work-size
                                                              neighbor-map-local-work-size)
                                      (finish command-queue)))
