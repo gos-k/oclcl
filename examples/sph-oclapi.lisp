@@ -518,12 +518,15 @@ light_source { <0, 30, -30> color White }
                                         ;  (output (/ i 10) pos))
                ))))))
 
-(defun foreign-float-to-lisp-float (foreign-array foreign-size)
-  (let ((n (if (< foreign-size 100)
-               foreign-size
+(defun foreign-to-lisp (array size type)
+  (let ((n (if (< size 100)
+               size
                100)))
     (loop for i from 0 below n
-          collecting (mem-aref foreign-array 'cl-float i))))
+          collecting (mem-aref array type i))))
+
+(defun foreign-float-to-lisp-float (foreign-array foreign-size)
+  (foreign-to-lisp foreign-array foreign-size 'cl-float))
 
 (defun pprint-foreign-float (foreign-array foreign-size)
   (pprint (foreign-float-to-lisp-float foreign-array foreign-size)))
@@ -606,6 +609,7 @@ light_source { <0, 30, -30> color White }
                                  (pprint-device-float command-queue neighbor-map-device size)
 
                                  ;; Update neighbor map.
+                                 #+nil
                                  (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_neighbor_map")
                                    (with-pointers ((neighbor-map-pointer neighbor-map-device)
                                                    (pos-pointer pos-device))
@@ -649,6 +653,7 @@ light_source { <0, 30, -30> color White }
                                                  :block-dim particle-block-dim)
 
                                  ;; Update pressure.
+                                 #+nil
                                  (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_pressure")
                                    (with-pointers ((rho-pointer rho-device)
                                                    (prs-pointer prs-device))
@@ -745,6 +750,7 @@ light_source { <0, 30, -30> color White }
                                                      :block-dim particle-block-dim)
 
                                  ;; Update velocity.
+                                 #+nil
                                  (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_velocity")
                                    (with-pointers ((vel-pointer vel-device)
                                                    (acc-pointer acc-device))
@@ -765,6 +771,7 @@ light_source { <0, 30, -30> color White }
                                                   :block-dim particle-block-dim)
 
                                  ;; Update position.
+                                 #+nil
                                  (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_position")
                                    (with-pointers ((pos-pointer pos-device)
                                                    (vel-pointer vel-device))
