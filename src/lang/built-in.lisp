@@ -269,6 +269,10 @@
   (loop for vector-type in (generate-vector-type-symbols scalar-type)
         collecting (list (list vector-type scalar-type) vector-type t operator)))
 
+(defun integer-vector-scalar-binary-operator (operator)
+  (loop for type in +scalar-integer-types+
+        collecting (vector-scalar-binary-operator operator type)))
+
 (defun arithmetic-binary-operator (operator types)
   (loop for type in types
         appending (same-type-function operator 2 type t)
@@ -461,8 +465,7 @@
     mad-hi ,(integer-types-ternary-function "mad_hi")
     mad-sat ,(integer-types-ternary-function "mad_sat")
     max ,(append (integer-types-binary-function "max")
-                 (loop for type in +scalar-integer-types+
-                       collecting (vector-scalar-binary-operator "max" type)))
+                 (integer-vector-scalar-binary-operator "max"))
     ;;min
     mul-hi ,(integer-types-binary-function "mul_hi")
     rotate ,(integer-types-binary-function "rotate")
