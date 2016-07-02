@@ -466,7 +466,8 @@
     mad-sat ,(integer-types-ternary-function "mad_sat")
     max ,(append (integer-types-binary-function "max")
                  (integer-vector-scalar-binary-operator "max"))
-    ;;min
+    min ,(append (integer-types-binary-function "min")
+                 (integer-vector-scalar-binary-operator "min"))
     mul-hi ,(integer-types-binary-function "mul_hi")
     rotate ,(integer-types-binary-function "rotate")
     sub-sat ,(integer-types-binary-function "sub_sat")
