@@ -589,8 +589,8 @@ light_source { <0, 30, -30> color White }
                                         (neighbor-map-local-work-size 37 1 1)
                                         (particle-global-work-size (* 512 64))
                                         (particle-local-work-size 64))
-                        ;; Do simulation.(time
-                        (loop repeat 300
+                        ;; Do simulation time
+                        (loop repeat 1;300
                               for i from 1
                               do ;; Clear neighbor map.
                                  (with-kernel (kernel program "oclcl_examples_sph_oclapi_clear_neighbor_map")
