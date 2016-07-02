@@ -518,18 +518,15 @@ light_source { <0, 30, -30> color White }
                                         ;  (output (/ i 10) pos))
                ))))))
 
-(defun foreign-to-lisp (array size type)
+(defun foreign-to-lisp (foreign-array size type)
   (let ((n (if (< size 100)
                size
                100)))
     (loop for i from 0 below n
-          collecting (mem-aref array type i))))
+          collecting (mem-aref foreign-array type i))))
 
-(defun foreign-float-to-lisp-float (foreign-array foreign-size)
-  (foreign-to-lisp foreign-array foreign-size 'cl-float))
-
-(defun pprint-foreign-float (foreign-array foreign-size)
-  (pprint (foreign-float-to-lisp-float foreign-array foreign-size)))
+(defun pprint-foreign (foreign-array size type)
+  (pprint (foreign-to-lisp foreign-array size type)))
 
 (defun pprint-device-float (command-queue device size)
   (with-foreign-objects ((foreign-array 'cl-float size))
@@ -539,7 +536,7 @@ light_source { <0, 30, -30> color White }
                          0
                          (* (foreign-type-size 'cl-float) size)
                          foreign-array)
-    (pprint-foreign-float foreign-array size)))
+    (pprint-foreign foreign-array size 'cl-float)))
 
 (defun main ()
   (with-platform-id (platform)
@@ -605,7 +602,6 @@ light_source { <0, 30, -30> color White }
                                  (clear-neighbor-map neighbor-map
                                                      :grid-dim neighbor-map-grid-dim
                                                      :block-dim neighbor-map-block-dim)
-                                 #+nil
                                  (pprint-device-float command-queue neighbor-map-device size)
 
                                  ;; Update neighbor map.
