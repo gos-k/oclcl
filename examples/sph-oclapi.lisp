@@ -563,6 +563,8 @@ light_source { <0, 30, -30> color White }
                 (with-foreign-objects ((pos :float (* 4 n))
                                        (vel :float (* 4 n)))
                   (initialize pos vel particles)
+                  ;(pprint-foreign pos (* 4 n) 'cl-float)
+                  ;(pprint-foreign vel (* 4 n) 'cl-float)
                   (with-buffers ((pos-device context +cl-mem-read-write+ (* 4 4 n))
                                  (vel-device context +cl-mem-read-write+ (* 4 4 n))
                                  (acc-device context +cl-mem-read-write+ (* 4 4 n))
@@ -604,7 +606,7 @@ light_source { <0, 30, -30> color White }
                                  (clear-neighbor-map neighbor-map
                                                      :grid-dim neighbor-map-grid-dim
                                                      :block-dim neighbor-map-block-dim)
-                                 (pprint-device command-queue neighbor-map-device size 'cl-float)
+                                 ;(pprint-device command-queue neighbor-map-device size 'cl-int)
 
                                  ;; Update neighbor map.
                                  #+nil
