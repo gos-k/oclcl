@@ -24,6 +24,7 @@
            :kernel-manager-define-memory
            :kernel-manager-load-global
            :kernel-manager-translate
+           :kernel-manager-function-c-name
            :kernel-manager-unload
            :ensure-kernel-module-compiled
            :ensure-kernel-module-loaded
@@ -162,6 +163,10 @@
     (error "The kernel manager has already been compiled."))
   (let ((kernel (kernel-manager-kernel manager)))
     (compile-kernel kernel)))
+
+(defun kernel-manager-function-c-name (manager name)
+  (kernel-function-c-name (kernel-manager-kernel manager)
+                          name))
 
 (defun ensure-kernel-module-compiled (manager)
   (or (kernel-manager-compiled-p manager)

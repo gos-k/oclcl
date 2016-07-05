@@ -13,4 +13,5 @@
 (reexport-from :oclcl.api.macro)
 (reexport-from :oclcl.api.kernel-manager
                :include '(:kernel-manager-translate
+                          :kernel-manager-function-c-name
                           :*kernel-manager*))
