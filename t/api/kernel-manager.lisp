@@ -80,6 +80,13 @@ float oclcl_test_api_kernel_manager_one()
 "
         "define function")))
 
+(subtest "kernel-manager-function-c-name"
+  (let ((mgr (make-kernel-manager)))
+    (kernel-manager-define-function mgr 'one 'void '() '())
+    (is (kernel-manager-function-c-name mgr 'one)
+        "oclcl_test_api_kernel_manager_one"
+        "get function c name")))
+
 ;;;
 ;;; test KERNEL-MANAGER-DEFINE-FUNCTION function
 ;;;
