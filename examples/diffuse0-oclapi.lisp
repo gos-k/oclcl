@@ -162,7 +162,8 @@
                   (with-command-queue (command-queue context device 0)
                     (initialize-device-memory nx ny dx dy command-queue a-host a-device)
                     (with-work-size (global-work-size elements)
-                      (with-kernel (kernel program "oclcl_examples_diffuse0_oclapi_diffusion2d")
+                      (with-kernel (kernel program (kernel-manager-function-c-name *kernel-manager*
+                                                                                   'diffusion2d))
                         (dotimes (i 20000)
                           (when (= (mod i 100) 0)
                             (print-time i time))

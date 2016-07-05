@@ -591,19 +591,21 @@ light_source { <0, 30, -30> color White }
                                         (neighbor-map-local-work-size 37 1 1)
                                         (particle-global-work-size (* 512 64))
                                         (particle-local-work-size 64))
-                        ;; Do simulation time
-                        (loop repeat 1;300
-                              for i from 1
-                              do ;; Clear neighbor map.
-                                 (with-kernel (kernel program "oclcl_examples_sph_oclapi_clear_neighbor_map")
-                                   (with-pointers ((neighbor-map-pointer neighbor-map-device))
-                                     (set-kernel-arg kernel 0 8 neighbor-map-pointer)
-                                     (enqueue-ndrange-kernel command-queue
-                                                             kernel
-                                                             3
-                                                             neighbor-map-global-work-size
-                                                             neighbor-map-local-work-size)
-                                     (finish command-queue)))
+                        (labels ((c-name (name)
+                                   (kernel-manager-function-c-name *kernel-manager* name)))
+                          ;; Do simulation time
+                          (loop repeat 1;300
+                                for i from 1
+                                do ;; Clear neighbor map.
+                                   (with-kernel (kernel program (c-name 'clear-neighbor-map))
+                                     (with-pointers ((neighbor-map-pointer neighbor-map-device))
+                                       (set-kernel-arg kernel 0 8 neighbor-map-pointer)
+                                       (enqueue-ndrange-kernel command-queue
+                                                               kernel
+                                                               3
+                                                               neighbor-map-global-work-size
+                                                               neighbor-map-local-work-size)
+                                       (finish command-queue)))
                                  #+nil
                                  (clear-neighbor-map neighbor-map
                                                      :grid-dim neighbor-map-grid-dim
@@ -611,7 +613,7 @@ light_source { <0, 30, -30> color White }
                                  ;(pprint-device command-queue neighbor-map-device size 'cl-int :step (1+ capacity))
 
                                  ;; Update neighbor map.
-                                 (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_neighbor_map")
+                                 (with-kernel (kernel program (c-name 'update-neighbor-map))
                                    (with-pointers ((neighbor-map-pointer neighbor-map-device)
                                                    (pos-pointer pos-device))
                                      (with-foreign-object (n-pointer 'cl-int)
@@ -632,7 +634,7 @@ light_source { <0, 30, -30> color White }
 
                                  ;; Update density.
                                  #+nil
-                                 (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_density")
+                                 (with-kernel (kernel program (c-name 'update-density))
                                    (with-pointers ((rho-pointer rho-device)
                                                    (pos-pointer pos-device)
                                                    (neighbor-map-pointer neighbor-map-device))
@@ -655,7 +657,7 @@ light_source { <0, 30, -30> color White }
 
                                  ;; Update pressure.
                                  #+nil
-                                 (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_pressure")
+                                 (with-kernel (kernel program (c-name 'update-pressure))
                                    (with-pointers ((rho-pointer rho-device)
                                                    (prs-pointer prs-device))
                                      (with-foreign-object (n-pointer 'cl-int)
@@ -677,7 +679,7 @@ light_source { <0, 30, -30> color White }
 
                                  ;; Update force.
                                  #+nil
-                                 (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_force")
+                                 (with-kernel (kernel program (c-name 'update-force))
                                    (with-pointers ((force-pointer force-device)
                                                    (pos-pointer pos-device)
                                                    (vel-pointer vel-device)
@@ -706,7 +708,7 @@ light_source { <0, 30, -30> color White }
 
                                  ;; Update acceleration.
                                  #+nil
-                                 (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_acceleration")
+                                 (with-kernel (kernel program (c-name 'update-acceleration))
                                    (with-pointers ((acc-pointer acc-device)
                                                    (force-pointer force-device)
                                                    (rho-pointer rho-device))
@@ -729,7 +731,7 @@ light_source { <0, 30, -30> color White }
 
                                  ;; Apply boundary condition.
                                  #+nil
-                                 (with-kernel (kernel program "oclcl_examples_sph_oclapi_boundary_condition")
+                                 (with-kernel (kernel program (c-name 'boundary-condition))
                                    (with-pointers ((acc-pointer acc-device)
                                                    (pos-pointer pos-device)
                                                    (vel-pointer vel-device))
@@ -752,7 +754,7 @@ light_source { <0, 30, -30> color White }
 
                                  ;; Update velocity.
                                  #+nil
-                                 (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_velocity")
+                                 (with-kernel (kernel program (c-name 'update-velocity))
                                    (with-pointers ((vel-pointer vel-device)
                                                    (acc-pointer acc-device))
                                      (with-foreign-object (n-pointer 'cl-int)
@@ -773,7 +775,7 @@ light_source { <0, 30, -30> color White }
 
                                  ;; Update position.
                                  #+nil
-                                 (with-kernel (kernel program "oclcl_examples_sph_oclapi_update_position")
+                                 (with-kernel (kernel program (c-name 'update-position))
                                    (with-pointers ((pos-pointer pos-device)
                                                    (vel-pointer vel-device))
                                      (with-foreign-object (n-pointer 'cl-int)
@@ -799,4 +801,4 @@ light_source { <0, 30, -30> color White }
                                         ;(when (= (mod i 10) 0)
                                         ;  (sync-memory-block pos :device-to-host)
                                         ;  (output (/ i 10) pos))
-                              )))))))))))))
+                                ))))))))))))))

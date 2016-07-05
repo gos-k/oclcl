@@ -108,7 +108,8 @@ __kernel void oclcl_examples_vector_add_vec_add_kernel( __global float* a, __glo
                                           b-host)
                     (finish command-queue)
                     (with-work-size (global-work-size elements)
-                      (with-kernel (kernel program "oclcl_examples_vector_add_oclapi_vec_add_kernel")
+                      (with-kernel (kernel program (kernel-manager-function-c-name *kernel-manager*
+                                                                                   'vec-add-kernel))
                         (with-pointers ((a-pointer a-device)
                                         (b-pointer b-device)
                                         (c-pointer c-device))
