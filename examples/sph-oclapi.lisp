@@ -81,7 +81,10 @@
 
 (defmemory box-min (float4 -10.0  0.0 -10.0 0.0) :constant)
 (defmemory box-max (float4 30.0 50.0  30.0 0.0) :constant)
-(defmemory origin (float4 0.0 0.0 0.0 0.0) :constant)
+(defmemory origin (float4 (- -10.0 (* (/ 0.005 0.004) 2.0))
+                          (-  0.0 (* (/ 0.005 0.004) 2.0))
+                          (- -10.0 (* (/ 0.005 0.004) 2.0))
+                          0.0) :constant)
 (defmemory delta (/ 0.005 0.004) :constant)
 (defmemory capacity 400 :constant)
 (defmemory size-x 37 :constant)
