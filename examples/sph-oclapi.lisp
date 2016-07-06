@@ -392,18 +392,27 @@ light_source { <0, 30, -30> color White }
 (defun output-header (stream)
   (format stream +header-template+))
 
-(defun output-sphere (pos stream)
-  (with-float4 (x y z w) pos
-    (format stream +sphere-template+ x y z)))
+(defun output-sphere (x y z stream)
+  (format stream +sphere-template+ x y z))
 
-(defun output (step pos)
+(defun output (command-queue step pos n)
   (format t "Output step ~A...~%" step)
-  (let ((n (memory-block-size pos))
-        (filename (filename step)))
+  (let* ((float-size (foreign-type-size 'cl-float))
+         (filename (filename step)))
     (with-open-file (out filename :direction :output :if-exists :supersede)
       (output-header out)
-      (loop for i from 0 below n
-         do (output-sphere (mem-aref pos i) out)))))
+      (with-foreign-objects ((foreign-array 'cl-float (* 4 n)))
+        (enqueue-read-buffer command-queue
+                             pos
+                             +cl-true+
+                             0
+                             (* 4 float-size n)
+                             foreign-array)
+        (loop for i from 0 below (* 4 n) by 4
+              do (output-sphere (mem-aref foreign-array 'cl-float i)
+                                (mem-aref foreign-array 'cl-float (+ 1 i))
+                                (mem-aref foreign-array 'cl-float (+ 2 i))
+                                out))))))
 
 
 ;;
@@ -530,10 +539,11 @@ light_source { <0, 30, -30> color White }
     (loop for i from 0 to (1- n) by step
           collecting (mem-aref foreign-array type i))))
 
-(defun pprint-foreign (foreign-array size type &key (limit size) (step 1))
-  (pprint (foreign-to-lisp foreign-array size type :limit limit :step step)))
+(defun print-foreign (foreign-array size type &key (limit size) (step 1))
+  (loop for i from 0 to (1- size) by step
+        do (format t "~a, ~a~%" i (mem-aref foreign-array type i))))
 
-(defun pprint-device (command-queue device size type &key (limit size) (step 1))
+(defun print-device (command-queue device size type &key (limit size) (step 1))
   (with-foreign-objects ((foreign-array type size))
     (enqueue-read-buffer command-queue
                          device
@@ -541,7 +551,7 @@ light_source { <0, 30, -30> color White }
                          0
                          (* (foreign-type-size type) size)
                          foreign-array)
-    (pprint-foreign foreign-array size type :limit limit :step step)))
+    (print-foreign foreign-array size type :limit limit :step step)))
 
 (defun main ()
   (with-platform-id (platform)
@@ -551,7 +561,7 @@ light_source { <0, 30, -30> color White }
                                           "#pragma OPENCL EXTENSION cl_khr_global_int32_base_atomics : enable"
                                           (kernel-manager-translate *kernel-manager*)))
               (device (mem-aref devices 'cl-device-id)))
-          (pprint c-source-code)
+          ;(pprint c-source-code)
           (with-program-with-source (program context 1 c-source-code)
             (build-program program 1 devices)
             (let* (;; Get initial condition.
@@ -568,8 +578,8 @@ light_source { <0, 30, -30> color White }
                 (with-foreign-objects ((pos :float (* 4 n))
                                        (vel :float (* 4 n)))
                   (initialize pos vel particles)
-                  ;(pprint-foreign pos (* 4 n) 'cl-float :limit 100)
-                  ;(pprint-foreign vel (* 4 n) 'cl-float :limit 100)
+                  ;(print-foreign pos (* 4 n) 'cl-float :limit 100)
+                  ;(print-foreign vel (* 4 n) 'cl-float :limit 100)
                   (with-buffers ((pos-device context +cl-mem-read-write+ (* 4 4 n))
                                  (vel-device context +cl-mem-read-write+ (* 4 4 n))
                                  (acc-device context +cl-mem-read-write+ (* 4 4 n))
@@ -597,7 +607,7 @@ light_source { <0, 30, -30> color White }
                         (labels ((c-name (name)
                                    (kernel-manager-function-c-name *kernel-manager* name)))
                           ;; Do simulation time
-                          (loop repeat 1;300
+                          (loop repeat 300
                                 for i from 1
                                 do ;; Clear neighbor map.
                                    (with-kernel (kernel program (c-name 'clear-neighbor-map))
@@ -613,7 +623,7 @@ light_source { <0, 30, -30> color White }
                                  (clear-neighbor-map neighbor-map
                                                      :grid-dim neighbor-map-grid-dim
                                                      :block-dim neighbor-map-block-dim)
-                                 ;(pprint-device command-queue neighbor-map-device size 'cl-int :step (1+ capacity))
+                                 ;(print-device command-queue neighbor-map-device size 'cl-int :step (1+ capacity))
 
                                  ;; Update neighbor map.
                                  (with-kernel (kernel program (c-name 'update-neighbor-map))
@@ -634,6 +644,7 @@ light_source { <0, 30, -30> color White }
                                  (update-neighbor-map neighbor-map pos n
                                                       :grid-dim particle-grid-dim
                                                       :block-dim particle-block-dim)
+                                 ;(print-device command-queue neighbor-map-device size 'cl-int)
 
                                  ;; Update density.
                                  (with-kernel (kernel program (c-name 'update-density))
@@ -677,11 +688,9 @@ light_source { <0, 30, -30> color White }
                                  (update-pressure prs rho n
                                                   :grid-dim particle-grid-dim
                                                   :block-dim particle-block-dim)
-                                 ;(pprint-device command-queue prs-device n 'cl-float)
-
+                                 ;(print-device command-queue prs-device n 'cl-float)
 
                                  ;; Update force.
-                                 #+nil
                                  (with-kernel (kernel program (c-name 'update-force))
                                    (with-pointers ((force-pointer force-device)
                                                    (pos-pointer pos-device)
@@ -708,9 +717,9 @@ light_source { <0, 30, -30> color White }
                                  (update-force force pos vel rho prs n neighbor-map
                                                :grid-dim particle-grid-dim
                                                :block-dim particle-block-dim)
+                                 ;(print-device command-queue force-device (* 4 n) 'cl-float)
 
                                  ;; Update acceleration.
-                                 #+nil
                                  (with-kernel (kernel program (c-name 'update-acceleration))
                                    (with-pointers ((acc-pointer acc-device)
                                                    (force-pointer force-device)
@@ -731,9 +740,9 @@ light_source { <0, 30, -30> color White }
                                  (update-acceleration acc force rho n
                                                       :grid-dim particle-grid-dim
                                                       :block-dim particle-block-dim)
+                                 ;(print-device command-queue acc-device (* 4 n) 'cl-float)
 
                                  ;; Apply boundary condition.
-                                 #+nil
                                  (with-kernel (kernel program (c-name 'boundary-condition))
                                    (with-pointers ((acc-pointer acc-device)
                                                    (pos-pointer pos-device)
@@ -754,9 +763,9 @@ light_source { <0, 30, -30> color White }
                                  (boundary-condition acc pos vel n
                                                      :grid-dim particle-grid-dim
                                                      :block-dim particle-block-dim)
+                                 ;(print-device command-queue acc-device (* 4 n) 'cl-float)
 
                                  ;; Update velocity.
-                                 #+nil
                                  (with-kernel (kernel program (c-name 'update-velocity))
                                    (with-pointers ((vel-pointer vel-device)
                                                    (acc-pointer acc-device))
@@ -775,9 +784,9 @@ light_source { <0, 30, -30> color White }
                                  (update-velocity vel acc n
                                                   :grid-dim particle-grid-dim
                                                   :block-dim particle-block-dim)
+                                 ;(print-device command-queue vel-device (* 4 n) 'cl-float)
 
                                  ;; Update position.
-                                 #+nil
                                  (with-kernel (kernel program (c-name 'update-position))
                                    (with-pointers ((pos-pointer pos-device)
                                                    (vel-pointer vel-device))
@@ -796,12 +805,13 @@ light_source { <0, 30, -30> color White }
                                  (update-position pos vel n
                                                   :grid-dim particle-grid-dim
                                                   :block-dim particle-block-dim)
+                                 ;(print-device command-queue pos-device (* 4 n) 'cl-float)
 
                                  ;; Synchronize CUDA context.
                                  #+nil
                                  (synchronize-context)
+
                                  ;; Output POV file.
-                                        ;(when (= (mod i 10) 0)
-                                        ;  (sync-memory-block pos :device-to-host)
-                                        ;  (output (/ i 10) pos))
-                                ))))))))))))))
+                                 #+nil
+                                 (when (= (mod i 10) 0)
+                                   (output command-queue i pos-device n))))))))))))))))

@@ -240,9 +240,9 @@
         (size-x (neighbor-map-size-x neighbor-map))
         (size-y (neighbor-map-size-y neighbor-map)))
     (declare (type fixnum capacity size-x size-y))
-    (the fixnum (+ (the fixnum (* capacity (the fixnum (* size-x (the fixnum (* size-y k))))))
-                   (the fixnum (+ (the fixnum (* capacity (the fixnum (* size-x j))))
-                                  (the fixnum (+ (the fixnum (* capacity i))
+    (the fixnum (+ (the fixnum (* (1+ capacity) (the fixnum (* size-x (the fixnum (* size-y k))))))
+                   (the fixnum (+ (the fixnum (* (1+ capacity) (the fixnum (* size-x j))))
+                                  (the fixnum (+ (the fixnum (* (1+ capacity) i))
                                                  l))))))))
 
 (defun update-neighbor-map (neighbor-map pos n)
@@ -557,6 +557,21 @@ light_source { <0, 30, -30> color White }
      do (set-vec3-aref pos i (values (vec3-x p) (vec3-y p) (vec3-z p)))
         (set-vec3-aref vel i (values 0.0 0.0 0.0))))
 
+(defun pprint-vec3-array (array)
+  (let* ((n (array-dimension array 0))
+         (m (loop for i from 0 to (1- n)
+                  collecting (aref array i 0)
+                  collecting (aref array i 1)
+                  collecting (aref array i 2)
+                  collecting 0.0)))
+    (loop for j from 0 to (1- (* 4 n))
+          do (format t "~a, ~a~%" j (nth j m)))))
+
+(defun pprint-scalar-array (array)
+  (let ((n (length array)))
+    (loop for i from 0 to (1- n)
+          do (format t "~a, ~a~%" i (aref array i)))))
+
 (defun main ()
   (let* (;; Get initial condition.
          (particles (initial-condition *init-min* *init-max*
@@ -586,21 +601,32 @@ light_source { <0, 30, -30> color White }
              (clear-neighbor-map neighbor-map)
              ;; Update neighbor map.
              (update-neighbor-map neighbor-map pos n)
+             #+nil
+             (loop for i from 0 below (length (neighbor-map-data neighbor-map)) ;by (1+ *capacity*)
+                   do (pprint (aref (neighbor-map-data neighbor-map) i)))
              ;; Update density.
              (update-density rho pos n neighbor-map)
+             ;(pprint-scalar-array rho)
              ;; Update pressure.
              (update-pressure prs rho n)
+             ;(pprint-scalar-array prs)
              ;; Update force.
              (update-force force pos vel rho prs n neighbor-map)
+             ;(pprint-vec3-array force)
              ;; Update acceleration.
              (update-acceleration acc force rho n)
+             ;(pprint-vec3-array acc)
              ;; Apply boundary condition.
              (boundary-condition acc pos vel n *box-min* *box-max*)
+             ;(pprint-vec3-array acc)
              ;; Update velocity.
              (update-velocity vel acc n)
+             ;(pprint-vec3-array vel)
              ;; Update position.
              (update-position pos vel n)
+             ;(pprint-vec3-array pos)
              ;; Output POV file.
-             ;(when (= (mod i 10) 0)
-             ;  (output (/ i 10) pos n))
+             #+nil
+             (when (= (mod i 10) 0)
+               (output (/ i 10) pos n))
              )))))
