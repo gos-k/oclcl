@@ -477,7 +477,9 @@ light_source { <0, 30, -30> color White }
                    ;; Get number of particles.
                    (n (length particles))
                    ;; Compute neighbor map origin.
-                   (origin (compute-origin box-min delta)))
+                   (origin (compute-origin box-min delta))
+                   (float-size (foreign-type-size 'cl-float))
+                   (float4-size (* float-size 4)))
 
               ;; Print number of particles.
               (format t "~A particles~%" n)
@@ -488,13 +490,13 @@ light_source { <0, 30, -30> color White }
                   (initialize pos vel particles)
                   ;(print-foreign pos (* 4 n) 'cl-float :limit 100)
                   ;(print-foreign vel (* 4 n) 'cl-float :limit 100)
-                  (with-buffers ((pos-device context +cl-mem-read-write+ (* 4 4 n))
-                                 (vel-device context +cl-mem-read-write+ (* 4 4 n))
-                                 (acc-device context +cl-mem-read-write+ (* 4 4 n))
-                                 (force-device context +cl-mem-read-write+ (* 4 4 n))
-                                 (rho-device context +cl-mem-read-write+ (* 4 n))
-                                 (prs-device context +cl-mem-read-write+ (* 4 n))
-                                 (neighbor-map-device context +cl-mem-read-write+ (* 4 size)))
+                  (with-buffers ((pos-device context +cl-mem-read-write+ (* float4-size n))
+                                 (vel-device context +cl-mem-read-write+ (* float4-size n))
+                                 (acc-device context +cl-mem-read-write+ (* float4-size n))
+                                 (force-device context +cl-mem-read-write+ (* 4 float4-size n))
+                                 (rho-device context +cl-mem-read-write+ (* float-size n))
+                                 (prs-device context +cl-mem-read-write+ (* float-size n))
+                                 (neighbor-map-device context +cl-mem-read-write+ (* float-size size)))
                     (with-command-queue (command-queue context device 0)
                       (labels ((write-buffer (device size host)
                                  (enqueue-write-buffer command-queue
@@ -503,8 +505,8 @@ light_source { <0, 30, -30> color White }
                                                        0
                                                        size
                                                        host)))
-                        (write-buffer pos-device (* 4 4 n) pos)
-                        (write-buffer vel-device (* 4 4 n) vel)
+                        (write-buffer pos-device (* float4-size n) pos)
+                        (write-buffer vel-device (* float4-size n) vel)
                         (finish command-queue))
 
                       ;; Grid and block dims.
