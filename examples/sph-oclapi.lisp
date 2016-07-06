@@ -70,15 +70,6 @@
 (defkernel-symbol-macro restdensity 600.0)
 (defkernel-symbol-macro g (float4 0.0 -9.8 0.0 0.0))
 
-;(defmemory box-min (float4 0.0 0.0 0.0 0.0) :constant)
-;(defmemory box-max (float4 0.0 0.0 0.0 0.0) :constant)
-;(defmemory origin (float4 0.0 0.0 0.0 0.0) :constant)
-;(defmemory delta 0.0 :constant)
-;(defmemory capacity 0 :constant)
-;(defmemory size-x 0 :constant)
-;(defmemory size-y 0 :constant)
-;(defmemory size-z 0 :constant)
-
 (defmemory box-min (float4 -10.0  0.0 -10.0 0.0) :constant)
 (defmemory box-max (float4 30.0 50.0  30.0 0.0) :constant)
 (defmemory origin (float4 (- -10.0 (* (/ 0.005 0.004) 2.0))
@@ -449,89 +440,6 @@ light_source { <0, 30, -30> color White }
         for i from 0
      do (print (mem-aref memory-block i))))
 
-#+nil
-(defun main ()
-  (let* (
-         ;; Grid and block dims.
-         (neighbor-map-grid-dim '(45 37 1))
-         (neighbor-map-block-dim '(37 1 1))
-         (particle-grid-dim '(512 1 1))
-         (particle-block-dim '(64 1 1))
-         ;; Get initial condition.
-         (particles (initial-condition init-min init-max (/ pdist simscale)))
-         ;; Get number of particles.
-         (n (length particles))
-         ;; Compute neighbor map origin.
-         (origin (compute-origin box-min delta)))
-    ;; Compute neighbor map size.
-    (multiple-value-bind (size-x size-y size-z size)
-        (compute-size box-min box-max delta capacity)
-      ;; Set boundary condition and neighbor map.
-      ;; With memory blocks.
-      ; set-params kernel
-    #+nil
-      (with-memory-blocks ((pos 'float4 n)
-                           (vel 'float4 n)
-                           (acc 'float4 n)
-                           (force 'float4 n)
-                           (rho 'float n)
-                           (prs 'float n)
-                           (neighbor-map 'int size))
-        ;; Print number of particles.
-        (format t "~A particles~%" n)
-        ;; Apply initial condition.
-        (initialize pos vel particles)
-        (sync-memory-block pos :host-to-device)
-        (sync-memory-block vel :host-to-device)
-                                        ;(output 0 pos)
-        ;; Do simulation.
-        (time
-         (loop repeat 300
-               for i from 1
-               do ;; Clear neighbor map.
-                  (clear-neighbor-map neighbor-map
-                                      :grid-dim neighbor-map-grid-dim
-                                      :block-dim neighbor-map-block-dim)
-                  ;; Update neighbor map.
-                  (update-neighbor-map neighbor-map pos n
-                                       :grid-dim particle-grid-dim
-                                       :block-dim particle-block-dim)
-                  ;; Update density.
-                  (update-density rho pos n neighbor-map
-                                  :grid-dim particle-grid-dim
-                                  :block-dim particle-block-dim)
-                  ;; Update pressure.
-                  (update-pressure prs rho n
-                                   :grid-dim particle-grid-dim
-                                   :block-dim particle-block-dim)
-                  ;; Update force.
-                  (update-force force pos vel rho prs n neighbor-map
-                                :grid-dim particle-grid-dim
-                                :block-dim particle-block-dim)
-                  ;; Update acceleration.
-                  (update-acceleration acc force rho n
-                                       :grid-dim particle-grid-dim
-                                       :block-dim particle-block-dim)
-                  ;; Apply boundary condition.
-                  (boundary-condition acc pos vel n
-                                      :grid-dim particle-grid-dim
-                                      :block-dim particle-block-dim)
-                  ;; Update velocity.
-                  (update-velocity vel acc n
-                                   :grid-dim particle-grid-dim
-                                   :block-dim particle-block-dim)
-                  ;; Update position.
-                  (update-position pos vel n
-                                   :grid-dim particle-grid-dim
-                                   :block-dim particle-block-dim)
-                  ;; Synchronize CUDA context.
-                  (synchronize-context)
-                  ;; Output POV file.
-                                        ;(when (= (mod i 10) 0)
-                                        ;  (sync-memory-block pos :device-to-host)
-                                        ;  (output (/ i 10) pos))
-               ))))))
-
 (defun foreign-to-lisp (foreign-array size type &key (limit size) (step 1))
   (let ((n (if (<= size limit)
                size
@@ -619,10 +527,6 @@ light_source { <0, 30, -30> color White }
                                                                neighbor-map-global-work-size
                                                                neighbor-map-local-work-size)
                                        (finish command-queue)))
-                                 #+nil
-                                 (clear-neighbor-map neighbor-map
-                                                     :grid-dim neighbor-map-grid-dim
-                                                     :block-dim neighbor-map-block-dim)
                                  ;(print-device command-queue neighbor-map-device size 'cl-int :step (1+ capacity))
 
                                  ;; Update neighbor map.
@@ -640,10 +544,6 @@ light_source { <0, 30, -30> color White }
                                                                particle-global-work-size
                                                                particle-local-work-size)
                                        (finish command-queue))))
-                                 #+nil
-                                 (update-neighbor-map neighbor-map pos n
-                                                      :grid-dim particle-grid-dim
-                                                      :block-dim particle-block-dim)
                                  ;(print-device command-queue neighbor-map-device size 'cl-int)
 
                                  ;; Update density.
@@ -663,10 +563,6 @@ light_source { <0, 30, -30> color White }
                                                                particle-global-work-size
                                                                particle-local-work-size)
                                        (finish command-queue))))
-                                 #+nil
-                                 (update-density rho pos n neighbor-map
-                                                 :grid-dim particle-grid-dim
-                                                 :block-dim particle-block-dim)
                                  ;(pprint-device command-queue rho-device n 'cl-float)
 
                                  ;; Update pressure.
@@ -684,10 +580,6 @@ light_source { <0, 30, -30> color White }
                                                                particle-global-work-size
                                                                particle-local-work-size)
                                        (finish command-queue))))
-                                 #+nil
-                                 (update-pressure prs rho n
-                                                  :grid-dim particle-grid-dim
-                                                  :block-dim particle-block-dim)
                                  ;(print-device command-queue prs-device n 'cl-float)
 
                                  ;; Update force.
@@ -713,10 +605,6 @@ light_source { <0, 30, -30> color White }
                                                                particle-global-work-size
                                                                particle-local-work-size)
                                        (finish command-queue))))
-                                 #+nil
-                                 (update-force force pos vel rho prs n neighbor-map
-                                               :grid-dim particle-grid-dim
-                                               :block-dim particle-block-dim)
                                  ;(print-device command-queue force-device (* 4 n) 'cl-float)
 
                                  ;; Update acceleration.
@@ -736,10 +624,6 @@ light_source { <0, 30, -30> color White }
                                                                particle-global-work-size
                                                                particle-local-work-size)
                                        (finish command-queue))))
-                                 #+nil
-                                 (update-acceleration acc force rho n
-                                                      :grid-dim particle-grid-dim
-                                                      :block-dim particle-block-dim)
                                  ;(print-device command-queue acc-device (* 4 n) 'cl-float)
 
                                  ;; Apply boundary condition.
@@ -759,10 +643,6 @@ light_source { <0, 30, -30> color White }
                                                                particle-global-work-size
                                                                particle-local-work-size)
                                        (finish command-queue))))
-                                 #+nil
-                                 (boundary-condition acc pos vel n
-                                                     :grid-dim particle-grid-dim
-                                                     :block-dim particle-block-dim)
                                  ;(print-device command-queue acc-device (* 4 n) 'cl-float)
 
                                  ;; Update velocity.
@@ -780,10 +660,6 @@ light_source { <0, 30, -30> color White }
                                                                particle-global-work-size
                                                                particle-local-work-size)
                                        (finish command-queue))))
-                                 #+nil
-                                 (update-velocity vel acc n
-                                                  :grid-dim particle-grid-dim
-                                                  :block-dim particle-block-dim)
                                  ;(print-device command-queue vel-device (* 4 n) 'cl-float)
 
                                  ;; Update position.
@@ -801,15 +677,7 @@ light_source { <0, 30, -30> color White }
                                                                particle-global-work-size
                                                                particle-local-work-size)
                                        (finish command-queue))))
-                                 #+nil
-                                 (update-position pos vel n
-                                                  :grid-dim particle-grid-dim
-                                                  :block-dim particle-block-dim)
                                  ;(print-device command-queue pos-device (* 4 n) 'cl-float)
-
-                                 ;; Synchronize CUDA context.
-                                 #+nil
-                                 (synchronize-context)
 
                                  ;; Output POV file.
                                  #+nil
