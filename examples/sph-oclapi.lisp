@@ -636,7 +636,6 @@ light_source { <0, 30, -30> color White }
                                                       :block-dim particle-block-dim)
 
                                  ;; Update density.
-                                 #+nil
                                  (with-kernel (kernel program (c-name 'update-density))
                                    (with-pointers ((rho-pointer rho-device)
                                                    (pos-pointer pos-device)
@@ -657,6 +656,7 @@ light_source { <0, 30, -30> color White }
                                  (update-density rho pos n neighbor-map
                                                  :grid-dim particle-grid-dim
                                                  :block-dim particle-block-dim)
+                                 ;(pprint-device command-queue rho-device n 'cl-float)
 
                                  ;; Update pressure.
                                  #+nil
