@@ -441,16 +441,6 @@ light_source { <0, 30, -30> color White }
     (loop for i from 0 to (1- n) by step
           collecting (mem-aref foreign-array type i))))
 
-(defun print-device (command-queue device size type &key (limit size) (step 1))
-  (with-foreign-objects ((foreign-array type size))
-    (enqueue-read-buffer command-queue
-                         device
-                         +cl-true+
-                         0
-                         (* (foreign-type-size type) size)
-                         foreign-array)
-    (print-foreign-array foreign-array size type :step step)))
-
 (defun main ()
   (with-platform-id (platform)
     (with-device-ids (devices num-devices platform)
@@ -519,7 +509,7 @@ light_source { <0, 30, -30> color White }
                                                                neighbor-map-global-work-size
                                                                neighbor-map-local-work-size)
                                        (finish command-queue)))
-                                 ;(print-device command-queue neighbor-map-device size 'cl-int :step (1+ capacity))
+                                 ;(print-device-memory command-queue neighbor-map-device size 'cl-int :step (1+ capacity))
 
                                  ;; Update neighbor map.
                                  (with-kernel (kernel program (c-name 'update-neighbor-map))
@@ -536,7 +526,7 @@ light_source { <0, 30, -30> color White }
                                                                particle-global-work-size
                                                                particle-local-work-size)
                                        (finish command-queue))))
-                                 ;(print-device command-queue neighbor-map-device size 'cl-int)
+                                 ;(print-device-memory command-queue neighbor-map-device size 'cl-int)
 
                                  ;; Update density.
                                  (with-kernel (kernel program (c-name 'update-density))
@@ -555,7 +545,7 @@ light_source { <0, 30, -30> color White }
                                                                particle-global-work-size
                                                                particle-local-work-size)
                                        (finish command-queue))))
-                                 ;(pprint-device command-queue rho-device n 'cl-float)
+                                 ;(pprint-device-memory command-queue rho-device n 'cl-float)
 
                                  ;; Update pressure.
                                  (with-kernel (kernel program (c-name 'update-pressure))
@@ -572,7 +562,7 @@ light_source { <0, 30, -30> color White }
                                                                particle-global-work-size
                                                                particle-local-work-size)
                                        (finish command-queue))))
-                                 ;(print-device command-queue prs-device n 'cl-float)
+                                 ;(print-device-memory command-queue prs-device n 'cl-float)
 
                                  ;; Update force.
                                  (with-kernel (kernel program (c-name 'update-force))
@@ -597,7 +587,7 @@ light_source { <0, 30, -30> color White }
                                                                particle-global-work-size
                                                                particle-local-work-size)
                                        (finish command-queue))))
-                                 ;(print-device command-queue force-device (* 4 n) 'cl-float)
+                                 ;(print-device-memory command-queue force-device (* 4 n) 'cl-float)
 
                                  ;; Update acceleration.
                                  (with-kernel (kernel program (c-name 'update-acceleration))
@@ -616,7 +606,7 @@ light_source { <0, 30, -30> color White }
                                                                particle-global-work-size
                                                                particle-local-work-size)
                                        (finish command-queue))))
-                                 ;(print-device command-queue acc-device (* 4 n) 'cl-float)
+                                 ;(print-device-memory command-queue acc-device (* 4 n) 'cl-float)
 
                                  ;; Apply boundary condition.
                                  (with-kernel (kernel program (c-name 'boundary-condition))
@@ -635,7 +625,7 @@ light_source { <0, 30, -30> color White }
                                                                particle-global-work-size
                                                                particle-local-work-size)
                                        (finish command-queue))))
-                                 ;(print-device command-queue acc-device (* 4 n) 'cl-float)
+                                 ;(print-device-memory command-queue acc-device (* 4 n) 'cl-float)
 
                                  ;; Update velocity.
                                  (with-kernel (kernel program (c-name 'update-velocity))
@@ -652,7 +642,7 @@ light_source { <0, 30, -30> color White }
                                                                particle-global-work-size
                                                                particle-local-work-size)
                                        (finish command-queue))))
-                                 ;(print-device command-queue vel-device (* 4 n) 'cl-float)
+                                 ;(print-device-memory command-queue vel-device (* 4 n) 'cl-float)
 
                                  ;; Update position.
                                  (with-kernel (kernel program (c-name 'update-position))
@@ -669,7 +659,7 @@ light_source { <0, 30, -30> color White }
                                                                particle-global-work-size
                                                                particle-local-work-size)
                                        (finish command-queue))))
-                                 ;(print-device command-queue pos-device (* 4 n) 'cl-float)
+                                 ;(print-device-memory command-queue pos-device (* 4 n) 'cl-float)
 
                                  ;; Output POV file.
                                  #+nil
