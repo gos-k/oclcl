@@ -434,13 +434,6 @@ light_source { <0, 30, -30> color White }
         do (set-float4 pos i (nth 0 p) (nth 1 p) (nth 2 p) (nth 3 p))
            (set-float4 vel i 0.0 0.0 0.0 0.0)))
 
-(defun foreign-to-lisp (foreign-array size type &key (limit size) (step 1))
-  (let ((n (if (<= size limit)
-               size
-               limit)))
-    (loop for i from 0 to (1- n) by step
-          collecting (mem-aref foreign-array type i))))
-
 (defun main ()
   (with-platform-id (platform)
     (with-device-ids (devices num-devices platform)
