@@ -100,9 +100,9 @@
 
 (defkernelmacro with-cell-index (((i j k) x) &body body)
   (once-only (x)
-    `(let ((,i (max 0 (to-int (floor (/ (- (float4-x ,x) (float4-x origin)) delta)))))
-           (,j (max 0 (to-int (floor (/ (- (float4-y ,x) (float4-y origin)) delta)))))
-           (,k (max 0 (to-int (floor (/ (- (float4-z ,x) (float4-z origin)) delta))))))
+    `(let ((,i (to-int (floor (/ (- (float4-x ,x) (float4-x origin)) delta))))
+           (,j (to-int (floor (/ (- (float4-y ,x) (float4-y origin)) delta))))
+           (,k (to-int (floor (/ (- (float4-z ,x) (float4-z origin)) delta)))))
        ,@body)))
 
 (defkernel offset (int ((i int) (j int) (k int) (l int)))
