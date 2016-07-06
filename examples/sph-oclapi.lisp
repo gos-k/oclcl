@@ -659,7 +659,6 @@ light_source { <0, 30, -30> color White }
                                  ;(pprint-device command-queue rho-device n 'cl-float)
 
                                  ;; Update pressure.
-                                 #+nil
                                  (with-kernel (kernel program (c-name 'update-pressure))
                                    (with-pointers ((rho-pointer rho-device)
                                                    (prs-pointer prs-device))
@@ -678,6 +677,7 @@ light_source { <0, 30, -30> color White }
                                  (update-pressure prs rho n
                                                   :grid-dim particle-grid-dim
                                                   :block-dim particle-block-dim)
+                                 ;(pprint-device command-queue prs-device n 'cl-float)
 
 
                                  ;; Update force.
