@@ -434,12 +434,6 @@ light_source { <0, 30, -30> color White }
         do (set-float4 pos i (nth 0 p) (nth 1 p) (nth 2 p) (nth 3 p))
            (set-float4 vel i 0.0 0.0 0.0 0.0)))
 
-(defun peek-memory-block (memory-block)
-  (sync-memory-block memory-block :device-to-host)
-  (loop repeat 10
-        for i from 0
-     do (print (mem-aref memory-block i))))
-
 (defun foreign-to-lisp (foreign-array size type &key (limit size) (step 1))
   (let ((n (if (<= size limit)
                size
