@@ -20,6 +20,10 @@ ros run
 (oclcl-examples.vector-add:main)
 (oclcl-examples.diffuse0:main)
 (oclcl-examples.diffuse1:main)
+(oclcl-examples.vector-add-oclapi:main)
+(oclcl-examples.diffuse0-oclapi:main)
+(oclcl-examples.diffuse1-oclapi:main)
+(oclcl-examples.sph-oclapi:main)
 ```
 
 # cl-cuda to oclcl
