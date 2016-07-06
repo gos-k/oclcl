@@ -11,12 +11,9 @@ oclcl's kernel macro and kernel symbol macro offer powerful abstraction that Ope
 
 ## Installation
 
-If you use roswell,
+oclcl is now available on [Quicklisp](https://www.quicklisp.org).
 
-    $ cd ~/.roswell/local-projects
-    $ git clone git://github.com/gos-k/oclcl.git
-
-Then `(ql:quickload :oclcl)` from `REPL` to load it.
+    (ql:quickload :oclcl)
 
 ## Requirements
 
