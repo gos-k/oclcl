@@ -137,7 +137,7 @@
            (do-range (,k (max 0 (- ,k0 1)) (+ ,k0 1))
              (let ((,size (aref ,neighbor-map (offset ,i ,j ,k 0))))
                (do-range (,l 1 ,size)
-                 (when (< ,l capacity)
+                 (when (< ,l (+ capacity 1))
                    (let ((,var (aref ,neighbor-map (offset ,i ,j ,k ,l))))
                      ,@body))))))))))
 
