@@ -531,9 +531,9 @@ light_source { <0, 30, -30> color White }
                                                    (pos-pointer pos-device))
                                      (with-foreign-object (n-pointer 'cl-int)
                                        (setf (mem-aref n-pointer 'cl-int) n)
-                                       (set-kernel-arg kernel 0 8 neighbor-map-pointer)
-                                       (set-kernel-arg kernel 1 8 pos-pointer)
-                                       (set-kernel-arg kernel 2 4 n-pointer)
+                                       (set-kernel-args kernel `((0 8 ,neighbor-map-pointer)
+                                                                 (1 8 ,pos-pointer)
+                                                                 (2 4 ,n-pointer)))
                                        (enqueue-ndrange-kernel command-queue
                                                                kernel
                                                                1
@@ -549,10 +549,10 @@ light_source { <0, 30, -30> color White }
                                                    (neighbor-map-pointer neighbor-map-device))
                                      (with-foreign-object (n-pointer 'cl-int)
                                        (setf (mem-aref n-pointer 'cl-int) n)
-                                       (set-kernel-arg kernel 0 8 rho-pointer)
-                                       (set-kernel-arg kernel 1 8 pos-pointer)
-                                       (set-kernel-arg kernel 2 4 n-pointer)
-                                       (set-kernel-arg kernel 3 8 neighbor-map-pointer)
+                                       (set-kernel-args kernel `((0 8 ,rho-pointer)
+                                                                 (1 8 ,pos-pointer)
+                                                                 (2 4 ,n-pointer)
+                                                                 (3 8 ,neighbor-map-pointer)))
                                        (enqueue-ndrange-kernel command-queue
                                                                kernel
                                                                1
@@ -567,9 +567,9 @@ light_source { <0, 30, -30> color White }
                                                    (prs-pointer prs-device))
                                      (with-foreign-object (n-pointer 'cl-int)
                                        (setf (mem-aref n-pointer 'cl-int) n)
-                                       (set-kernel-arg kernel 0 8 prs-pointer)
-                                       (set-kernel-arg kernel 1 8 rho-pointer)
-                                       (set-kernel-arg kernel 2 4 n-pointer)
+                                       (set-kernel-args kernel `((0 8 ,prs-pointer)
+                                                                 (1 8 ,rho-pointer)
+                                                                 (2 4 ,n-pointer)))
                                        (enqueue-ndrange-kernel command-queue
                                                                kernel
                                                                1
@@ -588,13 +588,13 @@ light_source { <0, 30, -30> color White }
                                                    (neighbor-map-pointer neighbor-map-device))
                                      (with-foreign-object (n-pointer 'cl-int)
                                        (setf (mem-aref n-pointer 'cl-int) n)
-                                       (set-kernel-arg kernel 0 8 force-pointer)
-                                       (set-kernel-arg kernel 1 8 pos-pointer)
-                                       (set-kernel-arg kernel 2 8 vel-pointer)
-                                       (set-kernel-arg kernel 3 8 rho-pointer)
-                                       (set-kernel-arg kernel 4 8 prs-pointer)
-                                       (set-kernel-arg kernel 5 4 n-pointer)
-                                       (set-kernel-arg kernel 6 8 neighbor-map-pointer)
+                                       (set-kernel-args kernel `((0 8 ,force-pointer)
+                                                                 (1 8 ,pos-pointer)
+                                                                 (2 8 ,vel-pointer)
+                                                                 (3 8 ,rho-pointer)
+                                                                 (4 8 ,prs-pointer)
+                                                                 (5 4 ,n-pointer)
+                                                                 (6 8 ,neighbor-map-pointer)))
                                        (enqueue-ndrange-kernel command-queue
                                                                kernel
                                                                1
@@ -610,10 +610,10 @@ light_source { <0, 30, -30> color White }
                                                    (rho-pointer rho-device))
                                      (with-foreign-object (n-pointer 'cl-int)
                                        (setf (mem-aref n-pointer 'cl-int) n)
-                                       (set-kernel-arg kernel 0 8 acc-pointer)
-                                       (set-kernel-arg kernel 1 8 force-pointer)
-                                       (set-kernel-arg kernel 2 8 rho-pointer)
-                                       (set-kernel-arg kernel 3 4 n-pointer)
+                                       (set-kernel-args kernel `((0 8 ,acc-pointer)
+                                                                 (1 8 ,force-pointer)
+                                                                 (2 8 ,rho-pointer)
+                                                                 (3 4 ,n-pointer)))
                                        (enqueue-ndrange-kernel command-queue
                                                                kernel
                                                                1
@@ -629,10 +629,10 @@ light_source { <0, 30, -30> color White }
                                                    (vel-pointer vel-device))
                                      (with-foreign-object (n-pointer 'cl-int)
                                        (setf (mem-aref n-pointer 'cl-int) n)
-                                       (set-kernel-arg kernel 0 8 acc-pointer)
-                                       (set-kernel-arg kernel 1 8 pos-pointer)
-                                       (set-kernel-arg kernel 2 8 vel-pointer)
-                                       (set-kernel-arg kernel 3 4 n-pointer)
+                                       (set-kernel-args kernel `((0 8 ,acc-pointer)
+                                                                 (1 8 ,pos-pointer)
+                                                                 (2 8 ,vel-pointer)
+                                                                 (3 4 ,n-pointer)))
                                        (enqueue-ndrange-kernel command-queue
                                                                kernel
                                                                1
@@ -647,9 +647,9 @@ light_source { <0, 30, -30> color White }
                                                    (acc-pointer acc-device))
                                      (with-foreign-object (n-pointer 'cl-int)
                                        (setf (mem-aref n-pointer 'cl-int) n)
-                                       (set-kernel-arg kernel 0 8 vel-pointer)
-                                       (set-kernel-arg kernel 1 8 acc-pointer)
-                                       (set-kernel-arg kernel 2 4 n-pointer)
+                                       (set-kernel-args kernel `((0 8 ,vel-pointer)
+                                                                 (1 8 ,acc-pointer)
+                                                                 (2 4 ,n-pointer)))
                                        (enqueue-ndrange-kernel command-queue
                                                                kernel
                                                                1
@@ -664,9 +664,9 @@ light_source { <0, 30, -30> color White }
                                                    (vel-pointer vel-device))
                                      (with-foreign-object (n-pointer 'cl-int)
                                        (setf (mem-aref n-pointer 'cl-int) n)
-                                       (set-kernel-arg kernel 0 8 pos-pointer)
-                                       (set-kernel-arg kernel 1 8 vel-pointer)
-                                       (set-kernel-arg kernel 2 4 n-pointer)
+                                       (set-kernel-args kernel `((0 8 ,pos-pointer)
+                                                                 (1 8 ,vel-pointer)
+                                                                 (2 4 ,n-pointer)))
                                        (enqueue-ndrange-kernel command-queue
                                                                kernel
                                                                1
