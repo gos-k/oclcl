@@ -119,7 +119,7 @@
       (with-cell-index ((i j k) (aref pos p))
         (let ((offset (offset i j k 0)))
           ;; Atomically increment the number of particles in the cell.
-          (let ((l (atomic-add (pointer (aref neighbor-map offset)) 1)))
+          (let ((l (atomic-inc (pointer (aref neighbor-map offset)))))
             ;; Set particle in the cell.
             (set (aref neighbor-map (offset i j k (+ l 1))) p)))))))
 
