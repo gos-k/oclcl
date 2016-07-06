@@ -441,10 +441,6 @@ light_source { <0, 30, -30> color White }
     (loop for i from 0 to (1- n) by step
           collecting (mem-aref foreign-array type i))))
 
-(defun print-foreign (foreign-array size type &key (limit size) (step 1))
-  (loop for i from 0 to (1- size) by step
-        do (format t "~a, ~a~%" i (mem-aref foreign-array type i))))
-
 (defun print-device (command-queue device size type &key (limit size) (step 1))
   (with-foreign-objects ((foreign-array type size))
     (enqueue-read-buffer command-queue
@@ -453,7 +449,7 @@ light_source { <0, 30, -30> color White }
                          0
                          (* (foreign-type-size type) size)
                          foreign-array)
-    (print-foreign foreign-array size type :limit limit :step step)))
+    (print-foreign-array foreign-array size type :step step)))
 
 (defun main ()
   (with-platform-id (platform)
@@ -482,8 +478,8 @@ light_source { <0, 30, -30> color White }
                 (with-foreign-objects ((pos 'cl-float (* 4 n))
                                        (vel 'cl-float (* 4 n)))
                   (initialize pos vel particles)
-                  ;(print-foreign pos (* 4 n) 'cl-float :limit 100)
-                  ;(print-foreign vel (* 4 n) 'cl-float :limit 100)
+                  ;(print-foreign-array pos (* 4 n) 'cl-float)
+                  ;(print-foreign-array vel (* 4 n) 'cl-float)
                   (with-buffers ((pos-device context +cl-mem-read-write+ (* float4-size n))
                                  (vel-device context +cl-mem-read-write+ (* float4-size n))
                                  (acc-device context +cl-mem-read-write+ (* float4-size n))
