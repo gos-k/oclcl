@@ -485,8 +485,7 @@ light_source { <0, 30, -30> color White }
                       ;; Grid and block dims.
                       (with-work-sizes ((neighbor-map-global-work-size 37 45 37)
                                         (neighbor-map-local-work-size 37 1 1)
-                                        (particle-global-work-size (* 512 64))
-                                        (particle-local-work-size 64))
+                                        (particle-global-work-size (* 512 64)))
                         (labels ((c-name (name)
                                    (kernel-manager-function-c-name *kernel-manager* name)))
                           ;; Do simulation time
@@ -516,8 +515,7 @@ light_source { <0, 30, -30> color White }
                                        (enqueue-ndrange-kernel command-queue
                                                                kernel
                                                                1
-                                                               particle-global-work-size
-                                                               particle-local-work-size)
+                                                               particle-global-work-size)
                                        (finish command-queue))))
                                  ;(print-device-memory command-queue neighbor-map-device size 'cl-int)
 
@@ -535,8 +533,7 @@ light_source { <0, 30, -30> color White }
                                        (enqueue-ndrange-kernel command-queue
                                                                kernel
                                                                1
-                                                               particle-global-work-size
-                                                               particle-local-work-size)
+                                                               particle-global-work-size)
                                        (finish command-queue))))
                                  ;(pprint-device-memory command-queue rho-device n 'cl-float)
 
@@ -552,8 +549,7 @@ light_source { <0, 30, -30> color White }
                                        (enqueue-ndrange-kernel command-queue
                                                                kernel
                                                                1
-                                                               particle-global-work-size
-                                                               particle-local-work-size)
+                                                               particle-global-work-size)
                                        (finish command-queue))))
                                  ;(print-device-memory command-queue prs-device n 'cl-float)
 
@@ -577,8 +573,7 @@ light_source { <0, 30, -30> color White }
                                        (enqueue-ndrange-kernel command-queue
                                                                kernel
                                                                1
-                                                               particle-global-work-size
-                                                               particle-local-work-size)
+                                                               particle-global-work-size)
                                        (finish command-queue))))
                                  ;(print-device-memory command-queue force-device (* 4 n) 'cl-float)
 
@@ -596,8 +591,7 @@ light_source { <0, 30, -30> color White }
                                        (enqueue-ndrange-kernel command-queue
                                                                kernel
                                                                1
-                                                               particle-global-work-size
-                                                               particle-local-work-size)
+                                                               particle-global-work-size)
                                        (finish command-queue))))
                                  ;(print-device-memory command-queue acc-device (* 4 n) 'cl-float)
 
@@ -615,8 +609,7 @@ light_source { <0, 30, -30> color White }
                                        (enqueue-ndrange-kernel command-queue
                                                                kernel
                                                                1
-                                                               particle-global-work-size
-                                                               particle-local-work-size)
+                                                               particle-global-work-size)
                                        (finish command-queue))))
                                  ;(print-device-memory command-queue acc-device (* 4 n) 'cl-float)
 
@@ -632,8 +625,7 @@ light_source { <0, 30, -30> color White }
                                        (enqueue-ndrange-kernel command-queue
                                                                kernel
                                                                1
-                                                               particle-global-work-size
-                                                               particle-local-work-size)
+                                                               particle-global-work-size)
                                        (finish command-queue))))
                                  ;(print-device-memory command-queue vel-device (* 4 n) 'cl-float)
 
@@ -649,8 +641,7 @@ light_source { <0, 30, -30> color White }
                                        (enqueue-ndrange-kernel command-queue
                                                                kernel
                                                                1
-                                                               particle-global-work-size
-                                                               particle-local-work-size)
+                                                               particle-global-work-size)
                                        (finish command-queue))))
                                  ;(print-device-memory command-queue pos-device (* 4 n) 'cl-float)
 
