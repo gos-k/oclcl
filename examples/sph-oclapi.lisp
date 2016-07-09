@@ -249,11 +249,12 @@
 
 (defkernel update-density (void ((rho float*)
                                  (pos float4*)
+                                 (neighbor-count int*)
                                  (neighbor-map int*)))
   (with-particle-index (i)
     (let ((xi (aref pos i))
           (tmp 0.0))
-      (do-neighbors (j neighbor-map xi)
+      (do-neighbors (j neighbor-count neighbor-map xi)
         (let* ((xj (aref pos j))
                (dr (* (- xi xj) simscale)))
           (when (<= (norm dr) h)
@@ -515,10 +516,12 @@ light_source { <0, 30, -30> color White }
                                  (with-kernel (kernel program (c-name 'update-density))
                                    (with-pointers ((rho-pointer rho-device)
                                                    (pos-pointer pos-device)
+                                                   (neighbor-count-pointer neighbor-count-device)
                                                    (neighbor-map-pointer neighbor-map-device))
                                      (set-kernel-args kernel `((0 8 ,rho-pointer)
                                                                (1 8 ,pos-pointer)
-                                                               (2 8 ,neighbor-map-pointer)))
+                                                               (2 8 ,neighbor-count-pointer)
+                                                               (3 8 ,neighbor-map-pointer)))
                                      (enqueue-ndrange-kernel command-queue
                                                              kernel
                                                              1
