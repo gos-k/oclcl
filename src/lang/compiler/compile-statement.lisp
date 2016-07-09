@@ -76,9 +76,7 @@
             (then-stmt2 (indent 2 then-stmt1))
             (else-stmt2 (if else-stmt1
                             (indent 2 else-stmt1))))
-        (format nil "if ~A {~%~A}~@[ else {~%~A}~]~%" test-expr2
-                                                      then-stmt2
-                                                      else-stmt2)))))
+        (format nil "if ~A~%{~%~A}~@[~%else~%{~%~A}~]~%" test-expr2 then-stmt2 else-stmt2)))))
 
 
 ;;;

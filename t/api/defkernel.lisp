@@ -122,7 +122,8 @@ __kernel void oclcl_test_api_defkernel_test_when();
 
 __kernel void oclcl_test_api_defkernel_test_when()
 {
-  if (true) {
+  if (true)
+  {
     return;
   }
   return;

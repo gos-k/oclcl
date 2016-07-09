@@ -47,9 +47,12 @@
 
   (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(if t (return) (return)))
-          (c-code (unlines "if (true) {"
+          (c-code (unlines "if (true)"
+                           "{"
                            "  return;"
-                           "} else {"
+                           "}"
+                           "else"
+                           "{"
                            "  return;"
                            "}")))
       (is (compile-if lisp-code var-env func-env) c-code
@@ -57,7 +60,8 @@
 
   (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(if t (return 0)))
-          (c-code (unlines "if (true) {"
+          (c-code (unlines "if (true)"
+                           "{"
                            "  return 0;"
                            "}")))
       (is (compile-if lisp-code var-env func-env) c-code
