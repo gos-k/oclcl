@@ -65,7 +65,7 @@ int oclcl_test_lang_compiler_compile_kernel_bar( int x )
 
 __kernel void oclcl_test_lang_compiler_compile_kernel_foo( __global int* x )
 {
-  x[0] = oclcl_test_lang_compiler_compile_kernel_bar( 1 );
+  x[0] = oclcl_test_lang_compiler_compile_kernel_bar(1);
   return;
 }
 "
