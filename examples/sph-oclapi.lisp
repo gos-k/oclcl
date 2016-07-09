@@ -105,6 +105,11 @@
            (,k (to-int (floor (/ (- (float4-z ,x) (float4-z origin)) delta)))))
        ,@body)))
 
+(defkernel count-offset (int ((i int) (j int) (k int)))
+  (return (+ (* size-x size-y k)
+             (* size-x j)
+             i)))
+
 (defkernel offset (int ((i int) (j int) (k int) (l int)))
   (return (+ (* (+ capacity 1) size-x size-y k)
              (* (+ capacity 1) size-x j)
@@ -121,11 +126,11 @@
           ;; Set particle in the cell.
           (set (aref neighbor-map (offset i j k (+ l 1))) p))))))
 
-(defkernel clear-neighbor-map (void ((neighbor-map int*)))
-  (let ((i (to-int (get-global-id 0)))
-        (j (to-int (get-global-id 1)))
-        (k (to-int (get-global-id 2))))
-    (set (aref neighbor-map (offset i j k 0)) 0)))
+(defkernel clear-neighbor-count (void ((neighbor-count int*)))
+  (set (aref neighbor-count (count-offset (to-int (get-global-id 0))
+                                          (to-int (get-global-id 1))
+                                          (to-int (get-global-id 2))))
+       0))
 
 (defkernelmacro do-neighbors ((var neighbor-map x) &body body)
   (with-gensyms (i0 j0 k0 i j k l size)
@@ -161,7 +166,7 @@
            (size (* size-x
                     size-y
                     size-z
-                    (1+ capacity))))
+                    capacity)))
       (values size-x size-y size-z size))))
 
 
@@ -435,6 +440,7 @@ light_source { <0, 30, -30> color White }
                    (n (length particles))
                    ;; Compute neighbor map origin.
                    (origin (compute-origin box-min delta))
+                   (int-size (foreign-type-size 'cl-int))
                    (float-size (foreign-type-size 'cl-float))
                    (float4-size (* float-size 4)))
 
@@ -453,7 +459,8 @@ light_source { <0, 30, -30> color White }
                                  (force-device context +cl-mem-read-write+ (* 4 float4-size n))
                                  (rho-device context +cl-mem-read-write+ (* float-size n))
                                  (prs-device context +cl-mem-read-write+ (* float-size n))
-                                 (neighbor-map-device context +cl-mem-read-write+ (* float-size size)))
+                                 (neighbor-count-device context +cl-mem-read-write+ (* int-size size-x size-y size-z))
+                                 (neighbor-map-device context +cl-mem-read-write+ (* int-size size)))
                     (with-command-queue (command-queue context device 0)
                       (labels ((write-buffer (device size host)
                                  (enqueue-write-buffer command-queue
@@ -476,16 +483,16 @@ light_source { <0, 30, -30> color White }
                           (loop repeat 300
                                 for i from 1
                                 do ;; Clear neighbor map.
-                                   (with-kernel (kernel program (c-name 'clear-neighbor-map))
-                                     (with-pointers ((neighbor-map-pointer neighbor-map-device))
-                                       (set-kernel-arg kernel 0 8 neighbor-map-pointer)
+                                   (with-kernel (kernel program (c-name 'clear-neighbor-count))
+                                     (with-pointers ((neighbor-count-pointer neighbor-count-device))
+                                       (set-kernel-arg kernel 0 8 neighbor-count-pointer)
                                        (enqueue-ndrange-kernel command-queue
                                                                kernel
                                                                3
                                                                neighbor-map-global-work-size
                                                                neighbor-map-local-work-size)
                                        (finish command-queue)))
-                                 ;(print-device-memory command-queue neighbor-map-device size 'cl-int :step (1+ capacity))
+                                 ;(print-device-memory command-queue neighbor-count-device (* size-x size-y size-z) 'cl-int)
 
                                  ;; Update neighbor map.
                                  (with-kernel (kernel program (c-name 'update-neighbor-map))
