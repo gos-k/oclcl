@@ -135,7 +135,7 @@
 (defun compile-arguments (arguments)
   (let ((arguments1 (mapcar #'compile-argument arguments)))
     (if arguments1
-        (format nil " ~{~A~^, ~} " arguments1)
+        (format nil "~{~A~^, ~}" arguments1)
         "")))
 
 (defun compile-declaration (kernel name)

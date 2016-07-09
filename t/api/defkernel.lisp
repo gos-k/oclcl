@@ -152,14 +152,14 @@ __kernel void oclcl_test_api_defkernel_test_when()
  *  Kernel function prototypes
  */
 
-__kernel void oclcl_test_api_defkernel_test_symbol_macro( __global int* ret );
+__kernel void oclcl_test_api_defkernel_test_symbol_macro(__global int* ret);
 
 
 /**
  *  Kernel function definitions
  */
 
-__kernel void oclcl_test_api_defkernel_test_symbol_macro( __global int* ret )
+__kernel void oclcl_test_api_defkernel_test_symbol_macro(__global int* ret)
 {
   ret[0] = 1;
   return;
