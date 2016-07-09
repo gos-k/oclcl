@@ -110,21 +110,22 @@
              (* size-x j)
              i)))
 
-(defkernel offset (int ((i int) (j int) (k int) (l int)))
-  (return (+ (* (+ capacity 1) size-x size-y k)
-             (* (+ capacity 1) size-x j)
-             (* (+ capacity 1) i)
+(defkernel map-offset (int ((i int) (j int) (k int) (l int)))
+  (return (+ (* capacity size-x size-y k)
+             (* capacity size-x j)
+             (* capacity i)
              l)))
 
-(defkernel update-neighbor-map (void ((neighbor-map int*)
+(defkernel update-neighbor-map (void ((neighbor-count int*)
+                                      (neighbor-map int*)
                                       (pos float4*)))
   (with-particle-index (p)
     (with-cell-index ((i j k) (aref pos p))
-      (let ((offset (offset i j k 0)))
+      (let ((co (count-offset i j k)))
         ;; Atomically increment the number of particles in the cell.
-        (let ((l (atomic-inc (pointer (aref neighbor-map offset)))))
+        (let ((l (atomic-inc (pointer (aref neighbor-count co)))))
           ;; Set particle in the cell.
-          (set (aref neighbor-map (offset i j k (+ l 1))) p))))))
+          (set (aref neighbor-map (map-offset i j k l)) p))))))
 
 (defkernel clear-neighbor-count (void ((neighbor-count int*)))
   (set (aref neighbor-count (count-offset (to-int (get-global-id 0))
@@ -496,15 +497,18 @@ light_source { <0, 30, -30> color White }
 
                                  ;; Update neighbor map.
                                  (with-kernel (kernel program (c-name 'update-neighbor-map))
-                                   (with-pointers ((neighbor-map-pointer neighbor-map-device)
+                                   (with-pointers ((neighbor-count-pointer neighbor-count-device)
+                                                   (neighbor-map-pointer neighbor-map-device)
                                                    (pos-pointer pos-device))
-                                     (set-kernel-args kernel `((0 8 ,neighbor-map-pointer)
-                                                               (1 8 ,pos-pointer)))
+                                     (set-kernel-args kernel `((0 8 ,neighbor-count-pointer)
+                                                               (1 8 ,neighbor-map-pointer)
+                                                               (2 8 ,pos-pointer)))
                                      (enqueue-ndrange-kernel command-queue
                                                              kernel
                                                              1
                                                              particle-global-work-size)
                                      (finish command-queue)))
+                                 ;(print-device-memory command-queue neighbor-count-device (* size-x size-y size-z) 'cl-int)
                                  ;(print-device-memory command-queue neighbor-map-device size 'cl-int)
 
                                  ;; Update density.
