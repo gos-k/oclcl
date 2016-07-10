@@ -483,146 +483,147 @@ light_source { <0, 30, -30> color White }
                         (labels ((c-name (name)
                                    (kernel-manager-function-c-name *kernel-manager* name)))
                           ;; Do simulation time
-                          (loop repeat 300
-                                for i from 1
-                                do ;; Clear neighbor map.
-                                   (with-kernel (kernel program (c-name 'clear-neighbor-count))
-                                     (with-pointers ((neighbor-count-pointer neighbor-count-device))
-                                       (set-kernel-arg kernel 0 8 neighbor-count-pointer)
-                                       (enqueue-ndrange-kernel command-queue
-                                                               kernel
-                                                               3
-                                                               neighbor-map-global-work-size
-                                                               neighbor-map-local-work-size)
-                                       (finish command-queue)))
-                                 ;(print-device-memory command-queue neighbor-count-device (* size-x size-y size-z) 'cl-int)
+                          (time
+                           (loop repeat 300
+                                 for i from 1
+                                 do ;; Clear neighbor map.
+                                    (with-kernel (kernel program (c-name 'clear-neighbor-count))
+                                      (with-pointers ((neighbor-count-pointer neighbor-count-device))
+                                        (set-kernel-arg kernel 0 8 neighbor-count-pointer)
+                                        (enqueue-ndrange-kernel command-queue
+                                                                kernel
+                                                                3
+                                                                neighbor-map-global-work-size
+                                                                neighbor-map-local-work-size)
+                                        (finish command-queue)))
+                                        ;(print-device-memory command-queue neighbor-count-device (* size-x size-y size-z) 'cl-int)
 
-                                 ;; Update neighbor map.
-                                 (with-kernel (kernel program (c-name 'update-neighbor-map))
-                                   (with-pointers ((neighbor-count-pointer neighbor-count-device)
-                                                   (neighbor-map-pointer neighbor-map-device)
-                                                   (pos-pointer pos-device))
-                                     (set-kernel-args kernel `((0 8 ,neighbor-count-pointer)
-                                                               (1 8 ,neighbor-map-pointer)
-                                                               (2 8 ,pos-pointer)))
-                                     (enqueue-ndrange-kernel command-queue
-                                                             kernel
-                                                             1
-                                                             particle-global-work-size)
-                                     (finish command-queue)))
-                                 ;(print-device-memory command-queue neighbor-count-device (* size-x size-y size-z) 'cl-int)
-                                 ;(print-device-memory command-queue neighbor-map-device size 'cl-int)
+                                    ;; Update neighbor map.
+                                    (with-kernel (kernel program (c-name 'update-neighbor-map))
+                                      (with-pointers ((neighbor-count-pointer neighbor-count-device)
+                                                      (neighbor-map-pointer neighbor-map-device)
+                                                      (pos-pointer pos-device))
+                                        (set-kernel-args kernel `((0 8 ,neighbor-count-pointer)
+                                                                  (1 8 ,neighbor-map-pointer)
+                                                                  (2 8 ,pos-pointer)))
+                                        (enqueue-ndrange-kernel command-queue
+                                                                kernel
+                                                                1
+                                                                particle-global-work-size)
+                                        (finish command-queue)))
+                                        ;(print-device-memory command-queue neighbor-count-device (* size-x size-y size-z) 'cl-int)
+                                        ;(print-device-memory command-queue neighbor-map-device size 'cl-int)
 
-                                 ;; Update density.
-                                 (with-kernel (kernel program (c-name 'update-density))
-                                   (with-pointers ((rho-pointer rho-device)
-                                                   (pos-pointer pos-device)
-                                                   (neighbor-count-pointer neighbor-count-device)
-                                                   (neighbor-map-pointer neighbor-map-device))
-                                     (set-kernel-args kernel `((0 8 ,rho-pointer)
-                                                               (1 8 ,pos-pointer)
-                                                               (2 8 ,neighbor-count-pointer)
-                                                               (3 8 ,neighbor-map-pointer)))
-                                     (enqueue-ndrange-kernel command-queue
-                                                             kernel
-                                                             1
-                                                             particle-global-work-size)
-                                     (finish command-queue)))
-                                 ;(pprint-device-memory command-queue rho-device n 'cl-float)
+                                    ;; Update density.
+                                    (with-kernel (kernel program (c-name 'update-density))
+                                      (with-pointers ((rho-pointer rho-device)
+                                                      (pos-pointer pos-device)
+                                                      (neighbor-count-pointer neighbor-count-device)
+                                                      (neighbor-map-pointer neighbor-map-device))
+                                        (set-kernel-args kernel `((0 8 ,rho-pointer)
+                                                                  (1 8 ,pos-pointer)
+                                                                  (2 8 ,neighbor-count-pointer)
+                                                                  (3 8 ,neighbor-map-pointer)))
+                                        (enqueue-ndrange-kernel command-queue
+                                                                kernel
+                                                                1
+                                                                particle-global-work-size)
+                                        (finish command-queue)))
+                                        ;(pprint-device-memory command-queue rho-device n 'cl-float)
 
-                                 ;; Update pressure.
-                                 (with-kernel (kernel program (c-name 'update-pressure))
-                                   (with-pointers ((rho-pointer rho-device)
-                                                   (prs-pointer prs-device))
-                                     (set-kernel-args kernel `((0 8 ,prs-pointer)
-                                                               (1 8 ,rho-pointer)))
-                                     (enqueue-ndrange-kernel command-queue
-                                                             kernel
-                                                             1
-                                                             particle-global-work-size)
-                                     (finish command-queue)))
-                                 ;(print-device-memory command-queue prs-device n 'cl-float)
+                                    ;; Update pressure.
+                                    (with-kernel (kernel program (c-name 'update-pressure))
+                                      (with-pointers ((rho-pointer rho-device)
+                                                      (prs-pointer prs-device))
+                                        (set-kernel-args kernel `((0 8 ,prs-pointer)
+                                                                  (1 8 ,rho-pointer)))
+                                        (enqueue-ndrange-kernel command-queue
+                                                                kernel
+                                                                1
+                                                                particle-global-work-size)
+                                        (finish command-queue)))
+                                        ;(print-device-memory command-queue prs-device n 'cl-float)
 
-                                 ;; Update force.
-                                 (with-kernel (kernel program (c-name 'update-force))
-                                   (with-pointers ((force-pointer force-device)
-                                                   (pos-pointer pos-device)
-                                                   (vel-pointer vel-device)
-                                                   (rho-pointer rho-device)
-                                                   (prs-pointer prs-device)
-                                                   (neighbor-count-pointer neighbor-count-device)
-                                                   (neighbor-map-pointer neighbor-map-device))
-                                     (set-kernel-args kernel `((0 8 ,force-pointer)
-                                                               (1 8 ,pos-pointer)
-                                                               (2 8 ,vel-pointer)
-                                                               (3 8 ,rho-pointer)
-                                                               (4 8 ,prs-pointer)
-                                                               (5 8 ,neighbor-count-pointer)
-                                                               (6 8 ,neighbor-map-pointer)))
-                                     (enqueue-ndrange-kernel command-queue
-                                                             kernel
-                                                             1
-                                                             particle-global-work-size)
-                                     (finish command-queue)))
-                                 ;(print-device-memory command-queue force-device (* 4 n) 'cl-float)
+                                    ;; Update force.
+                                    (with-kernel (kernel program (c-name 'update-force))
+                                      (with-pointers ((force-pointer force-device)
+                                                      (pos-pointer pos-device)
+                                                      (vel-pointer vel-device)
+                                                      (rho-pointer rho-device)
+                                                      (prs-pointer prs-device)
+                                                      (neighbor-count-pointer neighbor-count-device)
+                                                      (neighbor-map-pointer neighbor-map-device))
+                                        (set-kernel-args kernel `((0 8 ,force-pointer)
+                                                                  (1 8 ,pos-pointer)
+                                                                  (2 8 ,vel-pointer)
+                                                                  (3 8 ,rho-pointer)
+                                                                  (4 8 ,prs-pointer)
+                                                                  (5 8 ,neighbor-count-pointer)
+                                                                  (6 8 ,neighbor-map-pointer)))
+                                        (enqueue-ndrange-kernel command-queue
+                                                                kernel
+                                                                1
+                                                                particle-global-work-size)
+                                        (finish command-queue)))
+                                        ;(print-device-memory command-queue force-device (* 4 n) 'cl-float)
 
-                                 ;; Update acceleration.
-                                 (with-kernel (kernel program (c-name 'update-acceleration))
-                                   (with-pointers ((acc-pointer acc-device)
-                                                   (force-pointer force-device)
-                                                   (rho-pointer rho-device))
-                                     (set-kernel-args kernel `((0 8 ,acc-pointer)
-                                                               (1 8 ,force-pointer)
-                                                               (2 8 ,rho-pointer)))
-                                     (enqueue-ndrange-kernel command-queue
-                                                             kernel
-                                                             1
-                                                             particle-global-work-size)
-                                     (finish command-queue)))
-                                 ;(print-device-memory command-queue acc-device (* 4 n) 'cl-float)
+                                    ;; Update acceleration.
+                                    (with-kernel (kernel program (c-name 'update-acceleration))
+                                      (with-pointers ((acc-pointer acc-device)
+                                                      (force-pointer force-device)
+                                                      (rho-pointer rho-device))
+                                        (set-kernel-args kernel `((0 8 ,acc-pointer)
+                                                                  (1 8 ,force-pointer)
+                                                                  (2 8 ,rho-pointer)))
+                                        (enqueue-ndrange-kernel command-queue
+                                                                kernel
+                                                                1
+                                                                particle-global-work-size)
+                                        (finish command-queue)))
+                                        ;(print-device-memory command-queue acc-device (* 4 n) 'cl-float)
 
-                                 ;; Apply boundary condition.
-                                 (with-kernel (kernel program (c-name 'boundary-condition))
-                                   (with-pointers ((acc-pointer acc-device)
-                                                   (pos-pointer pos-device)
-                                                   (vel-pointer vel-device))
-                                     (set-kernel-args kernel `((0 8 ,acc-pointer)
-                                                               (1 8 ,pos-pointer)
-                                                               (2 8 ,vel-pointer)))
-                                     (enqueue-ndrange-kernel command-queue
-                                                             kernel
-                                                             1
-                                                             particle-global-work-size)
-                                     (finish command-queue)))
-                                 ;(print-device-memory command-queue acc-device (* 4 n) 'cl-float)
+                                    ;; Apply boundary condition.
+                                    (with-kernel (kernel program (c-name 'boundary-condition))
+                                      (with-pointers ((acc-pointer acc-device)
+                                                      (pos-pointer pos-device)
+                                                      (vel-pointer vel-device))
+                                        (set-kernel-args kernel `((0 8 ,acc-pointer)
+                                                                  (1 8 ,pos-pointer)
+                                                                  (2 8 ,vel-pointer)))
+                                        (enqueue-ndrange-kernel command-queue
+                                                                kernel
+                                                                1
+                                                                particle-global-work-size)
+                                        (finish command-queue)))
+                                        ;(print-device-memory command-queue acc-device (* 4 n) 'cl-float)
 
-                                 ;; Update velocity.
-                                 (with-kernel (kernel program (c-name 'update-velocity))
-                                   (with-pointers ((vel-pointer vel-device)
-                                                   (acc-pointer acc-device))
-                                     (set-kernel-args kernel `((0 8 ,vel-pointer)
-                                                               (1 8 ,acc-pointer)))
-                                     (enqueue-ndrange-kernel command-queue
-                                                             kernel
-                                                             1
-                                                             particle-global-work-size)
-                                     (finish command-queue)))
-                                 ;(print-device-memory command-queue vel-device (* 4 n) 'cl-float)
+                                    ;; Update velocity.
+                                    (with-kernel (kernel program (c-name 'update-velocity))
+                                      (with-pointers ((vel-pointer vel-device)
+                                                      (acc-pointer acc-device))
+                                        (set-kernel-args kernel `((0 8 ,vel-pointer)
+                                                                  (1 8 ,acc-pointer)))
+                                        (enqueue-ndrange-kernel command-queue
+                                                                kernel
+                                                                1
+                                                                particle-global-work-size)
+                                        (finish command-queue)))
+                                        ;(print-device-memory command-queue vel-device (* 4 n) 'cl-float)
 
-                                 ;; Update position.
-                                 (with-kernel (kernel program (c-name 'update-position))
-                                   (with-pointers ((pos-pointer pos-device)
-                                                   (vel-pointer vel-device))
-                                     (set-kernel-args kernel `((0 8 ,pos-pointer)
-                                                               (1 8 ,vel-pointer)))
-                                     (enqueue-ndrange-kernel command-queue
-                                                             kernel
-                                                             1
-                                                             particle-global-work-size)
-                                     (finish command-queue)))
-                                 ;(print-device-memory command-queue pos-device (* 4 n) 'cl-float)
+                                    ;; Update position.
+                                    (with-kernel (kernel program (c-name 'update-position))
+                                      (with-pointers ((pos-pointer pos-device)
+                                                      (vel-pointer vel-device))
+                                        (set-kernel-args kernel `((0 8 ,pos-pointer)
+                                                                  (1 8 ,vel-pointer)))
+                                        (enqueue-ndrange-kernel command-queue
+                                                                kernel
+                                                                1
+                                                                particle-global-work-size)
+                                        (finish command-queue)))
+                                        ;(print-device-memory command-queue pos-device (* 4 n) 'cl-float)
 
-                                 ;; Output POV file.
-                                 #+nil
-                                 (when (= (mod i 10) 0)
-                                   (output command-queue i pos-device n))))))))))))))))
+                                    ;; Output POV file.
+                                    #+nil
+                                    (when (= (mod i 10) 0)
+                                      (output command-queue i pos-device n)))))))))))))))))
