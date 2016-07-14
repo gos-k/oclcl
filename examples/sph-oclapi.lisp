@@ -14,9 +14,11 @@
                 :with-gensyms
                 :once-only)
   (:export :main
+           :*pov-files*
            :*interim-results*))
 (in-package :oclcl-examples.sph-oclapi)
 
+(defvar *pov-files* nil)
 (defvar *interim-results* nil)
 
 ;;
@@ -616,6 +618,6 @@ light_source { <0, 30, -30> color White }
                                       (print-interim-result command-queue pos-device (* 4 n) 'cl-float)
 
                                       ;; Output POV file.
-                                      #+nil
-                                      (when (= (mod i 10) 0)
-                                        (output command-queue i pos-device n))))))))))))))))))
+                                      (when *pov-files*
+                                        (when (= (mod i 10) 0)
+                                          (output command-queue i pos-device n)))))))))))))))))))
