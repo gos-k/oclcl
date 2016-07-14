@@ -13,9 +13,11 @@
   (:import-from :alexandria
                 :with-gensyms
                 :once-only)
-  (:export :main))
+  (:export :main
+           :*interim-results*))
 (in-package :oclcl-examples.sph-oclapi)
 
+(defvar *interim-results* nil)
 
 ;;
 ;; Utilities
@@ -434,7 +436,7 @@ light_source { <0, 30, -30> color White }
                                           "#pragma OPENCL EXTENSION cl_khr_global_int32_base_atomics : enable"
                                           (kernel-manager-translate *kernel-manager*)))
               (device (mem-aref devices 'cl-device-id)))
-          ;(pprint c-source-code)
+          ;;(pprint c-source-code)
           (with-program-with-source (program context 1 c-source-code)
             (build-program program 1 devices)
             (let* (;; Get initial condition.
@@ -454,8 +456,9 @@ light_source { <0, 30, -30> color White }
                 (with-foreign-objects ((pos 'cl-float (* 4 n))
                                        (vel 'cl-float (* 4 n)))
                   (initialize pos vel particles)
-                  ;(print-foreign-array pos (* 4 n) 'cl-float)
-                  ;(print-foreign-array vel (* 4 n) 'cl-float)
+                  (when *interim-results*
+                    (print-foreign-array pos (* 4 n) 'cl-float)
+                    (print-foreign-array vel (* 4 n) 'cl-float))
                   (with-buffers ((pos-device context +cl-mem-read-write+ (* float4-size n))
                                  (vel-device context +cl-mem-read-write+ (* float4-size n))
                                  (acc-device context +cl-mem-read-write+ (* float4-size n))
@@ -489,7 +492,15 @@ light_source { <0, 30, -30> color White }
                                           (neighbor-map-local-work-size 37 1 1)
                                           (particle-global-work-size n))
                           (labels ((c-name (name)
-                                     (kernel-manager-function-c-name *kernel-manager* name)))
+                                     (kernel-manager-function-c-name *kernel-manager* name))
+                                   (print-interim-result (command-queue device size type &key (step 1) (index nil))
+                                     (when *interim-results*
+                                       (print-device-memory command-queue
+                                                            device
+                                                            size
+                                                            type
+                                                            :step step
+                                                            :index index))))
                             ;; Do simulation time
                             (time
                              (loop repeat 300
@@ -503,7 +514,7 @@ light_source { <0, 30, -30> color White }
                                                                 neighbor-map-global-work-size
                                                                 neighbor-map-local-work-size)
                                         (finish command-queue))
-                                        ;(print-device-memory command-queue neighbor-count-device (* size-x size-y size-z) 'cl-int)
+                                      (print-interim-result command-queue neighbor-count-device (* size-x size-y size-z) 'cl-int)
 
                                       ;; Update neighbor map.
                                       (with-kernel (kernel program (c-name 'update-neighbor-map))
@@ -515,8 +526,8 @@ light_source { <0, 30, -30> color White }
                                                                 1
                                                                 particle-global-work-size)
                                         (finish command-queue))
-                                        ;(print-device-memory command-queue neighbor-count-device (* size-x size-y size-z) 'cl-int)
-                                        ;(print-device-memory command-queue neighbor-map-device size 'cl-int)
+                                      (print-interim-result command-queue neighbor-count-device (* size-x size-y size-z) 'cl-int)
+                                      (print-interim-result command-queue neighbor-map-device size 'cl-int)
 
                                       ;; Update density.
                                       (with-kernel (kernel program (c-name 'update-density))
@@ -529,7 +540,7 @@ light_source { <0, 30, -30> color White }
                                                                 1
                                                                 particle-global-work-size)
                                         (finish command-queue))
-                                        ;(pprint-device-memory command-queue rho-device n 'cl-float)
+                                      (print-interim-result command-queue rho-device n 'cl-float)
 
                                       ;; Update pressure.
                                       (with-kernel (kernel program (c-name 'update-pressure))
@@ -540,7 +551,7 @@ light_source { <0, 30, -30> color White }
                                                                 1
                                                                 particle-global-work-size)
                                         (finish command-queue))
-                                        ;(print-device-memory command-queue prs-device n 'cl-float)
+                                      (print-interim-result command-queue prs-device n 'cl-float)
 
                                       ;; Update force.
                                       (with-kernel (kernel program (c-name 'update-force))
@@ -556,7 +567,7 @@ light_source { <0, 30, -30> color White }
                                                                 1
                                                                 particle-global-work-size)
                                         (finish command-queue))
-                                        ;(print-device-memory command-queue force-device (* 4 n) 'cl-float)
+                                      (print-interim-result command-queue force-device (* 4 n) 'cl-float)
 
                                       ;; Update acceleration.
                                       (with-kernel (kernel program (c-name 'update-acceleration))
@@ -568,7 +579,7 @@ light_source { <0, 30, -30> color White }
                                                                 1
                                                                 particle-global-work-size)
                                         (finish command-queue))
-                                        ;(print-device-memory command-queue acc-device (* 4 n) 'cl-float)
+                                      (print-interim-result command-queue acc-device (* 4 n) 'cl-float)
 
                                       ;; Apply boundary condition.
                                       (with-kernel (kernel program (c-name 'boundary-condition))
@@ -580,7 +591,7 @@ light_source { <0, 30, -30> color White }
                                                                 1
                                                                 particle-global-work-size)
                                         (finish command-queue))
-                                        ;(print-device-memory command-queue acc-device (* 4 n) 'cl-float)
+                                      (print-interim-result command-queue acc-device (* 4 n) 'cl-float)
 
                                       ;; Update velocity.
                                       (with-kernel (kernel program (c-name 'update-velocity))
@@ -591,7 +602,7 @@ light_source { <0, 30, -30> color White }
                                                                 1
                                                                 particle-global-work-size)
                                         (finish command-queue))
-                                        ;(print-device-memory command-queue vel-device (* 4 n) 'cl-float)
+                                      (print-interim-result command-queue vel-device (* 4 n) 'cl-float)
 
                                       ;; Update position.
                                       (with-kernel (kernel program (c-name 'update-position))
@@ -602,7 +613,7 @@ light_source { <0, 30, -30> color White }
                                                                 1
                                                                 particle-global-work-size)
                                         (finish command-queue))
-                                        ;(print-device-memory command-queue pos-device (* 4 n) 'cl-float)
+                                      (print-interim-result command-queue pos-device (* 4 n) 'cl-float)
 
                                       ;; Output POV file.
                                       #+nil
