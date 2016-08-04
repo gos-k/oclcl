@@ -26,6 +26,29 @@ ros run
 (oclcl-examples.sph-oclapi:main)
 ```
 
+## SPH
+
+Output pov files.
+
+```for i in *.pov; do povray -D0 $i; done; convert *.png output.m4v
+```
+(ql:quickload :oclcl-examples)
+(oclcl-examples.sph-oclapi:main :pov-files t)
+```
+
+Output m4v file.
+
+```
+for i in *.pov; do povray -D0 $i; done; convert *.png output.m4v
+```
+
+Show m4v file.
+
+```
+vlc output.m4v
+```
+
+
 # cl-cuda to oclcl
 
 thread-idx-x -> (get-local-id 0)
