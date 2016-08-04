@@ -449,7 +449,8 @@ light_source { <0, 30, -30> color White }
                    (origin (compute-origin box-min delta))
                    (int-size (foreign-type-size 'cl-int))
                    (float-size (foreign-type-size 'cl-float))
-                   (float4-size (* float-size 4)))
+                   (float4-size (* float-size 4))
+                   (float4-n-size (* float4-size n)))
 
               ;; Print number of particles.
               (format t "~A particles~%" n)
@@ -461,10 +462,10 @@ light_source { <0, 30, -30> color White }
                   (when *interim-results*
                     (print-foreign-array pos (* 4 n) 'cl-float)
                     (print-foreign-array vel (* 4 n) 'cl-float))
-                  (with-buffers ((pos-device context +cl-mem-read-write+ (* float4-size n))
-                                 (vel-device context +cl-mem-read-write+ (* float4-size n))
-                                 (acc-device context +cl-mem-read-write+ (* float4-size n))
-                                 (force-device context +cl-mem-read-write+ (* 4 float4-size n))
+                  (with-buffers ((pos-device context +cl-mem-read-write+ float4-n-size)
+                                 (vel-device context +cl-mem-read-write+ float4-n-size)
+                                 (acc-device context +cl-mem-read-write+ float4-n-size)
+                                 (force-device context +cl-mem-read-write+ (* 4 float4-n-size))
                                  (rho-device context +cl-mem-read-write+ (* float-size n))
                                  (prs-device context +cl-mem-read-write+ (* float-size n))
                                  (neighbor-count-device context +cl-mem-read-write+ (* int-size size-x size-y size-z))
@@ -485,8 +486,8 @@ light_source { <0, 30, -30> color White }
                                                          0
                                                          size
                                                          host)))
-                          (write-buffer pos-device (* float4-size n) pos)
-                          (write-buffer vel-device (* float4-size n) vel)
+                          (write-buffer pos-device float4-n-size pos)
+                          (write-buffer vel-device float4-n-size vel)
                           (finish command-queue))
 
                         ;; Grid and block dims.
