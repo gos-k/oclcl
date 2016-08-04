@@ -13,13 +13,8 @@
   (:import-from :alexandria
                 :with-gensyms
                 :once-only)
-  (:export :main
-           :*pov-files*
-           :*interim-results*))
+  (:export :main))
 (in-package :oclcl-examples.sph-oclapi)
-
-(defvar *pov-files* nil)
-(defvar *interim-results* nil)
 
 ;;
 ;; Utilities
@@ -430,7 +425,7 @@ light_source { <0, 30, -30> color White }
         do (set-float4 pos i (nth 0 p) (nth 1 p) (nth 2 p) (nth 3 p))
            (set-float4 vel i 0.0 0.0 0.0 0.0)))
 
-(defun main ()
+(defun main (&key pov-files interim-results)
   (with-platform-id (platform)
     (with-device-ids (devices num-devices platform)
       (with-context (context (null-pointer) 1 devices)
@@ -460,7 +455,7 @@ light_source { <0, 30, -30> color White }
                 (with-foreign-objects ((pos 'cl-float (* 4 n))
                                        (vel 'cl-float (* 4 n)))
                   (initialize pos vel particles)
-                  (when *interim-results*
+                  (when interim-results
                     (print-foreign-array pos (* 4 n) 'cl-float)
                     (print-foreign-array vel (* 4 n) 'cl-float))
                   (with-buffers ((pos-device context +cl-mem-read-write+ float4-n-size)
@@ -498,7 +493,7 @@ light_source { <0, 30, -30> color White }
                           (labels ((c-name (name)
                                      (kernel-manager-function-c-name *kernel-manager* name))
                                    (print-interim-result (command-queue device size type &key (step 1) (index nil))
-                                     (when *interim-results*
+                                     (when interim-results
                                        (print-device-memory command-queue
                                                             device
                                                             size
@@ -620,6 +615,6 @@ light_source { <0, 30, -30> color White }
                                       (print-interim-result command-queue pos-device (* 4 n) 'cl-float)
 
                                       ;; Output POV file.
-                                      (when *pov-files*
+                                      (when pov-files
                                         (when (= (mod i 10) 0)
                                           (output command-queue i pos-device n)))))))))))))))))))
