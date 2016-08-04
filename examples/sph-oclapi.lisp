@@ -449,6 +449,7 @@ light_source { <0, 30, -30> color White }
                    (origin (compute-origin box-min delta))
                    (int-size (foreign-type-size 'cl-int))
                    (float-size (foreign-type-size 'cl-float))
+                   (float-n-size (* float-size n))
                    (float4-size (* float-size 4))
                    (float4-n-size (* float4-size n)))
 
@@ -466,8 +467,8 @@ light_source { <0, 30, -30> color White }
                                  (vel-device context +cl-mem-read-write+ float4-n-size)
                                  (acc-device context +cl-mem-read-write+ float4-n-size)
                                  (force-device context +cl-mem-read-write+ (* 4 float4-n-size))
-                                 (rho-device context +cl-mem-read-write+ (* float-size n))
-                                 (prs-device context +cl-mem-read-write+ (* float-size n))
+                                 (rho-device context +cl-mem-read-write+ float-n-size)
+                                 (prs-device context +cl-mem-read-write+ float-n-size)
                                  (neighbor-count-device context +cl-mem-read-write+ (* int-size size-x size-y size-z))
                                  (neighbor-map-device context +cl-mem-read-write+ (* int-size size)))
                     (with-pointers ((pos-pointer pos-device)
