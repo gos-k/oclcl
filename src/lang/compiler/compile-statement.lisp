@@ -140,8 +140,7 @@
       (let ((statements1 (compile-symbol-macrolet-statements statements
                                                              var-env1
                                                              func-env)))
-        (let ((statements2 (indent 2 statements1)))
-          (format nil "{~%~A}~%" statements2))))))
+        (format nil "~a" statements1)))))
 
 
 ;;;

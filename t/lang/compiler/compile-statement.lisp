@@ -106,9 +106,7 @@
   (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(symbol-macrolet ((x 1))
                        (return x)))
-          (c-code (unlines "{"
-                           "  return 1;"
-                           "}")))
+          (c-code (unlines "return 1;")))
       (is (compile-symbol-macrolet lisp-code var-env func-env) c-code
           "basic case 1"))))
 
