@@ -19,13 +19,8 @@
 (plan nil)
 
 (defmacro with-stub-kernel-manager (&body body)
-  `(let ((kernel-manager *kernel-manager*))
-    (setf *kernel-manager* (make-kernel-manager))
-    (unwind-protect
-         (progn ,@body)
-      (progn
-        (setf *kernel-manager* kernel-manager)
-        t))))
+  `(let ((*kernel-manager* (make-kernel-manager)))
+     ,@body))
 
 ;;;
 ;;; test DEFKERNEL macro
