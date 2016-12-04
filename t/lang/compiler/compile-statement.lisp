@@ -183,7 +183,19 @@
                               "  __local float a[(16 + 2)];"
                               "  a[0] = 1.0f;"
                               "}")
-                     "basic case 6")
+                     "store to local memory")
+
+  (test-local-memory '(with-local-memory ((a float (+ 16 2)))
+                       (let ((b 0.0))
+                         (set b (aref a 0))))
+                     (unlines "{"
+                              "  __local float a[(16 + 2)];"
+                              "  {"
+                              "    float b = 0.0f;"
+                              "    b = a[0];"
+                              "  }"
+                              "}")
+                     "load from local memory")
 
   (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(with-local-memory (a float)
