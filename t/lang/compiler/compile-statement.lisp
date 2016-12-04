@@ -135,62 +135,55 @@
 ;;;
 
 (subtest "COMPILE-WITH-LOCAL-MEMORY"
-  (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(with-local-memory ((a int 16)
-                                           (b float 16 16))
-                       (return)))
-          (c-code (unlines "{"
-                           "  __local int a[16];"
-                           "  __local float b[16][16];"
-                           "  return;"
-                           "}")))
+  (defun test-local-memory (lisp-code c-code message)
+    (multiple-value-bind (var-env func-env) (empty-environment)
       (is (compile-with-local-memory lisp-code var-env func-env) c-code
-          "basic case 1")))
+          message)))
 
-  (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(with-local-memory () (return)))
-          (c-code (unlines "{"
-                           "  return;"
-                           "}")))
-      (is (compile-with-local-memory lisp-code var-env func-env) c-code
-          "basic case 2")))
+  (test-local-memory '(with-local-memory ((a int 16)
+                                          (b float 16 16))
+                       (return))
+                     (unlines "{"
+                              "  __local int a[16];"
+                              "  __local float b[16][16];"
+                              "  return;"
+                              "}")
+                     "basic case 1")
 
-  (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(with-local-memory ()))
-          (c-code (unlines "{"
-                           "}")))
-      (is (compile-with-local-memory lisp-code var-env func-env) c-code
-          "basic case 3")))
+  (test-local-memory '(with-local-memory () (return))
+                     (unlines "{"
+                              "  return;"
+                              "}")
+                     "basic case 2")
 
-  (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(with-local-memory ((a float))
-                       (return a)))
-          (c-code (unlines "{"
-                           "  __local float a;"
-                           "  return a;"
-                           "}")))
-      (is (compile-with-local-memory lisp-code var-env func-env) c-code
-          "basic case 4")))
+  (test-local-memory '(with-local-memory ())
+                     (unlines "{"
+                              "}")
+                     "basic case 3")
 
-  (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(with-local-memory ((a float 16 16))
-                       (set (aref a 0 0) 1.0)))
-          (c-code (unlines "{"
-                           "  __local float a[16][16];"
-                           "  a[0][0] = 1.0f;"
-                           "}")))
-      (is (compile-with-local-memory lisp-code var-env func-env) c-code
-          "basic case 5")))
+  (test-local-memory '(with-local-memory ((a float))
+                       (return a))
+                     (unlines "{"
+                              "  __local float a;"
+                              "  return a;"
+                              "}")
+                     "basic case 4")
 
-  (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(with-local-memory ((a float (+ 16 2)))
-                       (set (aref a 0) 1.0)))
-          (c-code (unlines "{"
-                           "  __local float a[(16 + 2)];"
-                           "  a[0] = 1.0f;"
-                           "}")))
-      (is (compile-with-local-memory lisp-code var-env func-env) c-code
-          "basic case 6")))
+  (test-local-memory '(with-local-memory ((a float 16 16))
+                       (set (aref a 0 0) 1.0))
+                     (unlines "{"
+                              "  __local float a[16][16];"
+                              "  a[0][0] = 1.0f;"
+                              "}")
+                     "basic case 5")
+
+  (test-local-memory '(with-local-memory ((a float (+ 16 2)))
+                       (set (aref a 0) 1.0))
+                     (unlines "{"
+                              "  __local float a[(16 + 2)];"
+                              "  a[0] = 1.0f;"
+                              "}")
+                     "basic case 6")
 
   (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(with-local-memory (a float)
