@@ -119,17 +119,18 @@
 ;;;
 
 (subtest "COMPILE-DO"
-  (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(do ((a 0 (+ a 1))
-                           (b 0 (+ b 1)))
-                       ((> a 15))
-                       (return)))
-          (c-code (unlines "for ( int a = 0, int b = 0; ! (a > 15); a = (a + 1), b = (b + 1) )"
-                           "{"
-                           "  return;"
-                           "}")))
-      (is (compile-do lisp-code var-env func-env) c-code
-          "basic case 1"))))
+  (defun test-do (lisp-code c-code message)
+    (%test-compile-statement #'compile-do lisp-code c-code message))
+
+  (test-do '(do ((a 0 (+ a 1))
+                   (b 0 (+ b 1)))
+               ((> a 15))
+             (return))
+           (unlines "for ( int a = 0, int b = 0; ! (a > 15); a = (a + 1), b = (b + 1) )"
+                    "{"
+                    "  return;"
+                    "}")
+           "basic case 1"))
 
 
 ;;;
