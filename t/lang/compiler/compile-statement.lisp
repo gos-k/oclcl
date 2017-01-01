@@ -48,28 +48,26 @@
 ;;;
 
 (subtest "COMPILE-IF"
+  (defun test-if (lisp-code c-code message)
+    (%test-compile-statement #'compile-if lisp-code c-code message))
 
-  (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(if t (return) (return)))
-          (c-code (unlines "if (true)"
-                           "{"
-                           "  return;"
-                           "}"
-                           "else"
-                           "{"
-                           "  return;"
-                           "}")))
-      (is (compile-if lisp-code var-env func-env) c-code
-          "basic case 1")))
+  (test-if '(if t (return) (return))
+           (unlines "if (true)"
+                    "{"
+                    "  return;"
+                    "}"
+                    "else"
+                    "{"
+                    "  return;"
+                    "}")
+           "test if else")
 
-  (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(if t (return 0)))
-          (c-code (unlines "if (true)"
-                           "{"
-                           "  return 0;"
-                           "}")))
-      (is (compile-if lisp-code var-env func-env) c-code
-          "basic case 2")))
+  (test-if '(if t (return 0))
+           (unlines "if (true)"
+                    "{"
+                    "  return 0;"
+                    "}")
+           "test if")
 
   (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(if 1 (return))))
