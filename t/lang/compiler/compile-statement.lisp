@@ -104,13 +104,13 @@
 ;;;
 
 (subtest "COMPILE-SYMBOL-MACROLET"
+  (defun test-symbol-macrolet (lisp-code c-code message)
+    (%test-compile-statement #'compile-symbol-macrolet lisp-code c-code message))
 
-  (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(symbol-macrolet ((x 1))
-                       (return x)))
-          (c-code (unlines "return 1;")))
-      (is (compile-symbol-macrolet lisp-code var-env func-env) c-code
-          "basic case 1"))))
+  (test-symbol-macrolet '(symbol-macrolet ((x 1))
+                          (return x))
+                        (unlines "return 1;")
+                        "basic case 1"))
 
 
 
