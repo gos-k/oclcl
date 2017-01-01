@@ -28,6 +28,10 @@
 
 (plan nil)
 
+(defun %test-compile-statement (statement-func lisp-code c-code message)
+  (multiple-value-bind (var-env func-env) (empty-environment)
+    (is (apply statement-func (list lisp-code var-env func-env)) c-code
+        message)))
 
 ;;;
 ;;; test COMPILE-STATEMENT function (not implemented)
@@ -136,9 +140,7 @@
 
 (subtest "COMPILE-WITH-LOCAL-MEMORY"
   (defun test-local-memory (lisp-code c-code message)
-    (multiple-value-bind (var-env func-env) (empty-environment)
-      (is (compile-with-local-memory lisp-code var-env func-env) c-code
-          message)))
+    (%test-compile-statement #'compile-with-local-memory lisp-code c-code message))
 
   (test-local-memory '(with-local-memory ((a int 16)
                                           (b float 16 16))
