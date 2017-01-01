@@ -79,16 +79,16 @@
 ;;;
 
 (subtest "COMPILE-LET"
+  (defun test-let (lisp-code c-code message)
+    (%test-compile-statement #'compile-let lisp-code c-code message))
 
-  (multiple-value-bind (var-env func-env) (empty-environment)
-    (let ((lisp-code '(let ((i 0))
-                       (return)))
-          (c-code (unlines "{"
-                           "  int i = 0;"
-                           "  return;"
-                           "}")))
-      (is (compile-let lisp-code var-env func-env) c-code
-          "basic case 1")))
+  (test-let '(let ((i 0))
+              (return))
+            (unlines "{"
+                     "  int i = 0;"
+                     "  return;"
+                     "}")
+            "basic case 1")
 
   (multiple-value-bind (var-env func-env) (empty-environment)
     (is-error (compile-let '(let (i) (return)) var-env func-env)
