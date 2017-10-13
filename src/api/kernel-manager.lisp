@@ -36,7 +36,9 @@
   (:shadow :expand-macro-1
            :expand-macro)
   (:import-from :alexandria
-                :ensure-list))
+                :ensure-list)
+  (:documentation
+   "Defines the kernel-manager object."))
 (in-package :oclcl.api.kernel-manager)
 
 

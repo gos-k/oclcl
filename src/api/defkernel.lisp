@@ -20,7 +20,11 @@
            :expand-macro)
   (:import-from :alexandria
                 :format-symbol
-                :with-gensyms))
+                :with-gensyms)
+  (:documentation
+   "Defines some convenience wrapper macros that register the OpenCL objects,
+ such as kernels, memory and kernel macros.
+ For the actual definitions see kernel-manager.lisp"))
 (in-package :oclcl.api.defkernel)
 
 

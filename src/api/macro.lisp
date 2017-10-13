@@ -10,7 +10,9 @@
         :oclcl.api.defkernel)
   (:export :let*
            :when
-           :unless))
+           :unless)
+  (:documentation
+   "Defines the default set of kernel macros that can be used for writing OpenCL code."))
 (in-package :oclcl.api.macro)
 
 
