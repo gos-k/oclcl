@@ -34,6 +34,7 @@
 
 
 (defmacro defkernel (name (return-type arguments) &body body)
+  "Register the kernel definition to *KERNEL-MANAGER* ."
   `(kernel-manager-define-function *kernel-manager*
                                    ',name
                                    ',return-type
@@ -44,6 +45,8 @@
 ;;;
 
 (defmacro defmemory (name expression &optional qualifiers)
+  "Register the name and the initialization statement of a global variable (stored in the global memory)
+ to *KERNEL-MANAGER* ."
   `(kernel-manager-define-memory *kernel-manager*
                                  ',name
                                  ',(or qualifiers :global)
@@ -54,6 +57,7 @@
 ;;;
 
 (defmacro defkernelmacro (name arguments &body body)
+  "Register the kernel macro definition to *KERNEL-MANAGER* ."
   `(kernel-manager-define-macro *kernel-manager* ',name ',arguments ',body))
 
 (defun expand-macro-1 (form)
@@ -68,4 +72,5 @@
 ;;;
 
 (defmacro defkernel-symbol-macro (name expansion)
+  "Register the kernel symbol macro to *KERNEL-MANAGER*."
   `(kernel-manager-define-symbol-macro *kernel-manager* ',name ',expansion))
