@@ -70,9 +70,11 @@ eldoc works."
        (kernel-manager-define-macro *kernel-manager* ',name ',arguments ',body))))
 
 (defun expand-macro-1 (form)
+  "Equivalent to macroexpand-1"
   (oclcl.api.kernel-manager:expand-macro-1 form *kernel-manager*))
 
 (defun expand-macro (form)
+  "Equivalent to macroexpand"
   (oclcl.api.kernel-manager:expand-macro form *kernel-manager*))
 
 
