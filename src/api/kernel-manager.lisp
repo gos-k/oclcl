@@ -38,7 +38,11 @@
   (:import-from :alexandria
                 :ensure-list)
   (:documentation
-   "Defines the kernel-manager object."))
+   "Defines the kernel-manager object.
+
+The special variable *kernel-manager* is bound to a kernel-manager instance.
+Kernel managers store the various information required to access the defined OCLCL entities.
+"))
 (in-package :oclcl.api.kernel-manager)
 
 
