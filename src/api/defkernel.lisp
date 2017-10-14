@@ -48,11 +48,8 @@
 Causes the the kernel-module named by NAME to become the current kernel-module
 --- that is, the value of *kernel-manager*. If no such package already exists, an error
 of type package-error is signaled.
-
-Everything in-package does is also performed at compile time if the call appears as a top level form. 
 "
-  `(eval-when (:compile-toplevel :load-toplevel :execute)
-     (setf *kernel-manager* (symbol-kernel-module ',name))))
+  `(setf *kernel-manager* (symbol-kernel-module ',name)))
 
 ;;;
 ;;; DEFKERNEL

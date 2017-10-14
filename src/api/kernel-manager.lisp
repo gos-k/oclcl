@@ -201,4 +201,5 @@ Kernel managers store the various information required to access the defined OCL
   (let ((kernel (kernel-manager-kernel manager)))
     (oclcl.lang.kernel:expand-macro form kernel)))
 
-(defvar *kernel-manager* (make-kernel-manager))
+(defvar *kernel-manager*)
+

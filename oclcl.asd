@@ -40,7 +40,7 @@
                   :components
                   ((:file "kernel-manager")
                    (:file "defkernel")
-                   (:file "macro")
+                   (:file "epilogue")
                    (:file "api")))
                  (:file "oclcl"))))
   :description "oclcl is a library S-expression to OpenCL C."
