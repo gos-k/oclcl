@@ -20,7 +20,8 @@
            :expand-macro)
   (:import-from :alexandria
                 :format-symbol
-                :with-gensyms)
+                :with-gensyms
+                :simple-style-warning)
   (:documentation
    "Defines some convenience wrapper macros that register the OpenCL objects,
  such as kernels, memory and kernel macros.
@@ -57,8 +58,16 @@
 ;;;
 
 (defmacro defkernelmacro (name arguments &body body)
-  "Register the kernel macro definition to *KERNEL-MANAGER* ."
-  `(kernel-manager-define-macro *kernel-manager* ',name ',arguments ',body))
+  "Register the kernel macro definition to *KERNEL-MANAGER* .
+For a macro which is not fbound, it tries to define the regular CL macro so that SLIME macroexpansion and
+eldoc works."
+  (with-gensyms (e)
+    `(progn
+       ,(if (fboundp name)
+            (simple-style-warning "Could not define the kernel macro ~a also as a regular macro, because it is fbound." name)
+            `(defmacro ,name (,@arguments &environment ,e)
+               ,@body))
+       (kernel-manager-define-macro *kernel-manager* ',name ',arguments ',body))))
 
 (defun expand-macro-1 (form)
   (oclcl.api.kernel-manager:expand-macro-1 form *kernel-manager*))
