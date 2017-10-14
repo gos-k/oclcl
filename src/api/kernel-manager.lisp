@@ -51,14 +51,16 @@ Kernel managers store the various information required to access the defined OCL
 ;;;
 
 (defstruct (kernel-manager (:constructor %make-kernel-manager))
+  name
   module-path
   module-handle
   %function-handles
   %memory-objects
   kernel)
 
-(defun make-kernel-manager ()
-  (%make-kernel-manager :module-path nil
+(defun make-kernel-manager (&optional (name (gensym)))
+  (%make-kernel-manager :name name
+                        :module-path nil
                         :module-handle nil
                         :%function-handles (make-hash-table)
                         :%memory-objects (make-hash-table)

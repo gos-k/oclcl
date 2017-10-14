@@ -40,7 +40,7 @@
   "define-kernel-module creates a kernel-module as specified and returns the kernel-module. "
   (declare (ignorable options))         ;; for future extensions
   `(setf (symbol-kernel-module ',name)
-         (make-kernel-manager)))
+         (make-kernel-manager ',name)))
 
 (defmacro in-kernel-module (name)
   "NAME is a symbol, not evaluated.
