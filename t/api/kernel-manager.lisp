@@ -24,22 +24,8 @@
     ;; I - initial state
     (kernel-manager-define-memory mgr 'a :global 1)
     (kernel-manager-define-function mgr 'foo 'void '() '())
-    (is (kernel-manager-compiled-p mgr) nil
-        "basic case 1")
-    (is (kernel-manager-module-handle mgr) nil
-        "basic case 2")
-    (is (kernel-manager-function-handles-empty-p mgr) t
-        "basic case 3")
-    (is (kernel-manager-memory-objects-empty-p mgr) t
-        "basic case 4")
     ;; I - initial state
-    (kernel-manager-define-function mgr 'bar 'void '() '())
-    (is (kernel-manager-compiled-p mgr) nil
-        "basic case 16")
-    (is (kernel-manager-module-handle mgr) nil
-        "basic case 17")
-    (is (kernel-manager-function-handles-empty-p mgr) t
-        "basic case 18")))
+    (kernel-manager-define-function mgr 'bar 'void '() '())))
 
 (subtest "KERNEL-MANAGER-TRANSLATE"
   (is (kernel-manager-translate (make-kernel-manager))
@@ -109,9 +95,7 @@ float oclcl_test_api_kernel_manager_one()
   (let* ((mgr (make-kernel-manager))
          (*kernel-manager* mgr))
     ;; defining macro with change makes state transfer
-    (kernel-manager-define-macro mgr 'foo '(a) '(a))
-    (is (kernel-manager-compiled-p mgr) nil
-        "basic case 3")))
+    (kernel-manager-define-macro mgr 'foo '(a) '(a))))
 
 ;;;
 ;;; test KERNEL-MANAGER-DEFINE-SYMBOL-MACRO function
