@@ -23,3 +23,4 @@ install:
 
 script:
   - run-prove oclcl-test.asd
+  - roswell/run-oclcl-examples.ros
