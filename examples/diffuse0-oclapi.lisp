@@ -13,6 +13,9 @@
   (:export :main))
 (in-package :oclcl-examples.diffuse0-oclapi)
 
+(define-kernel-module :diffuse0-oclapi)
+(in-kernel-module :diffuse0-oclapi)
+
 ;;; image output functions
 
 (declaim (inline index))

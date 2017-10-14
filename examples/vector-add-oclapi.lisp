@@ -38,6 +38,9 @@
   (:export :main))
 (in-package :oclcl-examples.vector-add-oclapi)
 
+(define-kernel-module :vector-add-oclapi)
+(in-kernel-module :vector-add-oclapi)
+
 (defun random-init (data n)
   (dotimes (i n)
     (let ((r (random 1.0)))

@@ -16,6 +16,9 @@
   (:export :main))
 (in-package :oclcl-examples.sph-oclapi)
 
+(define-kernel-module :sph-oclapi)
+(in-kernel-module :sph-oclapi)
+
 ;;
 ;; Utilities
 

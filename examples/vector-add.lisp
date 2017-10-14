@@ -17,6 +17,9 @@
   (:export :main))
 (in-package :oclcl-examples.vector-add)
 
+(define-kernel-module :vector-add-eazyopencl)
+(in-kernel-module :vector-add-eazyopencl)
+
 (defun random-init (data n)
   (dotimes (i n)
     (let ((r (random 1.0)))
