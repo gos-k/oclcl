@@ -15,7 +15,9 @@
            :defkernelmacro
            :expand-macro-1
            :expand-macro
-           :defkernel-symbol-macro)
+           :defkernel-symbol-macro
+           :in-kernel-module
+           :define-kernel-module)
   (:shadow :expand-macro-1
            :expand-macro)
   (:import-from :alexandria
@@ -28,6 +30,29 @@
  For the actual definitions see kernel-manager.lisp"))
 (in-package :oclcl.api.defkernel)
 
+(lispn:define-namespace kernel-module t nil "Namespace for the kernel module.
+
+ A kernel module is a single compilation unit, i.e. a single OpenCL C source code.
+ An instance of kernel module is (rather inadequetely) named a kernel-manager.
+")
+
+(defmacro define-kernel-module (name &body options)
+  "define-kernel-module creates a kernel-module as specified and returns the kernel-module. "
+  (declare (ignorable options))         ;; for future extensions
+  `(setf (symbol-kernel-module ',name)
+         (make-kernel-manager)))
+
+(defmacro in-kernel-module (name)
+  "NAME is a symbol, not evaluated.
+
+Causes the the kernel-module named by NAME to become the current kernel-module
+--- that is, the value of *kernel-manager*. If no such package already exists, an error
+of type package-error is signaled.
+
+Everything in-package does is also performed at compile time if the call appears as a top level form. 
+"
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
+     (setf *kernel-manager* (symbol-kernel-module ',name))))
 
 ;;;
 ;;; DEFKERNEL
