@@ -41,6 +41,12 @@ install:
   - curl -L https://raw.githubusercontent.com/snmsts/roswell/release/scripts/install-for-ci.sh | sh
   - ros install prove
 
+cache:
+  directories:
+    - $HOME/.roswell
+    - $HOME/.config/common-lisp
+    - $HOME/pocl
+
 script:
   - run-prove oclcl-test.asd
   - roswell/run-oclcl-examples.ros

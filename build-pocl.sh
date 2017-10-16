@@ -2,9 +2,9 @@
 
 [ -d pocl ] && exit 0
 
-git clone --depth=1 https://github.com/pocl/pocl.git
+git clone --depth=1 https://github.com/pocl/pocl.git $HOME/pocl
 
-cd pocl
+cd $HOME/pocl
 mkdir build
 cd build
 cmake ..
