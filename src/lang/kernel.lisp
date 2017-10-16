@@ -63,8 +63,9 @@
 ;;;
 
 (defstruct (kernel (:constructor %make-kernel))
-  (variable-namespace :variable-namespace)
-  (function-namespace :function-namespace))
+  name
+  variable-namespace
+  function-namespace)
 
 (defun make-kernel ()
   (%make-kernel :variable-namespace '()
