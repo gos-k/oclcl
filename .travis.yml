@@ -18,7 +18,11 @@ matrix:
     - env: LISP=clisp
 
 install:
+  - sudo bash -c 'echo "deb http://mirrors.kernel.org/ubuntu vivid main universe" >> /etc/apt/sources.list'
+  - sudo apt-get update
+  - sudo apt-get install -y pocl-opencl-icd ocl-icd-opencl-dev clinfo
   - curl -L https://raw.githubusercontent.com/snmsts/roswell/release/scripts/install-for-ci.sh | sh
+  - clinfo
   - ros install prove
 
 script:
