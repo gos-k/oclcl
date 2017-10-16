@@ -276,7 +276,9 @@ May cause program-conflict."
   name)
 
 (defun program-memory-exists-p (program name)
-  (%lookup-memory program name))
+  (let ((o (%lookup-bound program name nil)))
+    (when (memory-p o)
+      t)))
 
 (defun program-memory-name (program name)
   (memory-name (%lookup-memory program name)))
@@ -309,7 +311,9 @@ May cause program-conflict."
   name)
 
 (defun program-function-exists-p (program name)
-  (%lookup-function program name))
+  (let ((o (%lookup-fbound program name nil)))
+    (when (function-p o)
+      t)))
 
 (defun program-function-name (program name)
   (function-name (%lookup-function program name)))
@@ -353,7 +357,9 @@ May cause program-conflict."
   name)
 
 (defun program-macro-exists-p (program name)
-  (%lookup-macro program name))
+  (let ((o (%lookup-fbound program name nil)))
+    (when (macro-p o)
+      t)))
 
 (defun program-macro-name (program name)
   (macro-name (%lookup-macro program name)))
@@ -412,7 +418,9 @@ May cause program-conflict."
   name)
 
 (defun program-symbol-macro-exists-p (program name)
-  (%lookup-symbol-macro program name))
+  (let ((o (%lookup-bound program name nil)))
+    (when (symbol-macro-p o)
+      t)))
 
 (defun program-symbol-macro-name (program name)
   (symbol-macro-name (%lookup-symbol-macro program name)))
