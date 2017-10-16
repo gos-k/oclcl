@@ -22,17 +22,16 @@
                    (:test-file "syntax")
                    (:test-file "environment")
                    (:test-file "built-in")
-                   (:test-file "kernel")
+                   (:test-file "program")
                    (:test-file "compiler/compile-data")
                    (:test-file "compiler/compile-type")
                    (:test-file "compiler/type-of-expression")
                    (:test-file "compiler/compile-expression")
                    (:test-file "compiler/compile-statement")
-                   (:test-file "compiler/compile-kernel")))
+                   (:test-file "compiler/compile-program")))
                  (:module "api"
                   :serial t
                   :components
-                  ((:test-file "defkernel")
-                   (:test-file "kernel-manager"))))))
+                  ((:test-file "defkernel"))))))
   :defsystem-depends-on ("prove-asdf")
   :perform (test-op (op c) (symbol-call :prove-asdf :run-test-system c)))

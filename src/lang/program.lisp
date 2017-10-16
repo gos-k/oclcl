@@ -5,49 +5,50 @@
 |#
 
 (in-package :cl-user)
-(defpackage oclcl.lang.kernel
+(defpackage oclcl.lang.program
   (:use :cl
         :oclcl.lang.util
         :oclcl.lang.data
         :oclcl.lang.type
         :oclcl.lang.syntax)
-  (:export ;; Kernel
-           :make-kernel
-           :kernel-function-names
-           :kernel-macro-names
-           :kernel-symbol-macro-names
-           :kernel-memory-names
+  (:export ;; Program
+           :program
+           :make-program
+           :program-function-names
+           :program-macro-names
+           :program-symbol-macro-names
+           :program-memory-names
            ;; Memory
-           :kernel-define-memory
-           :kernel-memory-exists-p
-           :kernel-memory-name
-           :kernel-memory-c-name
-           :kernel-address-space-qualifiers
-           :kernel-memory-expression
+           :program-define-memory
+           :program-memory-exists-p
+           :program-memory-name
+           :program-memory-c-name
+           :program-address-space-qualifiers
+           :program-memory-expression
            ;; Function
-           :kernel-define-function
-           :kernel-function-exists-p
-           :kernel-function-name
-           :kernel-function-c-name
-           :kernel-function-return-type
-           :kernel-function-arguments
-           :kernel-function-argument-vars
-           :kernel-function-argument-types
-           :kernel-function-body
+           :program-define-function
+           :program-function-exists-p
+           :program-function-name
+           :program-function-c-name
+           :program-function-return-type
+           :program-function-arguments
+           :program-function-argument-vars
+           :program-function-argument-types
+           :program-function-body
            ;; Macro
-           :kernel-define-macro
-           :kernel-macro-exists-p
-           :kernel-macro-name
-           :kernel-macro-arguments
-           :kernel-macro-body
-           :kernel-macro-expander
+           :program-define-macro
+           :program-macro-exists-p
+           :program-macro-name
+           :program-macro-arguments
+           :program-macro-body
+           :program-macro-expander
            :expand-macro-1
            :expand-macro
            ;; Symbol macro
-           :kernel-define-symbol-macro
-           :kernel-symbol-macro-exists-p
-           :kernel-symbol-macro-name
-           :kernel-symbol-macro-expansion)
+           :program-define-symbol-macro
+           :program-symbol-macro-exists-p
+           :program-symbol-macro-name
+           :program-symbol-macro-expansion)
   ;; Shadow symbols in oclcl.lang.syntax.
   (:shadow :macro-p
            :symbol-macro-p
@@ -55,43 +56,39 @@
   (:import-from :alexandria
                 :with-gensyms
                 :ensure-list))
-(in-package :oclcl.lang.kernel)
+(in-package :oclcl.lang.program)
 
 
 ;;;
-;;; Kernel definition
+;;; Program definition
 ;;;
 
-(defstruct (kernel (:constructor %make-kernel))
+(defstruct program
   name
-  variable-namespace
-  function-namespace)
+  (variable-namespace nil)
+  (function-namespace nil))
 
-(defun make-kernel ()
-  (%make-kernel :variable-namespace '()
-                :function-namespace '()))
-
-(defun kernel-function-names (kernel)
-  (let ((namespace (kernel-function-namespace kernel)))
+(defun program-function-names (program)
+  (let ((namespace (program-function-namespace program)))
     (loop for (name object) on namespace by #'cddr
        when (function-p object)
        collect name)))
 
-(defun kernel-memory-names (kernel)
-  (let ((namespace (kernel-variable-namespace kernel)))
+(defun program-memory-names (program)
+  (let ((namespace (program-variable-namespace program)))
     (nreverse
      (loop for (name object) on namespace by #'cddr
         when (memory-p object)
         collect name))))
 
-(defun kernel-macro-names (kernel)
-  (let ((namespace (kernel-function-namespace kernel)))
+(defun program-macro-names (program)
+  (let ((namespace (program-function-namespace program)))
     (loop for (name object) on namespace by #'cddr
        when (macro-p object)
        collect name)))
 
-(defun kernel-symbol-macro-names (kernel)
-  (let ((namespace (kernel-variable-namespace kernel)))
+(defun program-symbol-macro-names (program)
+  (let ((namespace (program-variable-namespace program)))
     (loop for (name object) on namespace by #'cddr
        when (symbol-macro-p object)
        collect name)))
@@ -126,133 +123,133 @@
 (defun memory-c-name (memory)
   (c-identifier (memory-name memory) t))
 
-;;; Kernel definition - memory
+;;; Global memory definition
 ;;;
 
-(defun kernel-define-memory (kernel name qualifiers expression)
-  (symbol-macrolet ((namespace (kernel-variable-namespace kernel)))
+(defun program-define-memory (program name qualifiers expression)
+  (symbol-macrolet ((namespace (program-variable-namespace program)))
     (let ((memory (make-memory name qualifiers expression)))
       (setf (getf namespace name) memory)))
   name)
 
-(defun kernel-memory-exists-p (kernel name)
+(defun program-memory-exists-p (program name)
   (check-type name oclcl-symbol)
-  (let ((namespace (kernel-variable-namespace kernel)))
+  (let ((namespace (program-variable-namespace program)))
     (memory-p (getf namespace name))))
 
-(defun %lookup-memory (kernel name)
-  (unless (kernel-memory-exists-p kernel name)
+(defun %lookup-memory (program name)
+  (unless (program-memory-exists-p program name)
     (error "The memory ~S not found." name))
-  (let ((namespace (kernel-variable-namespace kernel)))
+  (let ((namespace (program-variable-namespace program)))
     (getf namespace name)))
 
-(defun kernel-memory-name (kernel name)
-  (memory-name (%lookup-memory kernel name)))
+(defun program-memory-name (program name)
+  (memory-name (%lookup-memory program name)))
 
-(defun kernel-memory-c-name (kernel name)
-  (memory-c-name (%lookup-memory kernel name)))
+(defun program-memory-c-name (program name)
+  (memory-c-name (%lookup-memory program name)))
 
-(defun kernel-address-space-qualifiers (kernel name)
-  (memory-qualifiers (%lookup-memory kernel name)))
+(defun program-address-space-qualifiers (program name)
+  (memory-qualifiers (%lookup-memory program name)))
 
-(defun kernel-memory-expression (kernel name)
-  (memory-expression (%lookup-memory kernel name)))
+(defun program-memory-expression (program name)
+  (memory-expression (%lookup-memory program name)))
 
 ;;;
-;;; Kernel definition - function
+;;; Kernel function definition
 ;;;
 
-(defun kernel-define-function (kernel name return-type arguments body)
-  (symbol-macrolet ((namespace (kernel-function-namespace kernel)))
+(defun program-define-function (program name return-type arguments body)
+  (symbol-macrolet ((namespace (program-function-namespace program)))
     (let ((function (make-function name return-type arguments body)))
       (setf (getf namespace name) function)))
   name)
 
-(defun kernel-function-exists-p (kernel name)
-  (let ((namespace (kernel-function-namespace kernel)))
+(defun program-function-exists-p (program name)
+  (let ((namespace (program-function-namespace program)))
     (function-p (getf namespace name))))
 
-(defun %lookup-function (kernel name)
-  (unless (kernel-function-exists-p kernel name)
+(defun %lookup-function (program name)
+  (unless (program-function-exists-p program name)
     (error "The function ~S is undefined." name))
-  (let ((namespace (kernel-function-namespace kernel)))
+  (let ((namespace (program-function-namespace program)))
     (getf namespace name)))
 
-(defun kernel-function-name (kernel name)
-  (function-name (%lookup-function kernel name)))
+(defun program-function-name (program name)
+  (function-name (%lookup-function program name)))
 
-(defun kernel-function-c-name (kernel name)
-  (function-c-name (%lookup-function kernel name)))
+(defun program-function-c-name (program name)
+  (function-c-name (%lookup-function program name)))
 
-(defun kernel-function-return-type (kernel name)
-  (function-return-type (%lookup-function kernel name)))
+(defun program-function-return-type (program name)
+  (function-return-type (%lookup-function program name)))
 
-(defun kernel-function-arguments (kernel name)
-  (function-arguments (%lookup-function kernel name)))
+(defun program-function-arguments (program name)
+  (function-arguments (%lookup-function program name)))
 
-(defun kernel-function-argument-vars (kernel name)
+(defun program-function-argument-vars (program name)
   (mapcar #'argument-var
-    (kernel-function-arguments kernel name)))
+    (program-function-arguments program name)))
 
-(defun kernel-function-argument-types (kernel name)
+(defun program-function-argument-types (program name)
   (mapcar #'argument-type
-    (kernel-function-arguments kernel name)))
+    (program-function-arguments program name)))
 
-(defun kernel-function-body (kernel name)
-  (function-body (%lookup-function kernel name)))
+(defun program-function-body (program name)
+  (function-body (%lookup-function program name)))
 
 ;;;
-;;; Kernel definition - macro
+;;; Program definition - macro
 ;;;
 
-(defun kernel-define-macro (kernel name arguments body)
-  (symbol-macrolet ((namespace (kernel-function-namespace kernel)))
+(defun program-define-macro (program name arguments body)
+  (symbol-macrolet ((namespace (program-function-namespace program)))
     (let ((macro (make-macro name arguments body)))
       (setf (getf namespace name) macro)))
   name)
 
-(defun kernel-macro-exists-p (kernel name)
-  (let ((namespace (kernel-function-namespace kernel)))
+(defun program-macro-exists-p (program name)
+  (let ((namespace (program-function-namespace program)))
     (macro-p (getf namespace name))))
 
-(defun %lookup-macro (kernel name)
-  (unless (kernel-macro-exists-p kernel name)
+(defun %lookup-macro (program name)
+  (unless (program-macro-exists-p program name)
     (error "The macro ~S is undefined." name))
-  (let ((namespace (kernel-function-namespace kernel)))
+  (let ((namespace (program-function-namespace program)))
     (getf namespace name)))
 
-(defun kernel-macro-name (kernel name)
-  (macro-name (%lookup-macro kernel name)))
+(defun program-macro-name (program name)
+  (macro-name (%lookup-macro program name)))
 
-(defun kernel-macro-arguments (kernel name)
-  (macro-arguments (%lookup-macro kernel name)))
+(defun program-macro-arguments (program name)
+  (macro-arguments (%lookup-macro program name)))
 
-(defun kernel-macro-body (kernel name)
-  (macro-body (%lookup-macro kernel name)))
+(defun program-macro-body (program name)
+  (macro-body (%lookup-macro program name)))
 
-(defun kernel-macro-expander (kernel name)
-  (macro-expander (%lookup-macro kernel name)))
+(defun program-macro-expander (program name)
+  (macro-expander (%lookup-macro program name)))
 
-(defun expand-macro-1 (form kernel)
+(defun expand-macro-1 (form program)
   (cond
     ((oclcl.lang.syntax:macro-p form)
      (let ((operator (macro-operator form))
            (operands (macro-operands form)))
-       (if (kernel-macro-exists-p kernel operator)
-           (let ((expander (kernel-macro-expander kernel operator)))
+       (if (program-macro-exists-p program operator)
+           (let ((expander (program-macro-expander program operator)))
              (values (funcall expander operands) t))
            (values form nil))))
     ((oclcl.lang.syntax:symbol-macro-p form)
-     (if (kernel-symbol-macro-exists-p kernel form)
-         (let ((expansion (kernel-symbol-macro-expansion kernel form)))
+     (if (program-symbol-macro-exists-p program form)
+         (let ((expansion (program-symbol-macro-expansion program form)))
            (values expansion t))
          (values form nil)))
     (t (values form nil))))
 
-(defun expand-macro (form kernel)
+(defun expand-macro (form program)
   (labels ((aux (form expanded-p)
              (multiple-value-bind (form1 newly-expanded-p)
-                 (expand-macro-1 form kernel)
+                 (expand-macro-1 form program)
                (if newly-expanded-p
                    (aux form1 t)
                    (values form1 expanded-p)))))
@@ -260,30 +257,30 @@
 
 
 ;;;
-;;; Kernel definition - symbol macro
+;;; Symbol macro definition
 ;;;
 
-(defun kernel-define-symbol-macro (kernel name expansion)
-  (symbol-macrolet ((namespace (kernel-variable-namespace kernel)))
+(defun program-define-symbol-macro (program name expansion)
+  (symbol-macrolet ((namespace (program-variable-namespace program)))
     (let ((symbol-macro (make-symbol-macro name expansion)))
       (setf (getf namespace name) symbol-macro)))
   name)
 
-(defun kernel-symbol-macro-exists-p (kernel name)
-  (let ((namespace (kernel-variable-namespace kernel)))
+(defun program-symbol-macro-exists-p (program name)
+  (let ((namespace (program-variable-namespace program)))
     (symbol-macro-p (getf namespace name))))
 
-(defun %lookup-symbol-macro (kernel name)
-  (unless (kernel-symbol-macro-exists-p kernel name)
+(defun %lookup-symbol-macro (program name)
+  (unless (program-symbol-macro-exists-p program name)
     (error "The symbol macro ~S not found." name))
-  (let ((namespace (kernel-variable-namespace kernel)))
+  (let ((namespace (program-variable-namespace program)))
     (getf namespace name)))
 
-(defun kernel-symbol-macro-name (kernel name)
-  (symbol-macro-name (%lookup-symbol-macro kernel name)))
+(defun program-symbol-macro-name (program name)
+  (symbol-macro-name (%lookup-symbol-macro program name)))
 
-(defun kernel-symbol-macro-expansion (kernel name)
-  (symbol-macro-expansion (%lookup-symbol-macro kernel name)))
+(defun program-symbol-macro-expansion (program name)
+  (symbol-macro-expansion (%lookup-symbol-macro program name)))
 
 
 ;;;

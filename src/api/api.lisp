@@ -11,7 +11,3 @@
 
 (reexport-from :oclcl.api.defkernel)
 (reexport-from :oclcl.api.epilogue)
-(reexport-from :oclcl.api.kernel-manager
-               :include '(:kernel-manager-translate
-                          :kernel-manager-function-c-name
-                          :*kernel-manager*))

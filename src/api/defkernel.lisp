@@ -9,15 +9,16 @@
   (:use :cl
         :oclcl.lang.syntax
         :oclcl.lang.type
-        :oclcl.api.kernel-manager)
+        :oclcl.lang.program)
   (:export :defkernel
            :defmemory
            :defkernelmacro
            :expand-macro-1
            :expand-macro
            :defkernel-symbol-macro
-           :in-kernel-module
-           :define-kernel-module)
+           :in-program
+           :define-program
+           :*program*)
   (:shadow :expand-macro-1
            :expand-macro)
   (:import-from :alexandria
@@ -26,30 +27,35 @@
                 :simple-style-warning)
   (:documentation
    "Defines some convenience wrapper macros that register the OpenCL objects,
- such as kernels, memory and kernel macros.
- For the actual definitions see kernel-manager.lisp"))
+ such as kernels, memory and kernel macros."))
 (in-package :oclcl.api.defkernel)
 
-(lispn:define-namespace kernel-module t nil "Namespace for the kernel module.
+(lispn:define-namespace program program nil "Namespace for the programs.
 
- A kernel module is a single compilation unit, i.e. a single OpenCL C source code.
- An instance of kernel module is (rather inadequetely) named a kernel-manager.
-")
+ A program in OpenCL is a single compilation unit, i.e. a single OpenCL C source code. ")
 
-(defmacro define-kernel-module (name &body options)
-  "define-kernel-module creates a kernel-module as specified and returns the kernel-module. "
+(defvar *program*)
+
+(defmacro define-program (name &body options)
+  "define-program creates a program as specified and returns the program. "
   (declare (ignorable options))         ;; for future extensions
-  `(setf (symbol-kernel-module ',name)
-         (make-kernel-manager ',name)))
+  `(setf (symbol-program ',name)
+         (make-program :name ',name)))
 
-(defmacro in-kernel-module (name)
+(defmacro in-program (name)
   "NAME is a symbol, not evaluated.
 
-Causes the the kernel-module named by NAME to become the current kernel-module
---- that is, the value of *kernel-manager*. If no such package already exists, an error
+Causes the the program named by NAME to become the current program
+--- that is, the value of *program*. If no such package already exists, an error
 of type package-error is signaled.
 "
-  `(setf *kernel-manager* (symbol-kernel-module ',name)))
+  `(setf *program* (symbol-program ',name)))
+
+(defun expand-macro-1 (form &optional (program *program*))
+  (oclcl.lang.program:expand-macro-1 form program))
+
+(defun expand-macro (form &optional (program *program*))
+  (oclcl.lang.program:expand-macro form program))
 
 ;;;
 ;;; DEFKERNEL
@@ -57,30 +63,30 @@ of type package-error is signaled.
 
 
 (defmacro defkernel (name (return-type arguments) &body body)
-  "Register the kernel definition to *KERNEL-MANAGER* ."
-  `(kernel-manager-define-function *kernel-manager*
-                                   ',name
-                                   ',return-type
-                                   ',arguments
-                                   ',body))
+  "Register the kernel definition to *PROGRAM* ."
+  `(program-define-function *program*
+                            ',name
+                            ',return-type
+                            ',arguments
+                            ',body))
 
 ;;; DEFMEMORY
 ;;;
 
 (defmacro defmemory (name expression &optional qualifiers)
   "Register the name and the initialization statement of a global variable (stored in the global memory)
- to *KERNEL-MANAGER* ."
-  `(kernel-manager-define-memory *kernel-manager*
-                                 ',name
-                                 ',(or qualifiers :global)
-                                 ',expression))
+ to *PROGRAM* ."
+  `(program-define-memory *program*
+                          ',name
+                          ',(or qualifiers :global)
+                          ',expression))
 
 ;;;
 ;;; DEFKERNELMACRO
 ;;;
 
 (defmacro defkernelmacro (name arguments &body body)
-  "Register the kernel macro definition to *KERNEL-MANAGER* .
+  "Register the kernel macro definition to *PROGRAM* .
 For a macro which is not fbound, it tries to define the regular CL macro so that SLIME macroexpansion and
 eldoc works."
   (with-gensyms (e)
@@ -88,22 +94,14 @@ eldoc works."
        ,(if (fboundp name)
             (simple-style-warning "Could not define the kernel macro ~a also as a regular macro, because it is fbound." name)
             `(defmacro ,name (,@arguments &environment ,e)
+               (declare (ignorable ,e))
                ,@body))
-       (kernel-manager-define-macro *kernel-manager* ',name ',arguments ',body))))
-
-(defun expand-macro-1 (form)
-  "Equivalent to macroexpand-1"
-  (oclcl.api.kernel-manager:expand-macro-1 form *kernel-manager*))
-
-(defun expand-macro (form)
-  "Equivalent to macroexpand"
-  (oclcl.api.kernel-manager:expand-macro form *kernel-manager*))
-
+       (program-define-macro *program* ',name ',arguments ',body))))
 
 ;;;
 ;;; DEFKERNEL-SYMBOL-MACRO
 ;;;
 
 (defmacro defkernel-symbol-macro (name expansion)
-  "Register the kernel symbol macro to *KERNEL-MANAGER*."
-  `(kernel-manager-define-symbol-macro *kernel-manager* ',name ',expansion))
+  "Register the kernel symbol macro to *PROGRAM*."
+  `(program-define-symbol-macro *program* ',name ',expansion))

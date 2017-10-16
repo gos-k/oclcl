@@ -16,8 +16,8 @@
    kernel module and its kernel macros."))
 (in-package :oclcl.api.epilogue)
 
-(define-kernel-module :oclcl)
-(in-kernel-module :oclcl)
+(define-program :oclcl)
+(in-program :oclcl)
 
 (defkernelmacro let* (bindings &body body)
   (if bindings

@@ -27,19 +27,18 @@
                    (:file "syntax")
                    (:file "environment")
                    (:file "built-in")
-                   (:file "kernel")
+                   (:file "program")
                    (:file "compiler/compile-data")
                    (:file "compiler/compile-type")
                    (:file "compiler/type-of-expression")
                    (:file "compiler/compile-expression")
                    (:file "compiler/compile-statement")
-                   (:file "compiler/compile-kernel")
+                   (:file "compiler/compile-program")
                    (:file "lang")))
                  (:module "api"
                   :serial t
                   :components
-                  ((:file "kernel-manager")
-                   (:file "defkernel")
+                  ((:file "defkernel")
                    (:file "epilogue")
                    (:file "api")))
                  (:file "oclcl"))))

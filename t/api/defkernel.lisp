@@ -8,18 +8,15 @@
 (defpackage oclcl-test.api.defkernel
   (:use :cl :prove
         :oclcl.api.defkernel
-        :oclcl.lang)
-  (:import-from :oclcl.api.defkernel)
-  (:import-from :oclcl.api.kernel-manager
-                :make-kernel-manager
-                :kernel-manager-translate
-                :*kernel-manager*))
+        :oclcl.lang
+        :oclcl.lang.compiler.compile-program)
+  (:import-from :oclcl.api.defkernel))
 (in-package :oclcl-test.api.defkernel)
 
 (plan nil)
 
-(defmacro with-stub-kernel-manager (&body body)
-  `(let ((*kernel-manager* (make-kernel-manager)))
+(defmacro with-stub-program (&body body)
+  `(let ((*program* (oclcl.lang.program:make-program)))
      ,@body))
 
 ;;;
@@ -66,10 +63,10 @@
 ;;;
 
 (subtest "DEFMEMORY"
-  (with-stub-kernel-manager
+  (with-stub-program
     (defmemory a 42 :constant)
     (defmemory b 0 :global)
-    (is (kernel-manager-translate *kernel-manager*)
+    (is (compile-program *program*)
 "
 
 /**
@@ -89,7 +86,7 @@ __global int oclcl_test_api_defkernel_b = 0;
 ;;;
 
 (subtest "DEFKERNELMACRO"
-  (with-stub-kernel-manager
+  (with-stub-program
 
     (defkernelmacro when (test &body forms)
       `(if ,test
@@ -99,7 +96,7 @@ __global int oclcl_test_api_defkernel_b = 0;
       (when t (return))
       (return))
 
-    (is (kernel-manager-translate *kernel-manager*)
+    (is (compile-program *program*)
 "
 
 
@@ -130,7 +127,7 @@ __kernel void oclcl_test_api_defkernel_test_when()
 ;;;
 
 (subtest "DEFKERNEL-SYMBOL-MACRO"
-  (with-stub-kernel-manager
+  (with-stub-program
 
     (defkernel-symbol-macro x 1)
 
@@ -138,7 +135,7 @@ __kernel void oclcl_test_api_defkernel_test_when()
       (set (aref ret 0) x)
       (return))
 
-    (is (kernel-manager-translate *kernel-manager*)
+    (is (compile-program *program*)
 "
 
 
