@@ -258,7 +258,7 @@
     (is-values (expand-macro 'a program) '(1.0 t))
     (is-values (expand-macro 'b program) '(1.0 t))
     (is-values (expand-macro 'c program) '(c nil))
-    (is-error (expand-macro '(foo)) error)))
+    (is-error (expand-macro '(foo) program) error)))
 
 
 ;;;
@@ -375,8 +375,8 @@
 
   (let ((program (make-program)))
     (is-error (program-memory-name program 'foo)
-              simple-error
-              "Global not found."))
+              undefined-program-variable
+              "Global memory should not be found."))
 
   (is-error (program-memory-name :foo 'foo)
             type-error
@@ -395,8 +395,8 @@
 
   (let ((program (make-program)))
     (is-error (program-memory-c-name program 'foo)
-              simple-error
-              "Global not found."))
+              undefined-program-variable
+              "Global memory should not be found.."))
 
   (is-error (program-memory-c-name :foo 'foo)
             type-error
@@ -415,8 +415,8 @@
 
   (let ((program (make-program)))
     (is-error (program-address-space-qualifiers program 'foo)
-              simple-error
-              "Global not found."))
+              undefined-program-variable
+              "Global memory should not be found.."))
 
   (is-error (program-address-space-qualifiers :foo 'foo)
             type-error
@@ -435,8 +435,8 @@
 
   (let ((program (make-program)))
     (is-error (program-memory-expression program 'foo)
-              simple-error
-              "Global not found."))
+              undefined-program-variable
+              "Global memory should not be found.."))
 
   (is-error (program-memory-expression :foo 'foo)
             type-error

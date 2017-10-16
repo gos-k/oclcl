@@ -63,7 +63,7 @@
            :program-fbound-names
            :oclcl-program-error
            :undefined-program-function
-           :unbound-program-variable)
+           :undefined-program-variable)
   ;; Shadow symbols in oclcl.lang.syntax.
   (:shadow :macro-p
            :symbol-macro-p
