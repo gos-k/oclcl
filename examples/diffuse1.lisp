@@ -162,6 +162,7 @@
          (devices (get-device-ids platform-id :device-type-default))
          (context (create-context devices))
          (command-queue (create-command-queue context (car devices) 0))
+         (*program* (find-program :diffuse1-eazyopencl))
          (c-source-code (compile-program *program*))
          (program (create-program-with-source context c-source-code))
          (elements (* nx ny))

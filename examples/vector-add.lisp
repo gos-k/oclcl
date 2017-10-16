@@ -61,6 +61,7 @@ __kernel void oclcl_examples_vector_add_vec_add_kernel( __global float* a, __glo
          (devices (get-device-ids platform-id :device-type-default))
          (context (create-context devices))
          (command-queue (create-command-queue context (first devices) 0))
+         (*program* (find-program :vector-add-eazyopencl))
          (c-source-code (compile-program *program*))
          (program
            (create-program-with-source context c-source-code)

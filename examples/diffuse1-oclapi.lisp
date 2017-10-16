@@ -167,6 +167,7 @@
          (elements (* nx ny))
          (float-size (foreign-type-size 'cl-float))
          (data-bytes (* float-size elements))
+         (*program* (find-program :diffuse1-oclapi))
          (c-source-code (compile-program *program*)))
     (with-platform-id (platform)
       (with-device-ids (devices num-devices platform)

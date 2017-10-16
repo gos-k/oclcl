@@ -433,7 +433,8 @@ light_source { <0, 30, -30> color White }
   (with-platform-id (platform)
     (with-device-ids (devices num-devices platform)
       (with-context (context (null-pointer) 1 devices)
-        (let ((c-source-code (concatenate 'string
+        (let ((*program* (find-program :sph-oclapi))
+              (c-source-code (concatenate 'string
                                           "#pragma OPENCL EXTENSION cl_khr_global_int32_base_atomics : enable"
                                           (compile-program *program*)))
               (device (mem-aref devices 'cl-device-id)))
