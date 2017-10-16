@@ -16,7 +16,7 @@
 (plan nil)
 
 (defmacro with-stub-program (&body body)
-  `(let ((*program* (oclcl.lang.program:make-program)))
+  `(let ((oclcl.lang.program:*program* (oclcl.lang.program:make-program)))
      ,@body))
 
 ;;;
