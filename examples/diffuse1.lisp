@@ -13,8 +13,8 @@
   (:export :main))
 (in-package :oclcl-examples.diffuse1)
 
-(define-kernel-module :diffuse1-eazyopencl)
-(in-kernel-module :diffuse1-eazyopencl)
+(define-program :diffuse1-eazyopencl)
+(in-program :diffuse1-eazyopencl)
 
 ;;; image output functions
 

@@ -13,8 +13,8 @@
   (:export :main))
 (in-package :oclcl-examples.diffuse0-oclapi)
 
-(define-kernel-module :diffuse0-oclapi)
-(in-kernel-module :diffuse0-oclapi)
+(define-program :diffuse0-oclapi)
+(in-program :diffuse0-oclapi)
 
 ;;; image output functions
 
