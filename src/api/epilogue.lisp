@@ -5,14 +5,20 @@
 |#
 
 (in-package :cl-user)
-(defpackage :oclcl.api.macro
+(defpackage :oclcl.api.epilogue
   (:use :cl
-        :oclcl.api.defkernel)
+        :oclcl.api.defkernel
+        :oclcl.lang.program)
   (:export :let*
            :when
-           :unless))
-(in-package :oclcl.api.macro)
+           :unless)
+  (:documentation
+   "Contains the epilogue code for the system that defines the default set of
+   kernel module and its kernel macros."))
+(in-package :oclcl.api.epilogue)
 
+(define-program :oclcl)
+(in-program :oclcl)
 
 (defkernelmacro let* (bindings &body body)
   (if bindings

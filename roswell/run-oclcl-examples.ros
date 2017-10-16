@@ -1,0 +1,29 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#| <Put a one-line description here>
+exec ros -Q -- $0 "$@"
+|#
+(progn ;;init forms
+  (ros:ensure-asdf)
+  #+quicklisp (ql:quickload '(:oclcl-examples :fiveam) :silent t)
+  )
+
+(defpackage :ros.script.run-examples.3716963759
+  (:use :cl :fiveam))
+(in-package :ros.script.run-examples.3716963759)
+
+(test test
+ (finishes
+  (oclcl-examples.diffuse0-oclapi:main))
+ (finishes
+  (oclcl-examples.diffuse1-oclapi:main))
+ (finishes
+  (oclcl-examples.sph-oclapi:main))
+ (finishes
+  (oclcl-examples.vector-add-oclapi:main)))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (run! 'test))
+
+;;; vim: set ft=lisp lisp:

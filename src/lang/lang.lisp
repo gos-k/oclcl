@@ -7,8 +7,13 @@
 (in-package :cl-user)
 (defpackage :oclcl.lang
   (:use :cl
-        :cl-reexport))
+        :cl-reexport)
+  (:documentation "
+Exports the symbols for writing OpenCL programs.
+APIs for manipulating those programs (e.g. compiling, lookup...) are not exported from this package."))
 (in-package :oclcl.lang)
+
+
 
 ;; reexport symbols of data structures oclcl provides
 (reexport-from :oclcl.lang.data
@@ -93,3 +98,5 @@
 ;; reexport symbols of oclcl built-in functions except the ones
 ;; exported from COMMON-LISP package
 (reexport-from :oclcl.lang.built-in)
+
+

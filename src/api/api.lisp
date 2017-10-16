@@ -6,12 +6,14 @@
 
 (in-package :cl-user)
 (defpackage oclcl.api
-  (:use :cl :cl-reexport))
+  (:use :cl :cl-reexport)
+  (:documentation "
+Exports the symbols for manipulating OpenCL programs.
+APIs for writing those programs (e.g. float4, etc...) are not exported from this package."))
 (in-package :oclcl.api)
 
 (reexport-from :oclcl.api.defkernel)
-(reexport-from :oclcl.api.macro)
-(reexport-from :oclcl.api.kernel-manager
-               :include '(:kernel-manager-translate
-                          :kernel-manager-function-c-name
-                          :*kernel-manager*))
+(reexport-from :oclcl.api.epilogue)
+(reexport-from :oclcl.lang.compiler.compile-program
+               :include '(:compile-program))
+(reexport-from :oclcl.lang.program)

@@ -1,9 +1,25 @@
 language: common-lisp
 sudo: required
 
+addons:
+  apt:
+    sources:
+      - llvm-toolchain-precise-3.6
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
+      - clang-3.6
+      - libclang-3.6-dev
+      - llvm-3.6-dev
+      - libedit-dev
+      - libc6-i386
+      - clisp
+      - openjdk-7-jre
+
 env:
   global:
     - PATH=~/.roswell/bin:$PATH
+    - LLVM_CONFIG=/usr/lib/llvm-3.6/bin/llvm-config
   matrix:
     - LISP=sbcl-bin
     - LISP=ccl-bin
@@ -18,8 +34,19 @@ matrix:
     - env: LISP=clisp
 
 install:
+  - sudo bash -c 'echo "deb http://mirrors.kernel.org/ubuntu vivid main universe" >> /etc/apt/sources.list'
+  - sudo apt-get update
+  - sudo apt-get install -y libltdl3-dev libhwloc-dev ocl-icd-opencl-dev
+  - ./build-pocl.sh
   - curl -L https://raw.githubusercontent.com/snmsts/roswell/release/scripts/install-for-ci.sh | sh
   - ros install prove
 
+cache:
+  directories:
+    - $HOME/.roswell
+    - $HOME/.config/common-lisp
+    - $HOME/pocl
+
 script:
   - run-prove oclcl-test.asd
+  - roswell/run-oclcl-examples.ros

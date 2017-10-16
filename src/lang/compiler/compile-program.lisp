@@ -5,85 +5,85 @@
 |#
 
 (in-package :cl-user)
-(defpackage oclcl.lang.compiler.compile-kernel
+(defpackage oclcl.lang.compiler.compile-program
   (:use :cl
         :oclcl.lang.util
         :oclcl.lang.type
         :oclcl.lang.syntax
         :oclcl.lang.environment
-        :oclcl.lang.kernel
+        :oclcl.lang.program
         :oclcl.lang.compiler.compile-data
         :oclcl.lang.compiler.compile-type
         :oclcl.lang.compiler.compile-expression
         :oclcl.lang.compiler.compile-statement
         :oclcl.lang.compiler.type-of-expression)
-  (:export :compile-kernel))
-(in-package :oclcl.lang.compiler.compile-kernel)
+  (:export :compile-program))
+(in-package :oclcl.lang.compiler.compile-program)
 
 
 ;;;
-;;; Kernel to Environment
+;;; Program to Environment
 ;;;
 
-(defun %add-function-arguments (kernel name var-env)
+(defun %add-function-arguments (program name var-env)
   (flet ((aux (var-env0 argument)
            (let ((var (argument-var argument))
                  (type (argument-type argument)))
              (variable-environment-add-variable var type var-env0))))
-    (reduce #'aux (kernel-function-arguments kernel name)
+    (reduce #'aux (program-function-arguments program name)
             :initial-value var-env)))
 
-(defun %add-symbol-macros (kernel var-env)
+(defun %add-symbol-macros (program var-env)
   (flet ((aux (var-env0 name)
-           (let ((expansion (kernel-symbol-macro-expansion kernel name)))
+           (let ((expansion (program-symbol-macro-expansion program name)))
              (variable-environment-add-symbol-macro name expansion
                                                     var-env0))))
-    (reduce #'aux (kernel-symbol-macro-names kernel)
+    (reduce #'aux (program-symbol-macro-names program)
             :initial-value var-env)))
 
-(defun %add-memories (kernel var-env)
+(defun %add-memories (program var-env)
   (flet ((aux (var-env0 name)
-           (let* ((expression (kernel-memory-expression kernel name))
+           (let* ((expression (program-memory-expression program name))
                   (type (type-of-expression expression nil nil)))
              (variable-environment-add-memory name type expression var-env0))))
-    (reduce #'aux (kernel-memory-names kernel)
+    (reduce #'aux (program-memory-names program)
             :initial-value var-env)))
 
-(defun kernel->variable-environment (kernel name)
+(defun program->variable-environment (program name)
   (if name
-      (%add-function-arguments kernel name
-                               (%add-symbol-macros kernel
-                                                   (%add-memories kernel
+      (%add-function-arguments program name
+                               (%add-symbol-macros program
+                                                   (%add-memories program
                                                                  (empty-variable-environment))))
-      (%add-symbol-macros kernel
-                          (%add-memories kernel
+      (%add-symbol-macros program
+                          (%add-memories program
                                         (empty-variable-environment)))))
 
-(defun %add-functions (kernel func-env)
+(defun %add-functions (program func-env)
   (flet ((aux (func-env0 name)
-           (let ((return-type (kernel-function-return-type kernel name))
-                 (argument-types (kernel-function-argument-types kernel
+           (let ((return-type (program-function-return-type program name))
+                 (argument-types (program-function-argument-types program
                                                                  name)))
              (function-environment-add-function name return-type
                                                argument-types func-env0))))
-    (reduce #'aux (kernel-function-names kernel)
+    (reduce #'aux (program-function-names program)
             :initial-value func-env)))
 
-(defun %add-macros (kernel func-env)
+(defun %add-macros (program func-env)
   (flet ((aux (func-env0 name)
-           (let ((arguments (kernel-macro-arguments kernel name))
-                 (body (kernel-macro-body kernel name)))
+           (let ((arguments (program-macro-arguments program name))
+                 (body (program-macro-body program name)))
              (function-environment-add-macro name arguments body func-env0))))
-    (reduce #'aux (kernel-macro-names kernel)
+    (reduce #'aux (program-macro-names program)
             :initial-value func-env)))
 
-(defun kernel->function-environment (kernel)
-  (%add-functions kernel
-    (%add-macros kernel
+(defun program->function-environment (program)
+  (%add-functions program
+    (%add-macros program
       (empty-function-environment))))
 
 ;;;
-;;; Compile kernel
+;;; Compile program
 ;;;
 
 (defun compile-includes ()
@@ -100,23 +100,23 @@
 (defun compile-address-space-qualifier (qualifier)
   (format nil "__~A" (string-downcase (princ-to-string qualifier))))
 
-(defun compile-memory (kernel name)
-  (let ((c-name (kernel-memory-c-name kernel name))
-        (qualifiers (kernel-address-space-qualifiers kernel name))
-        (expression (kernel-memory-expression kernel name)))
+(defun compile-memory (program name)
+  (let ((c-name (program-memory-c-name program name))
+        (qualifiers (program-address-space-qualifiers program name))
+        (expression (program-memory-expression program name)))
     (let ((type1 (compile-type
                   (type-of-expression expression nil nil)))
           (qualifiers1 (mapcar #'compile-address-space-qualifier qualifiers))
           (expression1 (compile-expression expression
-                        (kernel->variable-environment kernel nil)
-                        (kernel->function-environment kernel))))
+                        (program->variable-environment program nil)
+                        (program->function-environment program))))
       (format nil "~{~A~^ ~} ~A ~A~@[ = ~A~];~%"
               qualifiers1 type1 c-name expression1))))
 
-(defun compile-memories (kernel)
+(defun compile-memories (program)
   (flet ((aux (name)
-           (compile-memory kernel name)))
-    (let ((memories (mapcar #'aux (kernel-memory-names kernel))))
+           (compile-memory program name)))
+    (let ((memories (mapcar #'aux (program-memory-names program))))
       (if (null memories)
           ""
           (format nil "/**
@@ -138,10 +138,10 @@
         (format nil "~{~A~^, ~}" arguments1)
         "")))
 
-(defun compile-declaration (kernel name)
-  (let ((c-name (kernel-function-c-name kernel name))
-        (return-type (kernel-function-return-type kernel name))
-        (arguments (kernel-function-arguments kernel name)))
+(defun compile-declaration (program name)
+  (let ((c-name (program-function-c-name program name))
+        (return-type (program-function-return-type program name))
+        (arguments (program-function-arguments program name)))
     (let ((function-qualifier (compile-function-qualifier return-type))
           (return-type1 (compile-type return-type))
           (arguments1 (compile-arguments arguments)))
@@ -149,14 +149,14 @@
           (format nil "~A ~A ~A(~A)" function-qualifier return-type1 c-name arguments1)
           (format nil "~A ~A(~A)" return-type1 c-name arguments1)))))
 
-(defun compile-prototype (kernel name)
-  (let ((declaration (compile-declaration kernel name)))
+(defun compile-prototype (program name)
+  (let ((declaration (compile-declaration program name)))
     (format nil "~A;~%" declaration)))
 
-(defun compile-prototypes (kernel)
+(defun compile-prototypes (program)
   (flet ((aux (name)
-           (compile-prototype kernel name)))
-    (let ((prototypes (mapcar #'aux (kernel-function-names kernel))))
+           (compile-prototype program name)))
+    (let ((prototypes (mapcar #'aux (program-function-names program))))
       (if (null prototypes)
           ""
           (format nil "/**
@@ -165,24 +165,24 @@
 
 ~{~A~}" prototypes)))))
 
-(defun compile-statements (kernel name)
-  (let ((var-env (kernel->variable-environment kernel name))
-        (func-env (kernel->function-environment kernel)))
+(defun compile-statements (program name)
+  (let ((var-env (program->variable-environment program name))
+        (func-env (program->function-environment program)))
     (flet ((aux (statement)
              (compile-statement statement var-env func-env)))
-      (let ((statements (kernel-function-body kernel name)))
+      (let ((statements (program-function-body program name)))
         (format nil "~{~A~}" (mapcar #'aux statements))))))
 
-(defun compile-definition (kernel name)
-  (let ((declaration (compile-declaration kernel name))
-        (statements (compile-statements kernel name)))
+(defun compile-definition (program name)
+  (let ((declaration (compile-declaration program name))
+        (statements (compile-statements program name)))
     (let ((statements1 (indent 2 statements)))
       (format nil "~A~%{~%~A}~%" declaration statements1))))
 
-(defun compile-definitions (kernel)
+(defun compile-definitions (program)
   (flet ((aux (name)
-           (compile-definition kernel name)))
-    (let ((definitions (mapcar #'aux (kernel-function-names kernel))))
+           (compile-definition program name)))
+    (let ((definitions (mapcar #'aux (program-function-names program))))
       (if (null definitions)
           ""
           (format nil "/**
@@ -191,11 +191,11 @@
 
 ~{~A~^~%~}" definitions)))))
 
-(defun compile-kernel (kernel)
+(defun compile-program (program)
   (let ((includes (compile-includes))
-        (memories (compile-memories kernel))
-        (prototypes (compile-prototypes kernel))
-        (definitions (compile-definitions kernel)))
+        (memories (compile-memories program))
+        (prototypes (compile-prototypes program))
+        (definitions (compile-definitions program)))
     (format nil "~A~%~%~A~%~%~A~%~%~A" includes
                                        memories
                                        prototypes

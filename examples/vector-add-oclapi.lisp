@@ -38,6 +38,10 @@
   (:export :main))
 (in-package :oclcl-examples.vector-add-oclapi)
 
+(define-program :vector-add-oclapi
+  (:use :oclcl))
+(in-program :vector-add-oclapi)
+
 (defun random-init (data n)
   (dotimes (i n)
     (let ((r (random 1.0)))
@@ -77,8 +81,9 @@ __kernel void oclcl_examples_vector_add_vec_add_kernel( __global float* a, __glo
   (with-platform-id (platform)
     (with-device-ids (devices num-devices platform)
       (with-context (context (null-pointer) 1 devices)
-        (let ((c-source-code (kernel-manager-translate *kernel-manager*))
-              (device (mem-aref devices 'cl-device-id)))
+        (let* ((*program* (find-program :vector-add-oclapi))
+               (c-source-code (compile-program *program*))
+               (device (mem-aref devices 'cl-device-id)))
           (with-program-with-source (program context 1 c-source-code)
             (build-program program 1 devices)
             (let* ((elements 128)
@@ -108,8 +113,7 @@ __kernel void oclcl_examples_vector_add_vec_add_kernel( __global float* a, __glo
                                           b-host)
                     (finish command-queue)
                     (with-work-size (global-work-size elements)
-                      (with-kernel (kernel program (kernel-manager-function-c-name *kernel-manager*
-                                                                                   'vec-add-kernel))
+                      (with-kernel (kernel program (program-function-c-name *program* 'vec-add-kernel))
                         (with-pointers ((a-pointer a-device)
                                         (b-pointer b-device)
                                         (c-pointer c-device))

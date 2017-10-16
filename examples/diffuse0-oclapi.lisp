@@ -13,6 +13,10 @@
   (:export :main))
 (in-package :oclcl-examples.diffuse0-oclapi)
 
+(define-program :diffuse0-oclapi
+  (:use :oclcl))
+(in-program :diffuse0-oclapi)
+
 ;;; image output functions
 
 (declaim (inline index))
@@ -148,7 +152,9 @@
          (elements (* nx ny))
          (float-size (foreign-type-size :float))
          (data-bytes (* float-size elements))
-         (c-source-code (kernel-manager-translate *kernel-manager*)))
+         (*program* (find-program :diffuse0-oclapi))
+         (c-source-code (compile-program *program*)))
+    (print c-source-code)
     (with-platform-id (platform)
       (with-device-ids (devices num-devices platform)
         (with-context (context (null-pointer) 1 devices)
@@ -162,8 +168,7 @@
                   (with-command-queue (command-queue context device 0)
                     (initialize-device-memory nx ny dx dy command-queue a-host a-device)
                     (with-work-size (global-work-size elements)
-                      (with-kernel (kernel program (kernel-manager-function-c-name *kernel-manager*
-                                                                                   'diffusion2d))
+                      (with-kernel (kernel program (program-function-c-name *program* 'diffusion2d))
                         (dotimes (i 20000)
                           (when (= (mod i 100) 0)
                             (print-time i time))

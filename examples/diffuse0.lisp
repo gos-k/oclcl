@@ -13,6 +13,10 @@
   (:export :main))
 (in-package :oclcl-examples.diffuse0)
 
+(define-program :diffuse0-eazyopencl
+  (:use :oclcl))
+(in-program :diffuse0-eazyopencl)
+
 ;;; image output functions
 
 (declaim (inline index))
@@ -142,7 +146,8 @@
          (devices (get-device-ids platform-id :device-type-default))
          (context (create-context devices))
          (command-queue (create-command-queue context (car devices) 0))
-         (c-source-code (kernel-manager-translate *kernel-manager*))
+         (*program* (find-program :diffuse0-eazyopencl))
+         (c-source-code (compile-program *program*))
          (program (create-program-with-source context c-source-code))
          (elements (* nx ny))
          (float-size (foreign-type-size :float))
