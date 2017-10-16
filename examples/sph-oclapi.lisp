@@ -16,7 +16,8 @@
   (:export :main))
 (in-package :oclcl-examples.sph-oclapi)
 
-(define-program :sph-oclapi)
+(define-program :sph-oclapi
+  (:use :oclcl))
 (in-program :sph-oclapi)
 
 ;;
@@ -434,7 +435,7 @@ light_source { <0, 30, -30> color White }
       (with-context (context (null-pointer) 1 devices)
         (let ((c-source-code (concatenate 'string
                                           "#pragma OPENCL EXTENSION cl_khr_global_int32_base_atomics : enable"
-                                          (kernel-manager-translate *kernel-manager*)))
+                                          (compile-program *program*)))
               (device (mem-aref devices 'cl-device-id)))
           ;;(pprint c-source-code)
           (with-program-with-source (program context 1 c-source-code)
@@ -494,7 +495,7 @@ light_source { <0, 30, -30> color White }
                                           (neighbor-map-local-work-size 37 1 1)
                                           (particle-global-work-size n))
                           (labels ((c-name (name)
-                                     (kernel-manager-function-c-name *kernel-manager* name))
+                                     (program-function-c-name *program* name))
                                    (print-interim-result (command-queue device size type &key (step 1) (index nil))
                                      (when interim-results
                                        (print-device-memory command-queue

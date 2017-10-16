@@ -17,7 +17,8 @@
   (:export :main))
 (in-package :oclcl-examples.vector-add)
 
-(define-program :vector-add-eazyopencl)
+(define-program :vector-add-eazyopencl
+  (:use :oclcl))
 (in-program :vector-add-eazyopencl)
 
 (defun random-init (data n)
@@ -60,7 +61,7 @@ __kernel void oclcl_examples_vector_add_vec_add_kernel( __global float* a, __glo
          (devices (get-device-ids platform-id :device-type-default))
          (context (create-context devices))
          (command-queue (create-command-queue context (first devices) 0))
-         (c-source-code (kernel-manager-translate *kernel-manager*))
+         (c-source-code (compile-program *program*))
          (program
            (create-program-with-source context c-source-code)
            #+nil

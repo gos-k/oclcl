@@ -13,14 +13,7 @@
   (:export :defkernel
            :defmemory
            :defkernelmacro
-           :expand-macro-1
-           :expand-macro
-           :defkernel-symbol-macro
-           :in-program
-           :define-program
-           :*program*)
-  (:shadow :expand-macro-1
-           :expand-macro)
+           :defkernel-symbol-macro)
   (:import-from :alexandria
                 :format-symbol
                 :with-gensyms
@@ -29,33 +22,6 @@
    "Defines some convenience wrapper macros that register the OpenCL objects,
  such as kernels, memory and kernel macros."))
 (in-package :oclcl.api.defkernel)
-
-(lispn:define-namespace program program nil "Namespace for the programs.
-
- A program in OpenCL is a single compilation unit, i.e. a single OpenCL C source code. ")
-
-(defvar *program*)
-
-(defmacro define-program (name &body options)
-  "define-program creates a program as specified and returns the program. "
-  (declare (ignorable options))         ;; for future extensions
-  `(setf (symbol-program ',name)
-         (make-program :name ',name)))
-
-(defmacro in-program (name)
-  "NAME is a symbol, not evaluated.
-
-Causes the the program named by NAME to become the current program
---- that is, the value of *program*. If no such package already exists, an error
-of type package-error is signaled.
-"
-  `(setf *program* (symbol-program ',name)))
-
-(defun expand-macro-1 (form &optional (program *program*))
-  (oclcl.lang.program:expand-macro-1 form program))
-
-(defun expand-macro (form &optional (program *program*))
-  (oclcl.lang.program:expand-macro form program))
 
 ;;;
 ;;; DEFKERNEL

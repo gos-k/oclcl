@@ -7,7 +7,8 @@
 (in-package :cl-user)
 (defpackage :oclcl.api.epilogue
   (:use :cl
-        :oclcl.api.defkernel)
+        :oclcl.api.defkernel
+        :oclcl.lang.program)
   (:export :let*
            :when
            :unless)

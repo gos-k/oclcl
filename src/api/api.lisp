@@ -16,3 +16,4 @@ APIs for writing those programs (e.g. float4, etc...) are not exported from this
 (reexport-from :oclcl.api.epilogue)
 (reexport-from :oclcl.lang.compiler.compile-program
                :include '(:compile-program))
+(reexport-from :oclcl.lang.program)
