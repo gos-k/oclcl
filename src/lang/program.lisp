@@ -207,9 +207,10 @@ May cause program-conflict."
 ;;; 
 
 (defun program-memory-names (program)
-  (append (loop for (name object) on (program-variable-namespace program) by #'cddr
-             when (memory-p object)
-             collect name)
+  (append (nreverse
+           (loop for (name object) on (program-variable-namespace program) by #'cddr
+              when (memory-p object)
+              collect name))
           (mappend #'program-memory-names (program-use-list program))))
 
 (defun program-function-names (program)
