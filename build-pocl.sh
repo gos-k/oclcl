@@ -5,10 +5,9 @@
 git clone --depth=1 https://github.com/pocl/pocl.git
 
 cd pocl
+mkdir build
+cd build
+cmake ..
 
-export CXX="g++-4.8"
-./autogen.sh
-./configure
-make
-
+make && sudo make install
 
