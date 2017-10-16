@@ -19,6 +19,7 @@
            :use-program
            :define-program
            :in-program
+           :program-name
            :program-variable-namespace
            :program-function-namespace
            :program-use-list
