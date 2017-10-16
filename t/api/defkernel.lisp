@@ -9,6 +9,7 @@
   (:use :cl :prove
         :oclcl.api.defkernel
         :oclcl.lang
+        :oclcl.lang.program
         :oclcl.lang.compiler.compile-program)
   (:import-from :oclcl.api.defkernel))
 (in-package :oclcl-test.api.defkernel)
