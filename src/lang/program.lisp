@@ -267,8 +267,9 @@ May cause program-conflict."
 
 (defun (setf %lookup-memory) (newval program name)
   (let ((o (%lookup-bound program name nil)))
-    (unless (memory-p o)
-      (warn "Redefining an oclcl memory variable ~a which was previously an oclcl symbol-macro" name))
+    (typecase o
+      (symbol-macro
+       (warn "Redefining an oclcl memory variable ~a which was previously an oclcl symbol-macro" name)))
     (setf (%lookup-bound program name) newval)))
 
 (defun program-define-memory (program name qualifiers expression)
@@ -302,8 +303,9 @@ May cause program-conflict."
 
 (defun (setf %lookup-function) (newval program name)
   (let ((o (%lookup-fbound program name nil)))
-    (unless (function-p o)
-      (warn "Redefining an oclcl kernel function ~a which was previously an oclcl macro" name))
+    (typecase o
+      (macro
+       (warn "Redefining an oclcl kernel function ~a which was previously an oclcl macro" name)))
     (setf (%lookup-fbound program name) newval)))
 
 (defun program-define-function (program name return-type arguments body)
@@ -348,8 +350,9 @@ May cause program-conflict."
 
 (defun (setf %lookup-macro) (newval program name)
   (let ((o (%lookup-fbound program name nil)))
-    (unless (macro-p o)
-      (warn "Redefining an oclcl macro ~a which was previously an oclcl kernel function" name))
+    (typecase o
+      (%function
+       (warn "Redefining an oclcl macro ~a which was previously an oclcl kernel function" name)))
     (setf (%lookup-fbound program name) newval)))
 
 (defun program-define-macro (program name arguments body)
@@ -409,8 +412,9 @@ May cause program-conflict."
 
 (defun (setf %lookup-symbol-macro) (newval program name)
   (let ((o (%lookup-bound program name nil)))
-    (unless (symbol-macro-p o)
-      (warn "Redefining an oclcl symbol-macro ~a which was previously an oclcl memory variable" name))
+    (typecase o
+      (memory
+       (warn "Redefining an oclcl symbol-macro ~a which was previously an oclcl memory variable" name)))
     (setf (%lookup-bound program name) newval)))
 
 (defun program-define-symbol-macro (program name expansion)
