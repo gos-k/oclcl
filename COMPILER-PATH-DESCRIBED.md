@@ -52,3 +52,6 @@ Instead, we describe how the S-expression is compiled into a C source code.
 
 # C code compilation process
 
+Gotcha! I don't describe it. Call graph should suffice!
+
+![compile-program.png](./compile-program.png)
