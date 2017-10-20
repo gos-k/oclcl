@@ -37,6 +37,7 @@ install:
   - sudo bash -c 'echo "deb http://mirrors.kernel.org/ubuntu vivid main universe" >> /etc/apt/sources.list'
   - sudo apt-get update
   - sudo apt-get install -y libltdl3-dev libhwloc-dev ocl-icd-opencl-dev
+  - clang --version
   - ./build-pocl.sh
   - curl -L https://raw.githubusercontent.com/snmsts/roswell/release/scripts/install-for-ci.sh | sh
   - ros install prove
