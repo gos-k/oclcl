@@ -35,6 +35,7 @@
     ((set-p form) (compile-set form var-env func-env))
     ((progn-p form) (compile-progn form var-env func-env))
     ((return-p form) (compile-return form var-env func-env))
+    ((declare-p form) (compile-declare form var-env func-env))
     ((function-p form) (compile-function form var-env func-env))
     (t (error "The value ~S is an invalid statement." form))))
 
@@ -295,3 +296,14 @@
   (let ((code (oclcl.lang.compiler.compile-expression::compile-function
                 form var-env func-env)))
     (format nil "~A;~%" code)))
+
+
+;;;
+;;; Compiler directives
+;;;
+
+(defun compile-declare (form var-env func-env)
+  (declare (ignore var-env func-env))
+  (format nil "#~{~A~^ ~}~%" (cdr form)))
+
+
