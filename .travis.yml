@@ -4,13 +4,13 @@ sudo: required
 addons:
   apt:
     sources:
-      - llvm-toolchain-precise-3.6
+      - llvm-toolchain-precise-3.9
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
-      - clang-3.6
-      - libclang-3.6-dev
-      - llvm-3.6-dev
+      - clang-3.9
+      - libclang-3.9-dev
+      - llvm-3.9-dev
       - libedit-dev
       - libc6-i386
       - clisp
@@ -19,7 +19,7 @@ addons:
 env:
   global:
     - PATH=~/.roswell/bin:$PATH
-    - LLVM_CONFIG=/usr/lib/llvm-3.6/bin/llvm-config
+    - LLVM_CONFIG=/usr/lib/llvm-3.9/bin/llvm-config
   matrix:
     - LISP=sbcl-bin
     - LISP=ccl-bin
