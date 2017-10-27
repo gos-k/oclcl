@@ -108,7 +108,9 @@
            :argument
            :argument-p
            :argument-var
-           :argument-type))
+           :argument-type
+           ;; Compiler directive
+           :declare-p))
 (in-package :oclcl.lang.syntax)
 
 
@@ -612,3 +614,13 @@
   (unless (argument-p argument)
     (error "The value ~A is an invalid argument." argument))
   (cadr argument))
+
+;;;
+;;; Compiler directive
+;;;
+
+(defun declare-p (form)
+  (cl-pattern:match form
+    (('declare . _) t)
+    (_ nil)))
+
