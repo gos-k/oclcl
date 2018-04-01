@@ -405,7 +405,16 @@
     maxmag ,(float-types-unary-function "maxmag")
     minmag ,(float-types-unary-function "minmag")
     ;;modf
-    ;;nan
+    nan ,(mapcar #'(lambda (arg-type ret-type)
+                     `((,arg-type) ,ret-type nil "nan"))
+                 (append +vector-uint-types+
+                         (list 'uint)
+                         +vector-ulong-types+
+                         (list 'ulong))
+                 (append +vector-single-float-types+
+                         (list 'float)
+                         +vector-double-float-types+
+                         (list 'double)))
     nextafter ,(float-types-binary-function "nextafter")
     pow ,(float-types-binary-function "pow")
     ;;pown

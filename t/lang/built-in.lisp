@@ -33,7 +33,16 @@
                                  ((fmax fmin) (double4 double4) double4)
                                  ((fmax fmin) (double4 double) double4))
         do (dolist (ope opes)
-             (is (built-in-function-return-type ope args) ret))))
+             (is (built-in-function-return-type ope args) ret)))
+
+  (loop for (opes args rets) in '(((nan) ((uint4) (ulong4))
+                                         (float4 double4)))
+        do (dolist (ope opes)
+             (mapcar #'(lambda (arg ret)
+                         (is (built-in-function-return-type ope arg) ret))
+                     args
+                     rets))))
+
 
 ;;;
 ;;; test BUILT-IN-FUNCTION-INFIX-P function
