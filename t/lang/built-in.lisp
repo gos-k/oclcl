@@ -1,7 +1,7 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
-                2015 gos-k (mag4.elan@gmail.com)
+                2015-2018 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
@@ -20,20 +20,16 @@
 ;;;
 
 (subtest "BUILT-IN-FUNCTION-RETURN-TYPE"
-  (dolist (operator '(+ * - / mod))
-    (is (built-in-function-return-type operator '(int int)) 'int))
-  (dolist (operator '(+ * - /))
-    (is (built-in-function-return-type operator '(float float)) 'float))
-  (dolist (operator '(+ * - / mod))
-    (is (built-in-function-return-type operator '(int4 int4)) 'int4))
-  (dolist (operator '(+ * - /))
-    (is (built-in-function-return-type operator '(float4 float4)) 'float4))
-  (dolist (operator '(< > <= >=))
-    (is (built-in-function-return-type operator '(int int)) 'bool))
-  (dolist (operator '(< > <= >=))
-    (is (built-in-function-return-type operator '(float4 float4)) 'int4))
-  (dolist (operator '(< > <= >=))
-    (is (built-in-function-return-type operator '(double4 double4)) 'long4)))
+  (loop for (opes args ret) in '(((+ * - / mod) (int int) int)
+                                 ((+ * - / mod) (int int) int)
+                                 ((+ * - /) (float float) float)
+                                 ((+ * - / mod) (int4 int4) int4)
+                                 ((+ * - /) (float4 float4) float4)
+                                 ((< > <= >=) (int int) bool)
+                                 ((< > <= >=) (float4 float4) int4)
+                                 ((< > <= >=) (double4 double4) long4))
+        do (dolist (ope opes)
+             (is (built-in-function-return-type ope args) ret))))
 
 ;;;
 ;;; test BUILT-IN-FUNCTION-INFIX-P function
