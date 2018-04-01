@@ -27,7 +27,11 @@
                                  ((+ * - /) (float4 float4) float4)
                                  ((< > <= >=) (int int) bool)
                                  ((< > <= >=) (float4 float4) int4)
-                                 ((< > <= >=) (double4 double4) long4))
+                                 ((< > <= >=) (double4 double4) long4)
+                                 ((fmax fmin) (float4 float4) float4)
+                                 ((fmax fmin) (float4 float) float4)
+                                 ((fmax fmin) (double4 double4) double4)
+                                 ((fmax fmin) (double4 double) double4))
         do (dolist (ope opes)
              (is (built-in-function-return-type ope args) ret))))
 

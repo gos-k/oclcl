@@ -382,8 +382,12 @@
     fdim ,(float-types-binary-function "fdim")
     floor ,(float-types-unary-function "floor")
     fma ,(float-types-ternary-function "fma")
-    ;;fmax ,(float-types-binary-function "fmax")
-    ;;fmin ,(float-types-binary-function "fmin")
+    fmax ,(append (float-types-binary-function "fmax")
+                  (vector-scalar-binary-operator "fmax" 'float)
+                  (vector-scalar-binary-operator "fmax" 'double))
+    fmin ,(append (float-types-binary-function "fmin")
+                  (vector-scalar-binary-operator "fmin" 'float)
+                  (vector-scalar-binary-operator "fmin" 'double))
     fmod ,(float-types-binary-function "fmod")
     ;;fract
     ;;frexp
