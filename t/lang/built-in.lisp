@@ -36,10 +36,11 @@
 ;;;
 
 (subtest "BUILT-IN-FUNCTION-INFIX-P"
-  (ok (built-in-function-infix-p '+ '(int int)))
-  (ok (built-in-function-infix-p '+ '(float3 float3)))
-  (ok (built-in-function-infix-p '- '(int int)))
-  (ok (built-in-function-infix-p 'mod '(int int))))
+  (loop for (ope args) in '((+ (int int))
+                            (+ (float3 float3))
+                            (- (int int))
+                            (mod (int int)))
+        do (ok (built-in-function-infix-p ope args))))
 
 ;;;
 ;;; test BUILT-IN-FUNCTION-C-NAME function
