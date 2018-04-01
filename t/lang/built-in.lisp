@@ -31,17 +31,17 @@
                                  ((fmax fmin) (float4 float4) float4)
                                  ((fmax fmin) (float4 float) float4)
                                  ((fmax fmin) (double4 double4) double4)
-                                 ((fmax fmin) (double4 double) double4))
+                                 ((fmax fmin) (double4 double) double4)
+                                 ((nan) (uint4) float4)
+                                 ((nan) (uint) float)
+                                 ((nan) (ulong4) double4)
+                                 ((nan) (ulong) double)
+                                 ((pown) (float4 int4) float4)
+                                 ((pown) (float int) float)
+                                 ((pown) (double4 int4) double4)
+                                 ((pown) (double int) double))
         do (dolist (ope opes)
-             (is (built-in-function-return-type ope args) ret)))
-
-  (loop for (opes args rets) in '(((nan) ((uint4) (ulong4))
-                                         (float4 double4)))
-        do (dolist (ope opes)
-             (mapcar #'(lambda (arg ret)
-                         (is (built-in-function-return-type ope arg) ret))
-                     args
-                     rets))))
+             (is (built-in-function-return-type ope args) ret))))
 
 
 ;;;

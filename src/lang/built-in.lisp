@@ -204,6 +204,7 @@
                                               short2 short3 short4 short8 short16
                                               int2 int3 int4 int8 int16
                                               long2 long3 long4 long8 long16))
+(defparameter +vector-int-types+ '(int2 int3 int4 int8 int16))
 (defparameter +vector-uchar-types+ '(uchar2 uchar3 uchar4 uchar8 uchar16))
 (defparameter +vector-ushort-types+ '(ushort2 ushort3 ushort4 ushort8 ushort16))
 (defparameter +vector-uint-types+ '(uint2 uint3 uint4 uint8 uint16))
@@ -417,7 +418,16 @@
                          (list 'double)))
     nextafter ,(float-types-binary-function "nextafter")
     pow ,(float-types-binary-function "pow")
-    ;;pown
+    pown ,(mapcar #'(lambda (lhs rhs)
+                      `((,lhs ,rhs) ,lhs nil "pown"))
+                  (append +vector-single-float-types+
+                          (list 'float)
+                          +vector-double-float-types+
+                          (list 'double))
+                  (append +vector-int-types+
+                          (list 'int)
+                          +vector-int-types+
+                          (list 'int)))
     powr ,(float-types-binary-function "powr")
     remainder ,(float-types-binary-function "remainder")
     ;;remquo
