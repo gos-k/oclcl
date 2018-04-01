@@ -32,6 +32,7 @@
                                  ((fmax fmin) (float4 float) float4)
                                  ((fmax fmin) (double4 double4) double4)
                                  ((fmax fmin) (double4 double) double4)
+                                 ((ilogb) (float4) int4)
                                  ((nan) (uint4) float4)
                                  ((nan) (uint) float)
                                  ((nan) (ulong4) double4)

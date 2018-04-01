@@ -393,7 +393,16 @@
     ;;fract
     ;;frexp
     hypot ,(float-types-binary-function "hypot")
-    ;;ilogb
+    ilogb ,(mapcar #'(lambda (arg-type ret-type)
+                       `((,arg-type) ,ret-type nil "ilogb"))
+                   (append +vector-single-float-types+
+                           (list 'float)
+                           +vector-double-float-types+
+                           (list 'double))
+                   (append +vector-int-types+
+                           (list 'int)
+                           +vector-int-types+
+                           (list 'int)))
     ;;ldexp
     lgamma ,(float-types-unary-function "lgamma")
     ;;lgamma_r
