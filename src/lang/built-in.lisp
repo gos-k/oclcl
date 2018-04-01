@@ -222,6 +222,17 @@
 (defparameter +vector-number-types+ (append +vector-integer-types+
                                             +vector-float-types+))
 
+(defparameter +all-int-types+ (append (list 'int)
+                                      +vector-int-types+))
+(defparameter +all-uint-types+ (append (list 'uint)
+                                       +vector-uint-types+))
+(defparameter +all-ulong-types+ (append (list 'ulong)
+                                        +vector-ulong-types+))
+(defparameter +all-single-float-types+ (append (list 'float)
+                                               +vector-single-float-types+))
+(defparameter +all-double-float-types+ (append (list 'double)
+                                               +vector-double-float-types+))
+
 (defparameter +number-types+ (append +scalar-number-types+
                                      +vector-number-types+))
 
@@ -395,14 +406,10 @@
     hypot ,(float-types-binary-function "hypot")
     ilogb ,(mapcar #'(lambda (arg-type ret-type)
                        `((,arg-type) ,ret-type nil "ilogb"))
-                   (append +vector-single-float-types+
-                           (list 'float)
-                           +vector-double-float-types+
-                           (list 'double))
-                   (append +vector-int-types+
-                           (list 'int)
-                           +vector-int-types+
-                           (list 'int)))
+                   (append +all-single-float-types+
+                           +all-double-float-types+)
+                   (append +all-int-types+
+                           +all-int-types+))
     ;;ldexp
     lgamma ,(float-types-unary-function "lgamma")
     ;;lgamma_r
@@ -417,26 +424,18 @@
     ;;modf
     nan ,(mapcar #'(lambda (arg-type ret-type)
                      `((,arg-type) ,ret-type nil "nan"))
-                 (append +vector-uint-types+
-                         (list 'uint)
-                         +vector-ulong-types+
-                         (list 'ulong))
-                 (append +vector-single-float-types+
-                         (list 'float)
-                         +vector-double-float-types+
-                         (list 'double)))
+                 (append +all-uint-types+
+                         +all-ulong-types+)
+                 (append +all-single-float-types+
+                         +all-double-float-types+))
     nextafter ,(float-types-binary-function "nextafter")
     pow ,(float-types-binary-function "pow")
     pown ,(mapcar #'(lambda (lhs rhs)
                       `((,lhs ,rhs) ,lhs nil "pown"))
-                  (append +vector-single-float-types+
-                          (list 'float)
-                          +vector-double-float-types+
-                          (list 'double))
-                  (append +vector-int-types+
-                          (list 'int)
-                          +vector-int-types+
-                          (list 'int)))
+                  (append +all-single-float-types+
+                          +all-double-float-types+)
+                  (append +all-int-types+
+                          +all-int-types+))
     powr ,(float-types-binary-function "powr")
     remainder ,(float-types-binary-function "remainder")
     ;;remquo
