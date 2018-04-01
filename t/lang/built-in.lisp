@@ -47,12 +47,12 @@
 ;;;
 
 (subtest "BUILT-IN-FUNCTION-C-NAME"
-  (is (built-in-function-c-name '+ '(int int)) "+")
-  (is (built-in-function-c-name '+ '(float3 float3)) "+")
-  (is (built-in-function-c-name '- '(int int)) "-")
-  (is (built-in-function-c-name 'mod '(int int)) "%")
-  (subtest "printf"
-    (is (built-in-function-c-name 'printf '(string)) "printf")
-    (is (built-in-function-c-name 'printf '(string int)) "printf")))
+  (loop for (ope args name) in '((+ (int int) "+")
+                                 (+ (float3 float3) "+")
+                                 (- (int int) "-")
+                                 (mod (int int) "%")
+                                 (printf (string) "printf")
+                                 (printf (string int) "printf"))
+        do (is (built-in-function-c-name ope args) name)))
 
 (finalize)
