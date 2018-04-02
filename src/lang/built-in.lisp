@@ -441,6 +441,12 @@
     ;;remquo
     rint ,(float-types-unary-function "rint")
     ;;rootn
+    rootn ,(mapcar #'(lambda (lhs rhs)
+                       `((,lhs ,rhs) ,lhs nil "rootn"))
+                   (append +all-single-float-types+
+                           +all-double-float-types+)
+                   (append +all-int-types+
+                           +all-int-types+))
     round ,(float-types-unary-function "round")
     rsqrt ,(float-types-unary-function "rsqrt")
     sin ,(float-types-unary-function "sin")
