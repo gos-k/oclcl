@@ -539,7 +539,15 @@
                            (append +all-signed-types+
                                    +all-unsigned-types+)
                            (append +all-signed-types+
-                                   +all-signed-types+)))
+                                   +all-signed-types+))
+                   (types-function "clamp" 3 (append +all-single-float-types+
+                                                     +all-double-float-types+))
+                   (mapcar #'(lambda (gentype)
+                               `((,gentype float float) ,gentype nil "clamp"))
+                           +all-single-float-types+)
+                   (mapcar #'(lambda (gentype)
+                               `((,gentype double double) ,gentype nil "clamp"))
+                           +all-double-float-types+))
     clz ,(integer-types-unary-function "clz")
     mad-hi ,(integer-types-ternary-function "mad_hi")
     mad-sat ,(integer-types-ternary-function "mad_sat")
@@ -587,7 +595,7 @@
                    (same-type-function "mul24" 2 'uint nil))
 
     ;; OpenCL v.1.2 dr19: 6.12.4 Common Functions
-    ;;clamp
+    ;; clamp impl Integer function
     degrees ,(float-types-unary-function "degrees")
     ;;max
     ;;min

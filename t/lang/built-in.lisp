@@ -44,6 +44,8 @@
                                  ((abs) (char4) uchar4)
                                  ((clamp) (uint4 uint4 uint4) uint4)
                                  ((clamp) (uint4 int4 int4) uint4)
+                                 ((clamp) (float4 float4 float4) float4)
+                                 ((clamp) (float4 float float) float4)
                                  ((upsample) (short4 ushort4) int4))
         do (dolist (ope opes)
              (is (built-in-function-return-type ope args) ret))))
