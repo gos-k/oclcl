@@ -523,7 +523,12 @@
                          +all-unsigned-types+)
                  (append +all-unsigned-types+
                          +all-unsigned-types+))
-    ;;abs-diff
+    abs-diff ,(mapcar #'(lambda (arg-type ret-type)
+                     `((,arg-type ,arg-type) ,ret-type nil "abs_diff"))
+                 (append +all-signed-types+
+                         +all-unsigned-types+)
+                 (append +all-unsigned-types+
+                         +all-unsigned-types+))
     add-sat ,(integer-types-binary-function "add_sat")
     hadd ,(integer-types-binary-function "hadd")
     rhadd ,(integer-types-binary-function "rhadd")
