@@ -136,7 +136,7 @@
            :mul-hi
            :rotate
            :sub-sat
-           :upsampl
+           :upsample
            :popcount
 
            :clamp
@@ -550,7 +550,35 @@
     mul-hi ,(integer-types-binary-function "mul_hi")
     rotate ,(integer-types-binary-function "rotate")
     sub-sat ,(integer-types-binary-function "sub_sat")
-    ;;upsampl
+    upsample ,(mapcar #'(lambda (lhs rhs ret)
+                          `((,lhs ,rhs) ,ret nil "upsample"))
+                      (append (list 'char 'uchar)
+                              +vector-char-types+
+                              +vector-uchar-types+
+                              (list 'short 'ushort)
+                              +vector-short-types+
+                              +vector-ushort-types+
+                              (list 'int 'uint)
+                              +vector-int-types+
+                              +vector-uint-types+)
+                      (append (list 'uchar 'uchar)
+                              +vector-uchar-types+
+                              +vector-uchar-types+
+                              (list 'ushort 'ushort)
+                              +vector-ushort-types+
+                              +vector-ushort-types+
+                              (list 'uint 'uint)
+                              +vector-uint-types+
+                              +vector-uint-types+)
+                      (append (list 'short 'ushort)
+                              +vector-short-types+
+                              +vector-ushort-types+
+                              (list 'int 'uint)
+                              +vector-int-types+
+                              +vector-uint-types+
+                              (list 'long 'ulong)
+                              +vector-long-types+
+                              +vector-ulong-types+))
     popcount ,(integer-types-unary-function "popcount")
 
     mad24 ,(append (same-type-function "mad24" 3 'int nil)
