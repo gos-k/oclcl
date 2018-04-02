@@ -200,11 +200,15 @@
 (defparameter +result-gentypes+ (append +integer-result-types+
                                         +float-result-types+))
 
-(defparameter +vector-signed-integer-types+ '(char2 char3 char4 char8 char16
-                                              short2 short3 short4 short8 short16
-                                              int2 int3 int4 int8 int16
-                                              long2 long3 long4 long8 long16))
+(defparameter +vector-char-types+ '(char2 char3 char4 char8 char16))
+(defparameter +vector-short-types+ '(short2 short3 short4 short8 short16))
 (defparameter +vector-int-types+ '(int2 int3 int4 int8 int16))
+(defparameter +vector-long-types+ '(long2 long3 long4 long8 long16))
+(defparameter +vector-signed-integer-types+ (append +vector-char-types+
+                                                    +vector-short-types+
+                                                    +vector-int-types+
+                                                    +vector-long-types+))
+
 (defparameter +vector-uchar-types+ '(uchar2 uchar3 uchar4 uchar8 uchar16))
 (defparameter +vector-ushort-types+ '(ushort2 ushort3 ushort4 ushort8 ushort16))
 (defparameter +vector-uint-types+ '(uint2 uint3 uint4 uint8 uint16))
@@ -213,6 +217,7 @@
                                                       +vector-ushort-types+
                                                       +vector-uint-types+
                                                       +vector-ulong-types+))
+
 (defparameter +vector-integer-types+ (append +vector-signed-integer-types+
                                              +vector-unsigned-integer-types+))
 (defparameter +vector-single-float-types+ '(float2 float3 float4 float8 float16))
@@ -222,12 +227,32 @@
 (defparameter +vector-number-types+ (append +vector-integer-types+
                                             +vector-float-types+))
 
+(defparameter +all-char-types+ (append (list 'char)
+                                       +vector-char-types+))
+(defparameter +all-short-types+ (append (list 'short)
+                                        +vector-short-types+))
 (defparameter +all-int-types+ (append (list 'int)
                                       +vector-int-types+))
+(defparameter +all-long-types+ (append (list 'long)
+                                       +vector-long-types+))
+(defparameter +all-uchar-types+ (append (list 'uchar)
+                                        +vector-uchar-types+))
+(defparameter +all-ushort-types+ (append (list 'ushort)
+                                         +vector-ushort-types+))
 (defparameter +all-uint-types+ (append (list 'uint)
                                        +vector-uint-types+))
 (defparameter +all-ulong-types+ (append (list 'ulong)
                                         +vector-ulong-types+))
+
+(defparameter +all-signed-types+ (append +all-char-types+
+                                         +all-short-types+
+                                         +all-int-types+
+                                         +all-long-types+))
+(defparameter +all-unsigned-types+ (append +all-uchar-types+
+                                           +all-ushort-types+
+                                           +all-uint-types+
+                                           +all-ulong-types+))
+
 (defparameter +all-single-float-types+ (append (list 'float)
                                                +vector-single-float-types+))
 (defparameter +all-double-float-types+ (append (list 'double)
@@ -492,7 +517,12 @@
     native-tan ,(same-type-function "native_tan" 1 'float nil)
 
     ;; OpenCL v.1.2 dr19: 6.12.3 Integer Functions
-    ;;abs
+    abs ,(mapcar #'(lambda (arg-type ret-type)
+                     `((,arg-type) ,ret-type nil "abs"))
+                 (append +all-signed-types+
+                         +all-unsigned-types+)
+                 (append +all-unsigned-types+
+                         +all-unsigned-types+))
     ;;abs-diff
     add-sat ,(integer-types-binary-function "add_sat")
     hadd ,(integer-types-binary-function "hadd")
