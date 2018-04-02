@@ -240,7 +240,7 @@ Implementation status of built in functions.
 |:------:|:----------|
 | Yes    | Work-Item |
 | Part   | Math |
-| Part   | Integer |
+| Yes    | Integer |
 | Part   | Common |
 | Yes    | Geometric |
 | No     | Relational |
