@@ -532,7 +532,14 @@
     add-sat ,(integer-types-binary-function "add_sat")
     hadd ,(integer-types-binary-function "hadd")
     rhadd ,(integer-types-binary-function "rhadd")
-    ;;clamp
+    clamp ,(append (types-function "clamp" 3 (append +all-signed-types+
+                                                     +all-unsigned-types+))
+                   (mapcar #'(lambda (gentype sgentype)
+                     `((,gentype ,sgentype ,sgentype) ,gentype nil "clamp"))
+                           (append +all-signed-types+
+                                   +all-unsigned-types+)
+                           (append +all-signed-types+
+                                   +all-signed-types+)))
     clz ,(integer-types-unary-function "clz")
     mad-hi ,(integer-types-ternary-function "mad_hi")
     mad-sat ,(integer-types-ternary-function "mad_sat")

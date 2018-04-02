@@ -41,7 +41,9 @@
                                  ((pown) (float int) float)
                                  ((pown) (double4 int4) double4)
                                  ((pown) (double int) double)
-                                 ((abs) (char4) uchar4))
+                                 ((abs) (char4) uchar4)
+                                 ((clamp) (uint4 uint4 uint4) uint4)
+                                 ((clamp) (uint4 int4 int4) uint4))
         do (dolist (ope opes)
              (is (built-in-function-return-type ope args) ret))))
 
