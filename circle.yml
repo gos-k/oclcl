@@ -6,7 +6,7 @@ machine:
 checkout:
     pre:
         - |
-          if [ -e ~/.roswell ]; then
+          if [ ! -d ~/.roswell ]; then
             curl -L https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | sh
           fi
 
