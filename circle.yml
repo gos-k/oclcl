@@ -10,7 +10,7 @@ dependencies:
         curl -L https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | sh
       fi
     - ros install prove
-    - ros install cffi
+    - ros -s oclcl -s oclcl-test
 
   cache_directories:
     - ~/.local
@@ -19,5 +19,4 @@ dependencies:
 
 test:
   override:
-    - ros run -- --version
-    - run-prove *-test.asd
+    - run-prove oclcl-test.asd
