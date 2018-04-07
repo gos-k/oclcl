@@ -11,6 +11,8 @@ install:
       curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
     fi
   - ros install prove
+  - run-prove oclcl-test.asd
+
 
 cache:
   directories:
@@ -21,4 +23,3 @@ cache:
 script:
   - ros --version
   - ros run -- --version
-  - run-prove oclcl-test.asd
