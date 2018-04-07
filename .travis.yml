@@ -1,48 +1,24 @@
 language: common-lisp
-sudo: required
-
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.8
-      - libedit-dev
-      - libc6-i386
-      - clisp
-      - openjdk-7-jre
 
 env:
   global:
-    - PATH=~/.roswell/bin:$PATH
-  matrix:
-    - LISP=sbcl-bin
-    - LISP=ccl-bin
-    - LISP=ecl
-    - LISP=abcl
-    - LISP=clisp
-
-matrix:
-  allow_failures:
-    - env: LISP=ecl
-    - env: LISP=abcl
-    - env: LISP=clisp
+    - PATH=$HOME/.local/bin:$HOME/.roswell/bin:$PATH
+    - ROSWELL_INSTALL_DIR=$HOME/.local
 
 install:
-  - sudo bash -c 'echo "deb http://mirrors.kernel.org/ubuntu vivid main universe" >> /etc/apt/sources.list'
-  - sudo apt-get update
-  - sudo apt-get install -y libltdl3-dev libhwloc-dev ocl-icd-opencl-dev
-  - clang --version
-  - ./build-pocl.sh
-  - curl -L https://raw.githubusercontent.com/snmsts/roswell/release/scripts/install-for-ci.sh | sh
-  - ros install prove
+  - |
+    if [ ! -e "$ROSWELL_INSTALL_DIR/bin/ros" ]; then
+      curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
+    fi
 
 cache:
   directories:
+    - $HOME/.local
     - $HOME/.roswell
-    - $HOME/.config/common-lisp
-    - $HOME/pocl
+    - $HOME/.cache/common-lisp
 
 script:
+  - ros --version
+  - ros run -- --version
   - run-prove oclcl-test.asd
   - roswell/run-oclcl-examples.ros
