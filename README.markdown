@@ -249,7 +249,7 @@ Implementation status of built in functions.
 | Yes    | Explicit Memory Fence |
 | No     | Async Copies from Global to Local Memory, Local to Global Memory, and Prefetch |
 | Yes    | Atomic |
-| Part   | Miscellaneous Vector |
+| Yes    | Miscellaneous Vector |
 | Yes    | printf |
 | No     | Image Read and Write Functions |
 
