@@ -11,7 +11,7 @@ install:
       curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
     fi
   - ros install prove
-  - run-prove oclcl-test.asd
+  - ros -s oclcl -s oclcl-test
 
 
 cache:
@@ -21,5 +21,4 @@ cache:
     - $HOME/.cache/common-lisp
 
 script:
-  - ros --version
-  - ros run -- --version
+  - run-prove oclcl-test.asd
