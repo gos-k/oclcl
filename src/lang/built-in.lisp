@@ -710,6 +710,11 @@
                                              (mapcar #'cons +vector-single-float-types+ +vector-uint-types+)
                                              (mapcar #'cons +vector-double-float-types+ +vector-ulong-types+))
                    collecting `((,x ,mask) x nil "shuffle"))
+    shuffle2 ,(loop for (x . mask) in (append (mapcar #'cons +vector-integer-types+ +vector-unsigned-integer-types+)
+                                              (mapcar #'cons +vector-unsigned-integer-types+ +vector-unsigned-integer-types+)
+                                              (mapcar #'cons +vector-single-float-types+ +vector-uint-types+)
+                                              (mapcar #'cons +vector-double-float-types+ +vector-ulong-types+))
+                    collecting `((,x ,x ,mask) x nil "shuffle2"))
 
     ;; OpenCL v.1.2 dr19: 6.12.13 printf
     printf ((,#'allow-any-types int nil "printf"))))
