@@ -1,24 +1,23 @@
 machine:
-    environment:
-        LISP: sbcl-bin
-        PATH: ~/.roswell/bin:$PATH
-
-checkout:
-    pre:
-        - |
-          if [ ! -d ~/.roswell ]; then
-            curl -L https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | sh
-          fi
+  environment:
+    PATH: $HOME/.local/bin:$HOME/.roswell/bin:$PATH
+    ROSWELL_INSTALL_DIR: $HOME/.local
 
 dependencies:
-    pre:
-        - ros install prove
+  pre:
+    - |
+      if [ ! -e "$ROSWELL_INSTALL_DIR/bin/ros" ]; then
+        curl -L https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | sh
+      fi
+    - ros install prove
+    - ros install cffi
 
-    cache_directories:
-        - ~/.roswell/
-        - ~/.config/common-lisp
+  cache_directories:
+    - ~/.local
+    - ~/.roswell/
+    - ~/.cache/common-lisp
 
 test:
-    override:
-        - ros run -- --version
-        - run-prove *-test.asd
+  override:
+    - ros run -- --version
+    - run-prove *-test.asd
