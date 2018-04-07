@@ -10,6 +10,7 @@ install:
     if [ ! -e "$ROSWELL_INSTALL_DIR/bin/ros" ]; then
       curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
     fi
+  - ros install prove
 
 cache:
   directories:
@@ -21,4 +22,3 @@ script:
   - ros --version
   - ros run -- --version
   - run-prove oclcl-test.asd
-  - roswell/run-oclcl-examples.ros
