@@ -49,8 +49,8 @@
 ;;;
 
 (subtest "COMPILE-FLOAT"
-  (is (compile-float 1.0) "1.0f")
-  (is (compile-float 1.23456789012345) "1.2345679f"))
+  (is (compile-float 1.0f0) "1.0f")
+  (is (compile-float 1.23456789012345f0) "1.2345679f"))
 
 
 ;;;

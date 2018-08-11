@@ -171,7 +171,7 @@
                      "basic case 4")
 
   (test-local-memory '(with-local-memory ((a float 16 16))
-                       (set (aref a 0 0) 1.0))
+                       (set (aref a 0 0) 1.0f0))
                      (unlines "{"
                               "  __local float a[16][16];"
                               "  a[0][0] = 1.0f;"
@@ -179,7 +179,7 @@
                      "basic case 5")
 
   (test-local-memory '(with-local-memory ((a float (+ 16 2)))
-                       (set (aref a 0) 1.0))
+                       (set (aref a 0) 1.0f0))
                      (unlines "{"
                               "  __local float a[(16 + 2)];"
                               "  a[0] = 1.0f;"
@@ -187,7 +187,7 @@
                      "store to local memory")
 
   (test-local-memory '(with-local-memory ((a float (+ 16 2)))
-                       (let ((b 0.0))
+                       (let ((b 0.0f0))
                          (set b (aref a 0))))
                      (unlines "{"
                               "  __local float a[(16 + 2)];"
@@ -206,7 +206,7 @@
 
   (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(with-local-memory ((a float 16 16))
-                       (set (aref a 0) 1.0))))
+                       (set (aref a 0) 1.0f0))))
       (is-error (compile-with-local-memory lisp-code var-env func-env)
                 simple-error))))
 
@@ -222,19 +222,19 @@
     (is (compile-set '(set x 1) var-env func-env)
         (unlines "x = 1;")
         "basic case 1")
-    (is-error (compile-set '(set x 1.0) var-env func-env) simple-error))
+    (is-error (compile-set '(set x 1.0f0) var-env func-env) simple-error))
 
   (multiple-value-bind (var-env func-env) (empty-environment)
     (setf var-env (variable-environment-add-variable 'x 'int* var-env))
     (is (compile-set '(set (aref x 0) 1) var-env func-env)
         (unlines "x[0] = 1;")
         "basic case 2")
-    (is-error (compile-set '(set (aref x 0) 1.0) var-env func-env)
+    (is-error (compile-set '(set (aref x 0) 1.0f0) var-env func-env)
               simple-error))
 
   (multiple-value-bind (var-env func-env) (empty-environment)
     (setf var-env (variable-environment-add-variable 'x 'float3 var-env))
-    (is (compile-set '(set (float3-x x) 1.0) var-env func-env)
+    (is (compile-set '(set (float3-x x) 1.0f0) var-env func-env)
         (unlines "x.x = 1.0f;")
         "basic case 3")
     (is-error (compile-set '(set (float3-x x) 1) var-env func-env)
