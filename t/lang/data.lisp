@@ -22,8 +22,8 @@
 
 (let ((cffi-type (cffi-type 'float3)))
   (cffi:with-foreign-object (x cffi-type)
-  (setf (cffi:mem-ref x cffi-type) (make-float3 1.0 1.0 1.0))
-  (is (cffi:mem-ref x cffi-type) (make-float3 1.0 1.0 1.0)
+  (setf (cffi:mem-ref x cffi-type) (make-float3 1.0f0 1.0f0 1.0f0))
+  (is (cffi:mem-ref x cffi-type) (make-float3 1.0f0 1.0f0 1.0f0)
       :test #'float3-=
       "basic case 1")))
 

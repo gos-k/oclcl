@@ -23,7 +23,7 @@
 
   (let ((program (make-program)))
     (program-define-memory program 'a :constant 1)
-    (program-define-memory program 'b :global 1.0)
+    (program-define-memory program 'b :global 1.0f0)
     (program-define-function program 'foo 'void '((x int*))
                             '((set (aref x 0) (bar 1))
                               (return)))

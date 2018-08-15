@@ -75,7 +75,7 @@
   (is (compile-literal 1) "1"
       "basic case 3")
 
-  (is (compile-literal 1.0) "1.0f"
+  (is (compile-literal 1.0f0) "1.0f"
       "basic case 4")
 
   (is (compile-literal 1.0d0) "1.0"
@@ -162,7 +162,7 @@
         "mod integer")
     (is (compile-arithmetic '(+ 1 1 (- 1 1)) var-env func-env) "((1 + 1) + (1 - 1))"
         "mix integer")
-    (is (compile-arithmetic '(+ 1.0 2.0 3.0 4.0) var-env func-env)
+    (is (compile-arithmetic '(+ 1.0f0 2.0f0 3.0f0 4.0f0) var-env func-env)
         "(((1.0f + 2.0f) + 3.0f) + 4.0f)"
         "add float")))
 
@@ -185,7 +185,7 @@
         "basic case 2")
     (is (compile-function '(- 1) var-env func-env) "-(1)"
         "basic case 3")
-    (is (compile-function '(+ (float3 1.0 1.0 1.0) (float3 2.0 2.0 2.0))
+    (is (compile-function '(+ (float3 1.0f0 1.0f0 1.0f0) (float3 2.0f0 2.0f0 2.0f0))
                           var-env func-env)
         "((float3)(1.0f, 1.0f, 1.0f) + (float3)(2.0f, 2.0f, 2.0f))"
         "float3 constructor")
