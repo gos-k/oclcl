@@ -532,22 +532,25 @@
     add-sat ,(integer-types-binary-function "add_sat")
     hadd ,(integer-types-binary-function "hadd")
     rhadd ,(integer-types-binary-function "rhadd")
-    clamp ,(append (types-function "clamp" 3 (append +all-signed-types+
-                                                     +all-unsigned-types+))
-                   (mapcar #'(lambda (gentype sgentype)
-                     `((,gentype ,sgentype ,sgentype) ,gentype nil "clamp"))
-                           (append +all-signed-types+
-                                   +all-unsigned-types+)
-                           (append +all-signed-types+
-                                   +all-signed-types+))
-                   (types-function "clamp" 3 (append +all-single-float-types+
-                                                     +all-double-float-types+))
-                   (mapcar #'(lambda (gentype)
-                               `((,gentype float float) ,gentype nil "clamp"))
-                           +all-single-float-types+)
-                   (mapcar #'(lambda (gentype)
-                               `((,gentype double double) ,gentype nil "clamp"))
-                           +all-double-float-types+))
+    ;; for clamp see also OpenCL v.1.2 dr19: 6.12.4 Common Functions
+    clamp ,(append 
+	    ;; same type args integer/float clamp (TYPES-FUNCTION creates vector types)
+	    (types-function "clamp" 3 +scalar-number-types+)
+	    ;; Integer clamp w/ scaler clamping args
+	    (mapcar #'(lambda (sgentype)
+			(alexandria:mappend
+			 (lambda (gentype)
+			   `((,gentype ,sgentype ,sgentype) ,gentype nil "clamp"))
+			 (generate-vector-type-symbols sgentype)))
+                    (append +scalar-signed-integer-types+ +scalar-unsigned-integer-types+))
+	    ;; single float clamp w/ scalar clamping args
+            (mapcar #'(lambda (gentype)
+                        `((,gentype float float) ,gentype nil "clamp"))
+                    +all-single-float-types+)
+	    ;; double float clamp w/ scalar clamping args
+            (mapcar #'(lambda (gentype)
+                        `((,gentype double double) ,gentype nil "clamp"))
+                    +all-double-float-types+))
     clz ,(integer-types-unary-function "clz")
     mad-hi ,(integer-types-ternary-function "mad_hi")
     mad-sat ,(integer-types-ternary-function "mad_sat")
