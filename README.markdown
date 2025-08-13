@@ -24,13 +24,13 @@ oclcl requires following:
 
 ## Test
 
-    (ql:quickload :prove)
-    (prove:run :oclcl-test)
+    (ql:quickload '(:oclcl-tests :rove))
+    (rove:run :oclcl-tests)
 
 or
 
-    $ ros install prove
-    $ run-prove oclcl/oclcl-test.asd
+    $ ros install rove
+    $ rove oclcl.asd
 
 ## Verification environments
 
@@ -261,7 +261,7 @@ C source generator is forked from [cl-cuda](https://github.com/takagi/cl-cuda).
 
 ## Copyright
 
-2015 gos-k (mag4.elan@gmail.com)
+2015-2025 gos-k (mag4.elan@gmail.com)
 
 ### cl-cuda
 

@@ -1,20 +1,19 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
-                2015 gos-k (mag4.elan@gmail.com)
+                2015-2025 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage oclcl-test.api.defkernel
-  (:use :cl :prove
+(defpackage :oclcl.tests.api.defkernel
+  (:use :cl :rove
+        :oclcl.tests.utils
         :oclcl.api.defkernel
         :oclcl.lang
         :oclcl.lang.program
         :oclcl.lang.compiler.compile-program)
   (:import-from :oclcl.api.defkernel))
-(in-package :oclcl-test.api.defkernel)
-
-(plan nil)
+(in-package :oclcl.tests.api.defkernel)
 
 (defmacro with-stub-program (&body body)
   `(let ((oclcl.lang.program:*program* (oclcl.lang.program:make-program)))
@@ -23,8 +22,6 @@
 ;;;
 ;;; test DEFKERNEL macro
 ;;;
-
-(diag "DEFKERNEL")
 
 ;; test "let1" kernel
 (defkernel let1 (void ())
@@ -63,7 +60,7 @@
 ;;; test DEFMEMORY macro
 ;;;
 
-(subtest "DEFMEMORY"
+(deftest defmemory
   (with-stub-program
     (defmemory a 42 :constant)
     (defmemory b 0 :global)
@@ -74,8 +71,8 @@
  *  Memory objects
  */
 
-__constant int oclcl_test_api_defkernel_a = 42;
-__global int oclcl_test_api_defkernel_b = 0;
+__constant int oclcl_tests_api_defkernel_a = 42;
+__global int oclcl_tests_api_defkernel_b = 0;
 
 
 
@@ -86,7 +83,7 @@ __global int oclcl_test_api_defkernel_b = 0;
 ;;; test DEFKERNELMACRO macro
 ;;;
 
-(subtest "DEFKERNELMACRO"
+(deftest defkernelmacro
   (with-stub-program
 
     (defkernelmacro when (test &body forms)
@@ -106,14 +103,14 @@ __global int oclcl_test_api_defkernel_b = 0;
  *  Kernel function prototypes
  */
 
-__kernel void oclcl_test_api_defkernel_test_when();
+__kernel void oclcl_tests_api_defkernel_test_when();
 
 
 /**
  *  Kernel function definitions
  */
 
-__kernel void oclcl_test_api_defkernel_test_when()
+__kernel void oclcl_tests_api_defkernel_test_when()
 {
   if (true)
   {
@@ -127,7 +124,7 @@ __kernel void oclcl_test_api_defkernel_test_when()
 ;;; test DEFKERNEL-SYMBOL-MACRO macro
 ;;;
 
-(subtest "DEFKERNEL-SYMBOL-MACRO"
+(deftest defkernel-symbol-macro
   (with-stub-program
 
     (defkernel-symbol-macro x 1)
@@ -145,14 +142,14 @@ __kernel void oclcl_test_api_defkernel_test_when()
  *  Kernel function prototypes
  */
 
-__kernel void oclcl_test_api_defkernel_test_symbol_macro(__global int* ret);
+__kernel void oclcl_tests_api_defkernel_test_symbol_macro(__global int* ret);
 
 
 /**
  *  Kernel function definitions
  */
 
-__kernel void oclcl_test_api_defkernel_test_symbol_macro(__global int* ret)
+__kernel void oclcl_tests_api_defkernel_test_symbol_macro(__global int* ret)
 {
   ret[0] = 1;
   return;
@@ -164,7 +161,7 @@ __kernel void oclcl_test_api_defkernel_test_symbol_macro(__global int* ret)
 ;;; test EXPAND-MACRO function
 ;;;
 
-(subtest "EXPAND-MACRO"
+(deftest expand-macro
   (defkernelmacro foo (x)
     `(return ,x))
 
@@ -175,21 +172,20 @@ __kernel void oclcl_test_api_defkernel_test_symbol_macro(__global int* ret)
 
   (defkernel-symbol-macro b a)
 
-  (is-values (expand-macro-1 '(foo 1)) '((return 1) t))
-  (is-values (expand-macro-1 '(bar 1)) '((foo 1) t))
-  (is-values (expand-macro-1 '(baz 1)) '((baz 1) nil))
-  (is-values (expand-macro-1 'a) '(1.0 t))
-  (is-values (expand-macro-1 'b) '(a t))
-  (is-values (expand-macro-1 'c) '(c nil))
-  (is-error (expand-macro-1 '(foo)) error)
+  (testing "exapnd-macro-1"
+    (is-values (expand-macro-1 '(foo 1)) '((return 1) t))
+    (is-values (expand-macro-1 '(bar 1)) '((foo 1) t))
+    (is-values (expand-macro-1 '(baz 1)) '((baz 1) nil))
+    (is-values (expand-macro-1 'a) '(1.0 t))
+    (is-values (expand-macro-1 'b) '(a t))
+    (is-values (expand-macro-1 'c) '(c nil))
+    (ok (signals (expand-macro-1 '(foo)) 'error)))
 
-  (is-values (expand-macro '(foo 1)) '((return 1) t))
-  (is-values (expand-macro '(bar 1)) '((return 1) t))
-  (is-values (expand-macro '(baz 1)) '((baz 1) nil))
-  (is-values (expand-macro 'a) '(1.0 t))
-  (is-values (expand-macro 'b) '(1.0 t))
-  (is-values (expand-macro 'c) '(c nil))
-  (is-error (expand-macro '(foo)) error))
-
-
-(finalize)
+  (testing "exapnd-macro"
+    (is-values (expand-macro '(foo 1)) '((return 1) t))
+    (is-values (expand-macro '(bar 1)) '((return 1) t))
+    (is-values (expand-macro '(baz 1)) '((baz 1) nil))
+    (is-values (expand-macro 'a) '(1.0 t))
+    (is-values (expand-macro 'b) '(1.0 t))
+    (is-values (expand-macro 'c) '(c nil))
+    (ok (signals (expand-macro '(foo)) 'error))))

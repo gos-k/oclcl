@@ -1,18 +1,16 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
-                2015 gos-k (mag4.elan@gmail.com)
+                2015-2025 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage oclcl-test.lang.syntax
-  (:use :cl :prove
+(defpackage oclcl.tests.lang.syntax
+  (:use :cl :rove
+        :oclcl.tests.utils
         :oclcl.lang.data
         :oclcl.lang.syntax))
-(in-package :oclcl-test.lang.syntax)
-
-(plan nil)
-
+(in-package :oclcl.tests.lang.syntax)
 
 ;;;
 ;;; test Symbol macro
@@ -23,7 +21,7 @@
 ;;; test Macro
 ;;;
 
-(subtest "Macro"
+(deftest macro
 
   (is (macro-p '(+ 1 1)) t
       "basic case 1")
@@ -43,7 +41,7 @@
 ;;; test Literal
 ;;;
 
-(subtest "Literal"
+(deftest literal
 
   (is (literal-p 't) t
       "basic case 1")
@@ -61,14 +59,14 @@
 ;;; test OpenCL literal
 ;;;
 
-(subtest "OpenCL literal")
+(deftest OpenCL-literal)
 
 
 ;;;
 ;;; test Reference
 ;;;
 
-(subtest "Reference"
+(deftest reference
 
   (is (reference-p 'x) t
       "basic case 1")
@@ -88,7 +86,7 @@
 ;;; test Inline-if
 ;;;
 
-(subtest "Inline-if"
+(deftest inline-if
 
   (is (inline-if-p '(if)) t
       "basic case 1")
@@ -111,7 +109,7 @@
 ;;; test Function application
 ;;;
 
-(subtest "Function application"
+(deftest function-application
 
   (is (function-p 'a) nil
       "basic case 1")
@@ -126,8 +124,8 @@
   (is (function-p '(foo 1 1)) t
       "basic case 6")
 
-  (is-error (function-operator 'a) simple-error
-            "FORM which is an invalid function application.")
+  (ok (signals (function-operator 'a) 'simple-error)
+      "FORM which is an invalid function application.")
   (is (function-operator '(foo)) 'foo
       "basic case 7")
   (is (function-operator '(+ 1 1)) '+
@@ -135,8 +133,8 @@
   (is (function-operator '(foo 1 1)) 'foo
       "basic case 9")
 
-  (is-error (function-operands 'a) simple-error
-            "FORM which is an invalid function application.")
+  (ok (signals (function-operands 'a) 'simple-error)
+      "FORM which is an invalid function application.")
   (is (function-operands '(foo)) '()
       "basic case 10")
   (is (function-operands '(+ 1 1)) '(1 1)
@@ -149,7 +147,7 @@
 ;;; test If statement
 ;;;
 
-(subtest "If statement"
+(deftest if-statement
 
   (is (if-else-statement '(if (= 1 1) (return 1))) nil
       "basic case 1"))
@@ -164,14 +162,14 @@
 ;;; test Symbol-macrolet statement
 ;;;
 
-(subtest "Symbol-macrolet statement"
+(deftest symbol-macrolet-statement
 
   (ok (symbol-macrolet-p '(symbol-macrolet ((x 'expanded-x))
-                           (return)))
+                            (return)))
       "basic case 1")
   (ok (symbol-macrolet-p '(symbol-macrolet ((x 'expanded-x))
-                           (do-something)
-                           (return)))
+                            (do-something)
+                            (return)))
       "basic case 2")
   (ok (symbol-macrolet-p '(symbol-macrolet ((x 'expanded-x))))
       "basic case 3"))
@@ -181,7 +179,7 @@
 ;;; test Do statement
 ;;;
 
-(subtest "Do statement"
+(deftest do-statement
 
   (let ((code '(do ((a 0 (+ a 1))
                     (b 0 (+ b 1)))
@@ -197,7 +195,7 @@
     (is (do-statements code) '((return))
         "basic case 4")))
 
-(subtest "Do statement - binding"
+(deftest do-statement-binding
 
   (let ((binding '(a 0 (+ a 1))))
     (ok (do-binding-p binding)
@@ -214,7 +212,7 @@
 ;;; test With-local-memory statement
 ;;;
 
-(subtest "WITH-LOCAL-MEMORY-P"
+(deftest with-local-memory-p
 
   (ok (with-local-memory-p '(with-local-memory ((a float 16))
                               (return)))
@@ -228,24 +226,24 @@
       "basic case 4"))
 
 
-(subtest "WITH-LOCAL-MEMORY-SPEC-P"
+(deftest with-local-memory-spec-p
 
-(ok (with-local-memory-spec-p '(a float 16))
-    "basic case 1")
-(ok (with-local-memory-spec-p '(a float (+ 16 2)))
-    "basic case 2"))
+  (ok (with-local-memory-spec-p '(a float 16))
+      "basic case 1")
+  (ok (with-local-memory-spec-p '(a float (+ 16 2)))
+      "basic case 2"))
 
 
 ;;;
 ;;; test Set statement
 ;;;
 
-(diag "Set statement")
+(deftest set-statement
+  (ok (set-p '(set x 1))
+      "basic case 1")
+  (ok (set-p '(set (aref x i) 1))
+      "basic case 2"))
 
-(ok (set-p '(set x 1))
-    "basic case 1")
-(ok (set-p '(set (aref x i) 1))
-    "basic case 2")
 
 
 ;;;
@@ -263,5 +261,3 @@
 ;;;
 
 
-
-(finalize)

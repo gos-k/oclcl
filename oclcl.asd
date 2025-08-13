@@ -1,7 +1,7 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
-                2017 gos-k (mag4.elan@gmail.com)
+                2017-2025 gos-k (mag4.elan@gmail.com)
 |#
 
 ;;;
@@ -44,4 +44,4 @@
                  (:file "oclcl"))))
   :description "oclcl is a library S-expression to OpenCL C."
   ;; :long-description #.(read-file-string (subpathname *load-pathname* "README.markdown"))
-  :in-order-to ((test-op (load-op "oclcl-test"))))
+  :in-order-to ((test-op (test-op "oclcl-tests"))))

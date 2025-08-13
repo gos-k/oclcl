@@ -1,12 +1,13 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
-                2015 gos-k (mag4.elan@gmail.com)
+                2015-2025 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage oclcl-test.lang.compiler.compile-expression
-  (:use :cl :prove
+(defpackage oclcl.tests.lang.compiler.compile-expression
+  (:use :cl :rove
+        :oclcl.tests.utils
         :oclcl.lang.syntax
         :oclcl.lang.data
         :oclcl.lang.type
@@ -22,16 +23,13 @@
                 :compile-inline-if
                 :compile-arithmetic
                 :compile-function))
-(in-package :oclcl-test.lang.compiler.compile-expression)
-
-(plan nil)
-
+(in-package :oclcl.tests.lang.compiler.compile-expression)
 
 ;;;
 ;;; test COMPILE-EXPRESSION function
 ;;;
 
-(subtest "COMPILE-EXPRESSION"
+(deftest compile-expression
   (multiple-value-bind (var-env func-env) (empty-environment)
     (is (compile-expression 1 var-env func-env) "1")))
 
@@ -40,7 +38,7 @@
 ;;; test COMPILE-MACRO function
 ;;;
 
-(subtest "COMPILE-MACRO"
+(deftest compile-macro
   (let ((var-env (empty-variable-environment))
         (func-env (function-environment-add-macro 'foo '(x) '(`(+ ,x ,x))
                                                   (empty-function-environment))))
@@ -52,7 +50,7 @@
 ;;; test COMPILE-SYMBOL-MACRO function
 ;;;
 
-(subtest "COMPILE-SYMBOL-MACRO"
+(deftest compile-symbol-macro
   (let ((var-env (variable-environment-add-symbol-macro 'x 1
                                                         (empty-variable-environment)))
         (func-env (empty-function-environment)))
@@ -64,7 +62,7 @@
 ;;; test COMPILE-LITERAL function
 ;;;
 
-(subtest "COMPILE-LITERAL"
+(deftest compile-literal
 
   (is (compile-literal t) "true"
       "basic case 1")
@@ -86,7 +84,7 @@
 
 ;;; test COMPILE-OPENCL-LITERAL function
 
-(subtest "COMPILE-OPENCL-LITERAL"
+(deftest compile-opencl-literal
   (is (compile-opencl-literal :clk-local-mem-fence)
       "CLK_LOCAL_MEM_FENCE"
       "CLK_LOCAL_MEM_FENCE")
@@ -98,7 +96,7 @@
 ;;; test COMPILE-REFERENCE funcion
 ;;;
 
-(subtest "COMPILE-REFERENCE - VARIABLE"
+(deftest compile-reference-variable
   (let* ((add-var (variable-environment-add-variable 'x 'int (empty-variable-environment)))
          (add-symbol-macro (variable-environment-add-symbol-macro 'y 'y-expansion add-var))
          (var-env (variable-environment-add-memory 'z 'int 1 (variable-environment-add-variable 'y-expansion 'float add-symbol-macro)))
@@ -106,14 +104,14 @@
     (is (compile-reference 'x var-env func-env) "x"
         "basic case 1")
     (is (compile-reference 'z var-env func-env)
-        "oclcl_test_lang_compiler_compile_expression_z"
+        "oclcl_tests_lang_compiler_compile_expression_z"
         "basic case 2")
-    (is-error (compile-reference 'y var-env func-env) simple-error
-              "FORM which is a variable not found.")
-    (is-error (compile-reference 'a var-env func-env) simple-error
-              "FORM which is a variable not found.")))
+    (ok (signals (compile-reference 'y var-env func-env) 'simple-error)
+        "FORM which is a variable not found.")
+    (ok (signals (compile-reference 'a var-env func-env) 'simple-error)
+        "FORM which is a variable not found.")))
 
-(subtest "COMPILE-REFERENCE - STRUCTURE"
+(deftest compile-reference-structure
   (let ((var-env (variable-environment-add-variable 'x 'float3
                                                     (empty-variable-environment)))
         (func-env (empty-function-environment)))
@@ -121,11 +119,11 @@
         "basic case 1")
     (is (compile-reference '(float3-y x) var-env func-env) "x.y"
         "basic case 2")
-    (is-error (compile-reference '(float4-x x) var-env func-env)
-              simple-error)))
+    (ok (signals (compile-reference '(float4-x x) var-env func-env)
+                 'simple-error))))
 
 
-(subtest "COMPILE-REFERENCE - ARRAY"
+(deftest compile-reference-array
   (let* ((add-var (variable-environment-add-variable 'x 'int* (empty-variable-environment)))
          (var-env (variable-environment-add-variable 'i 'int add-var))
          (func-env (empty-function-environment)))
@@ -137,7 +135,7 @@
 ;;; test COMPILE-INLINE-IF function
 ;;;
 
-(subtest "COMPILE-INLINE-IF"
+(deftest compile-inline-if
   (multiple-value-bind (var-env func-env) (empty-environment)
     (is (compile-inline-if '(if (= 1 1) 1 2) var-env func-env)
         "((1 == 1) ? 1 : 2)"
@@ -148,7 +146,7 @@
 ;;; test COMPILE-ARITHMETIC function
 ;;;
 
-(subtest "COMPILE-ARITHMETIC"
+(deftest compile-arithmetic
   (multiple-value-bind (var-env func-env) (empty-environment)
     (is (compile-arithmetic '(+ 1 1 1) var-env func-env) "((1 + 1) + 1)"
         "add integer")
@@ -171,14 +169,14 @@
 ;;; test COMPILE-FUNCTION function
 ;;;
 
-(subtest "COMPILE-FUNCTION"
+(deftest compile-function
   (let ((var-env (empty-variable-environment))
         (func-env (function-environment-add-function 'foo 'int '(int int)
                                                      (empty-function-environment))))
     (is (compile-function '(foo 1 1) var-env func-env)
-        "oclcl_test_lang_compiler_compile_expression_foo(1, 1)"
+        "oclcl_tests_lang_compiler_compile_expression_foo(1, 1)"
         "basic case 1")
-    (is-error (compile-function '(foo 1 1 1) var-env func-env) simple-error))
+    (ok (signals (compile-function '(foo 1 1 1) var-env func-env) 'simple-error)))
 
   (multiple-value-bind (var-env func-env) (empty-environment)
     (is (compile-function '(+ 1 1) var-env func-env) "(1 + 1)"
@@ -192,5 +190,3 @@
     (is (compile-function '(barrier :clk-local-mem-fence) var-env func-env)
         "barrier(CLK_LOCAL_MEM_FENCE)"
         "barrier")))
-
-(finalize)

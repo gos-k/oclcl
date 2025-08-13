@@ -1,24 +1,22 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
-                2015 gos-k (mag4.elan@gmail.com)
+                2015-2025 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage oclcl-test.lang.program
-  (:use :cl :prove
+(defpackage :oclcl.tests.lang.program
+  (:use :cl :rove
+        :oclcl.tests.utils
         :oclcl.lang.program
         :oclcl.lang.type))
-(in-package :oclcl-test.lang.program)
-
-(plan nil)
-
+(in-package :oclcl.tests.lang.program)
 
 ;;;
 ;;; test MAKE-PROGRAM function
 ;;;
 
-(subtest "MAKE-PROGRAM"
+(deftest make-program
 
   (let ((program (make-program)))
     (is (program-function-names program) nil
@@ -30,7 +28,7 @@
 ;;; test PROGRAM-MEMORY-NAMES function
 ;;;
 
-(subtest "PROGRAM-MEMORY-NAMES"
+(deftest program-memory-names
   (let ((program (make-program)))
     (program-define-memory program 'x :global 42)
     (program-define-symbol-macro program 'y 42)
@@ -40,7 +38,7 @@
 ;;; test PROGRAM-FUNCTION-NAMES function
 ;;;
 
-(subtest "PROGRAM-FUNCTION-NAMES"
+(deftest program-function-names
 
   (let ((program (make-program)))
     (program-define-function program 'foo 'int '((x int)) '((return x)))
@@ -53,7 +51,7 @@
 ;;; test PROGRAM-MACRO-NAMES function
 ;;;
 
-(subtest "PROGRAM-MACRO-NAMES"
+(deftest program-macro-names
 
   (let ((program (make-program)))
     (program-define-function program 'foo 'int '((x int)) '((return x)))
@@ -66,7 +64,7 @@
 ;;; test PROGRAM-SYMBOL-MACRO-NAMES function
 ;;;
 
-(subtest "PROGRAM-SYMBOL-MACRO-NAMES"
+(deftest program-symbol-macro-names
 
   (let ((program (make-program)))
     (program-define-symbol-macro program 'x 1.0)
@@ -78,34 +76,34 @@
 ;;; test PROGRAM-DEFINE-FUNCTION function
 ;;;
 
-(subtest "PROGRAM-DEFINE-FUNCTION"
+(deftest program-define-function
 
   (let ((program (make-program)))
     (is (program-define-function program 'foo 'int '((x int)) '((return x)))
         'foo "basic case 1"))
 
   (let ((program (make-program)))
-    (is-error (program-define-function program
-                                      1 'int '((x int)) '((return x)))
-              type-error
-              "NAME which is not a oclcl symbol."))
+    (ok (signals (program-define-function program
+                                          1 'int '((x int)) '((return x)))
+                 'type-error)
+        "NAME which is not a oclcl symbol."))
 
   (let ((program (make-program)))
-    (is-error (program-define-function program 'foo 1 '((x int)) '((return x)))
-              type-error
-              "RETURN-TYPE which is not a oclcl type."))
+    (ok (signals (program-define-function program 'foo 1 '((x int)) '((return x)))
+                 'type-error)
+        "RETURN-TYPE which is not a oclcl type."))
 
   (let ((program (make-program)))
-    (is-error (program-define-function program 'foo 1 'bar '((return x)))
-              type-error
-              "ARGUMENTS which are invlalid arguments.")))
+    (ok (signals (program-define-function program 'foo 1 'bar '((return x)))
+                 'type-error)
+        "ARGUMENTS which are invlalid arguments.")))
 
 
 ;;;
 ;;; test PROGRAM-FUNCTION-EXISTS-P function
 ;;;
 
-(subtest "PROGRAM-FUNCTION-EXISTS-P"
+(deftest program-function-exists-p
 
   (let ((program (make-program)))
     (program-define-function program 'foo 'int '((x int)) '((return x)))
@@ -165,23 +163,23 @@
 ;;; test PROGRAM-DEFINE-MACRO function
 ;;;
 
-(subtest "PROGRAM-DEFINE-MACRO"
+(deftest program-define-macro
 
   (let ((program (make-program)))
     (is (program-define-macro program 'foo '(x) '(`(return ,x)))
         'foo "basic case 1"))
 
   (let ((program (make-program)))
-    (is-error (program-define-macro program 1 '(x) '(`(return ,x)))
-              type-error
-              "NAME which is not a oclcl symbol.")))
+    (ok (signals (program-define-macro program 1 '(x) '(`(return ,x)))
+                 'type-error)
+        "NAME which is not a oclcl symbol.")))
 
 
 ;;;
 ;;; test PROGRAM-MACRO-EXISTS-P function
 ;;;
 
-(subtest "PROGRAM-MACRO-EXISTS-P"
+(deftest program-macro-exists-p
 
   (let ((program (make-program)))
     (program-define-function program 'foo 'int '((x int)) '((return x)))
@@ -226,7 +224,7 @@
 ;;; test EXPAND-MACRO-1 function
 ;;;
 
-(subtest "EXPAND-MACRO-1"
+(deftest expand-macro-1
   (let ((program (make-program)))
     (program-define-macro program 'foo '(x) '(`(return ,x)))
     (program-define-macro program 'bar '(x) '(`(foo ,x)))
@@ -238,14 +236,14 @@
     (is-values (expand-macro-1 'a program) '(1.0 t))
     (is-values (expand-macro-1 'b program) '(a t))
     (is-values (expand-macro-1 'c program) '(c nil))
-    (is-error (expand-macro-1 '(foo) program) error)))
+    (ok (signals (expand-macro-1 '(foo) program) 'error))))
 
 
 ;;;
 ;;; test EXPAND-MACRO function
 ;;;
 
-(subtest "EXPAND-MACRO"
+(deftest expand-macro
 
   (let ((program (make-program)))
     (program-define-macro program 'foo '(x) '(`(return ,x)))
@@ -258,29 +256,29 @@
     (is-values (expand-macro 'a program) '(1.0 t))
     (is-values (expand-macro 'b program) '(1.0 t))
     (is-values (expand-macro 'c program) '(c nil))
-    (is-error (expand-macro '(foo) program) error)))
+    (ok (signals (expand-macro '(foo) program) 'error))))
 
 
 ;;;
 ;;; test PROGRAM-DEFINE-SYMBOL-MACRO function
 ;;;
 
-(subtest "PROGRAM-DEFINE-SYMBOL-MACRO"
+(deftest program-define-symbol-macro
 
   (let ((program (make-program)))
     (is (program-define-symbol-macro program 'x 1.0)
         'x "basic case 1"))
 
   (let ((program (make-program)))
-    (is-error (program-define-symbol-macro program 1 1.0) type-error
-              "NAME which is not a oclcl symbol.")))
+    (ok (signals (program-define-symbol-macro program 1 1.0) 'type-error)
+        "NAME which is not a oclcl symbol.")))
 
 
 ;;;
 ;;; test PROGRAM-SYMBOL-MACRO-EXISTS-P function
 ;;;
 
-(subtest "PROGRAM-SYMBOL-MACRO-EXISTS-P"
+(deftest program-symbol-macro-exists-p
 
   (let ((program (make-program)))
     (program-define-symbol-macro program 'x 1.0)
@@ -304,7 +302,7 @@
 ;;; Global
 ;;;
 
-(subtest "program-define-memory"
+(deftest program-define-memory
   (let ((program (make-program)))
     (program-define-memory program 'foo :global 42)
     (is (program-memory-exists-p program 'foo)
@@ -312,7 +310,7 @@
     (is (program-memory-name program 'foo)
         'foo)
     (is (program-memory-c-name program 'foo)
-        "oclcl_test_lang_program_foo")
+        "oclcl_tests_lang_program_foo")
     (is (program-address-space-qualifiers program 'foo)
         '(:global))
     (is (program-memory-expression program 'foo)
@@ -333,21 +331,21 @@
     (is (program-address-space-qualifiers program 'foo)
         '(:global :constant)))
 
-  (is-error (program-define-memory :foo 'foo :global 42)
-            type-error
-            "Invalid program.")
+  (ok (signals (program-define-memory :foo 'foo :global 42)
+               'type-error)
+      "Invalid program.")
 
   (let ((program (make-program)))
-    (is-error (program-define-memory program "foo" :global 42)
-              type-error
-              "Invalid name."))
+    (ok (signals (program-define-memory program "foo" :global 42)
+                 'type-error)
+        "Invalid name."))
 
   (let ((program (make-program)))
-    (is-error (program-define-memory program 'foo :foo 42)
-              type-error
-              "Invalid qualifier.")))
+    (ok (signals (program-define-memory program 'foo :foo 42)
+                 'type-error)
+        "Invalid qualifier.")))
 
-(subtest "program-memory-exists-p"
+(deftest program-memory-exists-p
   (let ((program (make-program)))
     (program-define-memory program 'foo :global 42)
     (program-define-symbol-macro program 'bar 42)
@@ -358,93 +356,91 @@
     (is (program-memory-exists-p program 'baz)
         nil))
 
-  (is-error (program-memory-exists-p :foo 'foo)
-            type-error
-            "Invalid program.")
+  (ok (signals (program-memory-exists-p :foo 'foo)
+               'type-error)
+      "Invalid program.")
 
   (let ((program (make-program)))
-    (is-error (program-memory-exists-p program "foo")
-              type-error
-              "Invalid name.")))
+    (ok (signals (program-memory-exists-p program "foo")
+                 'type-error)
+        "Invalid name.")))
 
-(subtest "program-memory-name"
+(deftest program-memory-name
   (let ((program (make-program)))
     (program-define-memory program 'foo :global 42)
     (is (program-memory-name program 'foo)
         'foo))
 
   (let ((program (make-program)))
-    (is-error (program-memory-name program 'foo)
-              undefined-program-variable
-              "Global memory should not be found."))
+    (ok (signals (program-memory-name program 'foo)
+                 'undefined-program-variable)
+        "Global memory should not be found."))
 
-  (is-error (program-memory-name :foo 'foo)
-            type-error
-            "Invalid program.")
+  (ok (signals (program-memory-name :foo 'foo)
+               'type-error)
+      "Invalid program.")
 
   (let ((program (make-program)))
-    (is-error (program-memory-name program "foo")
-              type-error
-              "Invalid name.")))
+    (ok (signals (program-memory-name program "foo")
+                 'type-error)
+        "Invalid name.")))
 
-(subtest "program-memory-c-name"
+(deftest program-memory-c-name
   (let ((program (make-program)))
     (program-define-memory program 'foo :global 42)
     (is (program-memory-c-name program 'foo)
-        "oclcl_test_lang_program_foo"))
+        "oclcl_tests_lang_program_foo"))
 
   (let ((program (make-program)))
-    (is-error (program-memory-c-name program 'foo)
-              undefined-program-variable
-              "Global memory should not be found.."))
+    (ok (signals (program-memory-c-name program 'foo)
+                 'undefined-program-variable)
+        "Global memory should not be found.."))
 
-  (is-error (program-memory-c-name :foo 'foo)
-            type-error
-            "Invalid program.")
+  (ok (signals (program-memory-c-name :foo 'foo)
+               'type-error)
+      "Invalid program.")
 
   (let ((program (make-program)))
-    (is-error (program-memory-c-name program "foo")
-              type-error
-              "Invalid name.")))
+    (ok (signals (program-memory-c-name program "foo")
+                 'type-error)
+        "Invalid name.")))
 
-(subtest "program-address-space-qualifiers"
+(deftest program-address-space-qualifiers
   (let ((program (make-program)))
     (program-define-memory program 'foo :global 42)
     (is (program-address-space-qualifiers program 'foo)
         '(:global)))
 
   (let ((program (make-program)))
-    (is-error (program-address-space-qualifiers program 'foo)
-              undefined-program-variable
-              "Global memory should not be found.."))
+    (ok (signals (program-address-space-qualifiers program 'foo)
+                 'undefined-program-variable)
+        "Global memory should not be found.."))
 
-  (is-error (program-address-space-qualifiers :foo 'foo)
-            type-error
-            "Invalid program.")
+  (ok (signals (program-address-space-qualifiers :foo 'foo)
+               'type-error)
+      "Invalid program.")
 
   (let ((program (make-program)))
-    (is-error (program-address-space-qualifiers program "foo")
-              type-error
-              "Invalid name.")))
+    (ok (signals (program-address-space-qualifiers program "foo")
+                 'type-error)
+        "Invalid name.")))
 
-(subtest "program-memory-expression"
+(deftest program-memory-expression
   (let ((program (make-program)))
     (program-define-memory program 'foo :global 42)
     (is (program-memory-expression program 'foo)
         42))
 
   (let ((program (make-program)))
-    (is-error (program-memory-expression program 'foo)
-              undefined-program-variable
-              "Global memory should not be found.."))
+    (ok (signals (program-memory-expression program 'foo)
+                 'undefined-program-variable)
+        "Global memory should not be found.."))
 
-  (is-error (program-memory-expression :foo 'foo)
-            type-error
-            "Invalid program.")
+  (ok (signals (program-memory-expression :foo 'foo)
+               'type-error)
+      "Invalid program.")
 
   (let ((program (make-program)))
-    (is-error (program-memory-expression program "foo")
-              type-error
-              "Invalid name.")))
-
-(finalize)
+    (ok (signals (program-memory-expression program "foo")
+                 'type-error)
+        "Invalid name.")))

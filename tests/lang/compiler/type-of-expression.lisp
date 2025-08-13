@@ -1,12 +1,13 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
-                2015 gos-k (mag4.elan@gmail.com)
+                2015-2025 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage oclcl-test.lang.compiler.type-of-expression
-  (:use :cl :prove
+(defpackage oclcl.tests.lang.compiler.type-of-expression
+  (:use :cl :rove
+        :oclcl.tests.utils
         :oclcl.lang.compiler.type-of-expression
         :oclcl.lang.data
         :oclcl.lang.type
@@ -23,16 +24,14 @@
                 :type-of-function)
   (:import-from :arrow-macros
                 :->>))
-(in-package :oclcl-test.lang.compiler.type-of-expression)
 
-(plan nil)
-
+(in-package :oclcl.tests.lang.compiler.type-of-expression)
 
 ;;;
 ;;; test TYPE-OF-EXPRESSION function
 ;;;
 
-(subtest "TYPE-OF-EXPRESSION"
+(deftest type-of-expression
   (let ((var-env (empty-variable-environment))
         (func-env (empty-function-environment)))
     (is (type-of-expression 1 var-env func-env) 'int)))
@@ -51,7 +50,7 @@
 ;;; test TYPE-OF-LITERAL function
 ;;;
 
-(subtest "TYPE-OF-LITERAL"
+(deftest type-of-literal
 
   (is (type-of-literal t) 'bool
       "basic case 1")
@@ -73,7 +72,7 @@
 ;;; test TYPE-OF-REFERENCE function
 ;;;
 
-(subtest "TYPE-OF-REFERENCE - VARIABLE"
+(deftest type-of-reference-variable
   (let ((var-env (->> (empty-variable-environment)
                    (variable-environment-add-variable 'x 'int)
                    (variable-environment-add-symbol-macro 'y 'y-expansion)
@@ -84,41 +83,39 @@
         "basic case 1")
     (is (type-of-reference 'z var-env func-env) 'int
         "basic caase 2")
-    (is-error (type-of-reference 'y var-env func-env) simple-error
-              "FORM which is a variable not found.")
-    (is-error (type-of-reference 'a var-env func-env) simple-error
-              "FORM which is a variable not found.")))
+    (ok (signals (type-of-reference 'y var-env func-env) 'simple-error)
+        "FORM which is a variable not found.")
+    (ok (signals (type-of-reference 'a var-env func-env) 'simple-error)
+        "FORM which is a variable not found.")))
 
 
-(subtest "TYPE-OF-REFERENCE - STRUCTURE"
-
+(deftest type-of-reference-structure
   (let ((var-env (variable-environment-add-variable 'x 'float3
                                                     (empty-variable-environment)))
         (func-env (empty-function-environment)))
     (is (type-of-reference '(float3-x x) var-env func-env) 'float)
     (is (type-of-reference '(float3-y x) var-env func-env) 'float)
-    (is-error (type-of-reference '(float4-x x) var-env func-env)
-              simple-error)))
+    (ok (signals (type-of-reference '(float4-x x) var-env func-env)
+                 'simple-error))))
 
 
-(subtest "TYPE-OF-REFERENCE - ARRAY"
+(deftest type-of-reference-array
 
   (let ((var-env (variable-environment-add-variable 'x 'int
                                                     (empty-variable-environment)))
         (func-env (empty-function-environment)))
-    (is-error (type-of-reference '(aref x) var-env func-env) simple-error))
+    (ok (signals (type-of-reference '(aref x) var-env func-env) 'simple-error)))
 
   (let ((var-env (variable-environment-add-variable 'x 'int*
                                                     (empty-variable-environment)))
         (func-env (empty-function-environment)))
     (is (type-of-reference '(aref x 0) var-env func-env) 'int)
-    (is-error (type-of-reference '(aref x 0 0) var-env func-env)
-              simple-error))
-
+    (ok (signals (type-of-reference '(aref x 0 0) var-env func-env)
+                 'simple-error)))
   (let ((var-env (variable-environment-add-variable 'x 'int**
                                                     (empty-variable-environment)))
         (func-env (empty-function-environment)))
-    (is-error (type-of-reference '(aref x 0) var-env func-env) simple-error)
+    (ok (signals (type-of-reference '(aref x 0) var-env func-env) 'simple-error))
     (is (type-of-reference '(aref x 0 0) var-env func-env) 'int)))
 
 
@@ -126,27 +123,27 @@
 ;;; test TYPE-OF-INLINE-IF function
 ;;;
 
-(subtest "TYPE-OF-INLINE-IF"
+(deftest type-of-inline-if
 
   (multiple-value-bind (var-env func-env) (empty-environment)
-    (is-error (type-of-inline-if '(if) var-env func-env)
-              simple-error
-              "only if")
-    (is-error (type-of-inline-if '(if (= 1 1)) var-env func-env)
-              simple-error
-              "test")
-    (is-error (type-of-inline-if '(if (= 1 1) 1) var-env func-env)
-              simple-error
-              "test and then")
+    (ok (signals (type-of-inline-if '(if) var-env func-env)
+                 'simple-error)
+        "only if")
+    (ok (signals (type-of-inline-if '(if (= 1 1)) var-env func-env)
+                 'simple-error)
+        "test")
+    (ok (signals (type-of-inline-if '(if (= 1 1) 1) var-env func-env)
+                 'simple-error)
+        "test and then")
     (is (type-of-inline-if '(if (= 1 1) 1 2) var-env func-env)
         'int
         "valid if expression")
-    (is-error (type-of-inline-if '(if 1 2 3) var-env func-env)
-              simple-error
-              "test is not bool")
-    (is-error (type-of-inline-if '(if (= 1 1) 1 2.0) var-env func-env)
-              simple-error
-              "different type")))
+    (ok (signals (type-of-inline-if '(if 1 2 3) var-env func-env)
+                 'simple-error)
+        "test is not bool")
+    (ok (signals (type-of-inline-if '(if (= 1 1) 1 2.0) var-env func-env)
+                 'simple-error)
+        "different type")))
 
 
 ;;;
@@ -158,20 +155,18 @@
 ;;; test TYPE-OF-FUNCTION function
 ;;;
 
-(subtest "TYPE-OF-FUNCTION"
+(deftest type-of-function
   (let ((var-env (empty-variable-environment))
         (func-env (function-environment-add-function 'foo 'int '(int int)
                                                      (empty-function-environment))))
     (is (type-of-function '(+ 1 1) var-env func-env) 'int)
     (is (type-of-function '(foo 1 1) var-env func-env) 'int)
     (is (type-of-function '(+ 1.0f0 1.0f0) var-env func-env) 'float)
-    (is-error (type-of-function '(+ 1 1.0f0) var-env func-env) simple-error)
+    (ok (signals (type-of-function '(+ 1 1.0f0) var-env func-env) 'simple-error))
     (is (type-of-function '(pow 1.0f0 1.0f0) var-env func-env) 'float)
     (is (type-of-function '(half-cos 1.0f0) var-env func-env) 'float)
-    (is-error (type-of-function '(half-divide 1.0) var-env func-env) simple-error)
+    (ok (signals (type-of-function '(half-divide 1.0) var-env func-env) 'simple-error))
     (is (type-of-function '(native-cos 1.0f0) var-env func-env) 'float)
-    (is-error (type-of-function '(native-divide 1.0) var-env func-env) simple-error)
+    (ok (signals (type-of-function '(native-divide 1.0) var-env func-env) 'simple-error))
     (is (type-of-function '(popcount 1) var-env func-env) 'int)
     (is (type-of-function '(degrees 1.0f0) var-env func-env) 'float)))
-
-(finalize)

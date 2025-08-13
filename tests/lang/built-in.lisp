@@ -1,25 +1,23 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
-                2015-2018 gos-k (mag4.elan@gmail.com)
+                2015-2025 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage oclcl-test.lang.built-in
-  (:use :cl :prove
+(defpackage oclcl.tests.lang.built-in
+  (:use :cl :rove
+        :oclcl.tests.utils
         :oclcl.lang.type
         :oclcl.lang.data
         :oclcl.lang.built-in))
-(in-package :oclcl-test.lang.built-in)
-
-(plan nil)
-
+(in-package :oclcl.tests.lang.built-in)
 
 ;;;
 ;;; test BUILT-IN-FUNCTION-RETURN-TYPE function
 ;;;
 
-(subtest "BUILT-IN-FUNCTION-RETURN-TYPE"
+(deftest built-in-function-return-type
   (loop for (opes args ret) in '(((+ * - / mod) (int int) int)
                                  ((+ * - / mod) (int int) int)
                                  ((+ * - /) (float float) float)
@@ -56,7 +54,7 @@
 ;;; test BUILT-IN-FUNCTION-INFIX-P function
 ;;;
 
-(subtest "BUILT-IN-FUNCTION-INFIX-P"
+(deftest built-in-function-infix-p
   (loop for (ope args) in '((+ (int int))
                             (+ (float3 float3))
                             (- (int int))
@@ -67,7 +65,7 @@
 ;;; test BUILT-IN-FUNCTION-C-NAME function
 ;;;
 
-(subtest "BUILT-IN-FUNCTION-C-NAME"
+(deftest built-in-function-c-name
   (loop for (ope args name) in '((+ (int int) "+")
                                  (+ (float3 float3) "+")
                                  (- (int int) "-")
@@ -75,5 +73,3 @@
                                  (printf (string) "printf")
                                  (printf (string int) "printf"))
         do (is (built-in-function-c-name ope args) name)))
-
-(finalize)

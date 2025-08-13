@@ -1,12 +1,13 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
-                2015 gos-k (mag4.elan@gmail.com)
+                2015-2025 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage oclcl-test.lang.compiler.compile-statement
-  (:use :cl :prove
+(defpackage oclcl.tests.lang.compiler.compile-statement
+  (:use :cl :rove
+        :oclcl.tests.utils
         :oclcl.lang.util
         :oclcl.lang.data
         :oclcl.lang.type
@@ -24,9 +25,7 @@
                 :compile-progn
                 :compile-return
                 :compile-function))
-(in-package :oclcl-test.lang.compiler.compile-statement)
-
-(plan nil)
+(in-package :oclcl.tests.lang.compiler.compile-statement)
 
 (defun %test-compile-statement (statement-func lisp-code c-code message)
   (multiple-value-bind (var-env func-env) (empty-environment)
@@ -47,7 +46,7 @@
 ;;; test COMPILE-IF funciton
 ;;;
 
-(subtest "COMPILE-IF"
+(deftest compile-if
   (defun test-if (lisp-code c-code message)
     (%test-compile-statement #'compile-if lisp-code c-code message))
 
@@ -71,14 +70,14 @@
 
   (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(if 1 (return))))
-      (is-error (compile-if lisp-code var-env func-env) simple-error))))
+      (ok (signals (compile-if lisp-code var-env func-env) 'simple-error)) )))
 
 
 ;;;
 ;;; test COMPILE-LET function
 ;;;
 
-(subtest "COMPILE-LET"
+(deftest compile-let
   (defun test-let (lisp-code c-code message)
     (%test-compile-statement #'compile-let lisp-code c-code message))
 
@@ -91,19 +90,19 @@
             "basic case 1")
 
   (multiple-value-bind (var-env func-env) (empty-environment)
-    (is-error (compile-let '(let (i) (return)) var-env func-env)
-              simple-error)
-    (is-error (compile-let '(let ((i)) (return)) var-env func-env)
-              simple-error)
-    (is-error (compile-let '(let ((x 1) (y x)) (return y)) var-env func-env)
-              simple-error)))
+    (ok (signals (compile-let '(let (i) (return)) var-env func-env)
+                 'simple-error))
+    (ok (signals (compile-let '(let ((i)) (return)) var-env func-env)
+                 'simple-error))
+    (ok (signals (compile-let '(let ((x 1) (y x)) (return y)) var-env func-env)
+                 'simple-error))))
 
 
 ;;;
 ;;; test COMPILE-SYMBOL-MACROLET function
 ;;;
 
-(subtest "COMPILE-SYMBOL-MACROLET"
+(deftest compile-symbol-macrolet
   (defun test-symbol-macrolet (lisp-code c-code message)
     (%test-compile-statement #'compile-symbol-macrolet lisp-code c-code message))
 
@@ -118,13 +117,13 @@
 ;;; test COMPILE-DO function
 ;;;
 
-(subtest "COMPILE-DO"
+(deftest compile-do
   (defun test-do (lisp-code c-code message)
     (%test-compile-statement #'compile-do lisp-code c-code message))
 
   (test-do '(do ((a 0 (+ a 1))
-                   (b 0 (+ b 1)))
-               ((> a 15))
+                 (b 0 (+ b 1)))
+             ((> a 15))
              (return))
            (unlines "for ( int a = 0, int b = 0; ! (a > 15); a = (a + 1), b = (b + 1) )"
                     "{"
@@ -137,7 +136,7 @@
 ;;; test COMPILE-WITH-LOCAL-MEMORY function
 ;;;
 
-(subtest "COMPILE-WITH-LOCAL-MEMORY"
+(deftest compile-with-local-memory
   (defun test-local-memory (lisp-code c-code message)
     (%test-compile-statement #'compile-with-local-memory lisp-code c-code message))
 
@@ -201,44 +200,43 @@
   (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(with-local-memory (a float)
                        (return))))
-      (is-error (compile-with-local-memory lisp-code var-env func-env)
-                simple-error)))
+      (ok (signals (compile-with-local-memory lisp-code var-env func-env)
+                   'simple-error))))
 
   (multiple-value-bind (var-env func-env) (empty-environment)
     (let ((lisp-code '(with-local-memory ((a float 16 16))
                        (set (aref a 0) 1.0f0))))
-      (is-error (compile-with-local-memory lisp-code var-env func-env)
-                simple-error))))
+      (ok (signals (compile-with-local-memory lisp-code var-env func-env)
+                   'simple-error)))))
 
 
 ;;;
 ;;; test COMPILE-SET function
 ;;;
 
-(subtest "COMPILE-SET"
+(deftest compile-set
 
-  (multiple-value-bind (var-env func-env) (empty-environment)
+  (multiple-valUe-bind (var-env func-env) (empty-environment)
     (setf var-env (variable-environment-add-variable 'x 'int var-env))
     (is (compile-set '(set x 1) var-env func-env)
         (unlines "x = 1;")
         "basic case 1")
-    (is-error (compile-set '(set x 1.0f0) var-env func-env) simple-error))
+    (ok (signals (compile-set '(set x 1.0f0) var-env func-env) 'simple-error)))
 
   (multiple-value-bind (var-env func-env) (empty-environment)
     (setf var-env (variable-environment-add-variable 'x 'int* var-env))
     (is (compile-set '(set (aref x 0) 1) var-env func-env)
         (unlines "x[0] = 1;")
         "basic case 2")
-    (is-error (compile-set '(set (aref x 0) 1.0f0) var-env func-env)
-              simple-error))
-
+    (ok (signals (compile-set '(set (aref x 0) 1.0f0) var-env func-env)
+                 'simple-error)))
   (multiple-value-bind (var-env func-env) (empty-environment)
     (setf var-env (variable-environment-add-variable 'x 'float3 var-env))
     (is (compile-set '(set (float3-x x) 1.0f0) var-env func-env)
         (unlines "x.x = 1.0f;")
         "basic case 3")
-    (is-error (compile-set '(set (float3-x x) 1) var-env func-env)
-              simple-error)))
+    (ok (signals (compile-set '(set (float3-x x) 1) var-env func-env)
+                 'simple-error))))
 
 
 ;;;
@@ -254,8 +252,3 @@
 ;;;
 ;;; test COMPILE-FUNCTION function (not implemented)
 ;;;
-
-
-
-
-(finalize)

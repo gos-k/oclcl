@@ -1,23 +1,21 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
-                2015 gos-k (mag4.elan@gmail.com)
+                2015-2025 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage oclcl-test.lang.compiler.compile-data
-  (:use :cl :prove
+(defpackage oclcl.tests.lang.compiler.compile-data
+  (:use :cl :rove
+        :oclcl.tests.utils
         :oclcl.lang.compiler.compile-data))
-(in-package :oclcl-test.lang.compiler.compile-data)
-
-(plan nil)
-
+(in-package :oclcl.tests.lang.compiler.compile-data)
 
 ;;;
 ;;; test COMPILE-SYMBOL function
 ;;;
 
-(subtest "COMPILE-SYMBOL"
+(deftest compile-symbol
   (is (compile-symbol 'x) "x"
       "basic case 1")
   (is (compile-symbol 'vec-add-kernel) "vec_add_kernel"
@@ -28,7 +26,7 @@
 ;;; test COMPILE-BOOL function
 ;;;
 
-(subtest "COMPILE-BOOL"
+(deftest compile-bool
   (is (compile-bool t) "true"
       "basic case 1")
   (is (compile-bool nil) "false"
@@ -39,7 +37,7 @@
 ;;; test COMPILE-INT function
 ;;;
 
-(subtest "COMPILE-INT"
+(deftest compile-int
   (is (compile-int 1) "1"
       "basic case 1"))
 
@@ -48,7 +46,7 @@
 ;;; test COMPILE-FLOAT function
 ;;;
 
-(subtest "COMPILE-FLOAT"
+(deftest compile-float
   (is (compile-float 1.0f0) "1.0f")
   (is (compile-float 1.23456789012345f0) "1.2345679f"))
 
@@ -57,14 +55,12 @@
 ;;; test COMPILE-DOUBLE function
 ;;;
 
-(subtest "COMPILE-DOUBLE"
+(deftest compile-double
   (is (compile-double 1.0d0) "1.0")
   (is (compile-double 1.23456789012345d0) "1.23456789012345"))
 
 ;;; test COMPILE-STRING function
 
-(subtest "compile-string"
+(deftest compile-string
   (is (compile-string "unittest compile-string")
       "\"unittest compile-string\""))
-
-(finalize)
