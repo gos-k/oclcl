@@ -37,13 +37,24 @@
     (is (type-of-expression 1 var-env func-env) 'int)))
 
 ;;;
-;;; test TYPE-OF-MACRO function (not implemented)
+;;; test TYPE-OF-MACRO function
 ;;;
 
+(deftest type-of-macro
+  (let ((var-env (empty-variable-environment))
+        (func-env (function-environment-add-macro 'alfa '(x) '(x)
+                                                  (empty-function-environment))))
+    (is (type-of-macro '(alfa "bravo") var-env func-env) 'string)))
 
 ;;;
-;;; test TYPE-OF-SYMBOL-MACRO function (not implemented)
+;;; test TYPE-OF-SYMBOL-MACRO function
 ;;;
+
+(deftest type-of-symbol-macro
+  (let ((var-env (variable-environment-add-symbol-macro 'alfa "bravo"
+                                                        (empty-variable-environment)))
+        (func-env (empty-function-environment)))
+    (is (type-of-symbol-macro 'alfa var-env func-env) 'string)))
 
 
 ;;;
@@ -147,8 +158,12 @@
 
 
 ;;;
-;;; test TYPE-OF-ARITHMETIC function (not implemented)
+;;; test TYPE-OF-ARITHMETIC function
 ;;;
+
+(deftest type-of-arithmetic
+  (multiple-value-bind (var-env func-env) (empty-environment)
+    (ok (type-of-arithmetic '(+ 1 2) var-env func-env) "arithmetic +")))
 
 
 ;;;

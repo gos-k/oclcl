@@ -33,13 +33,32 @@
         message)))
 
 ;;;
-;;; test COMPILE-STATEMENT function (not implemented)
+;;; test COMPILE-STATEMENT function
 ;;;
+
+(deftest compile-statement
+  (flet ((test-statement (lisp-code c-code message)
+           (%test-compile-statement #'compile-statement lisp-code c-code message)))
+    (test-statement '(return) (unlines "return;") "return statement")
+    (test-statement '(+ 1 2) (unlines "(1 + 2);") "arithmetic statement")))
 
 
 ;;;
-;;; test COMPILE-MACRO function (not implemented)
+;;; test COMPILE-MACRO function
 ;;;
+
+(deftest compile-macro
+  (let ((var-env (empty-variable-environment))
+        (func-env (function-environment-add-macro 'alfa '(x) '(`(let ((,x 0))
+                                                                  (* ,x ,x)))
+                                                  (empty-function-environment))))
+    (flet ((test-statement (lisp-code c-code message)
+             (is (compile-macro lisp-code var-env func-env) c-code message)))
+      (test-statement '(alfa bravo) (unlines "{"
+                                             "  int bravo = 0;"
+                                             "  (bravo * bravo);"
+                                             "}")
+                      "macro statement"))))
 
 
 ;;;
@@ -240,15 +259,30 @@
 
 
 ;;;
-;;; test COMPILE-PROGN function (not implemented)
+;;; test COMPILE-PROGN function
 ;;;
 
 
+(deftest compile-progn
+  (multiple-valUe-bind (var-env func-env) (empty-environment)
+    (is (compile-progn '(progn) var-env func-env) "")
+    (is (compile-progn '(progn (return))  var-env func-env) (unlines "return;"))))
+
 ;;;
-;;; test COMPILE-RETURN function (not implemented)
+;;; test COMPILE-RETURN function
 ;;;
 
+(deftest compile-return
+  (multiple-valUe-bind (var-env func-env) (empty-environment)
+    (is (compile-return '(return) var-env func-env) (unlines "return;"))))
 
 ;;;
-;;; test COMPILE-FUNCTION function (not implemented)
+;;; test COMPILE-FUNCTION function
 ;;;
+
+(deftest compile-function
+  (multiple-valUe-bind (var-env func-env) (empty-environment)
+    (setf func-env (function-environment-add-function 'alfa 'int '(int) func-env))
+    (is (compile-function '(alfa 1) var-env func-env)
+        (unlines "oclcl_tests_lang_compiler_compile_statement_alfa(1);"))))
+
