@@ -42,17 +42,18 @@ __global float oclcl_tests_lang_compiler_compile_program_b = 1.0f;
  *  Kernel function prototypes
  */
 
-__kernel void oclcl_tests_lang_compiler_compile_program_baz();
-int oclcl_tests_lang_compiler_compile_program_bar(int x);
 __kernel void oclcl_tests_lang_compiler_compile_program_foo(__global int* x);
+int oclcl_tests_lang_compiler_compile_program_bar(int x);
+__kernel void oclcl_tests_lang_compiler_compile_program_baz();
 
 
 /**
  *  Kernel function definitions
  */
 
-__kernel void oclcl_tests_lang_compiler_compile_program_baz()
+__kernel void oclcl_tests_lang_compiler_compile_program_foo(__global int* x)
 {
+  x[0] = oclcl_tests_lang_compiler_compile_program_bar(1);
   return;
 }
 
@@ -61,9 +62,8 @@ int oclcl_tests_lang_compiler_compile_program_bar(int x)
   return x;
 }
 
-__kernel void oclcl_tests_lang_compiler_compile_program_foo(__global int* x)
+__kernel void oclcl_tests_lang_compiler_compile_program_baz()
 {
-  x[0] = oclcl_tests_lang_compiler_compile_program_bar(1);
   return;
 }
 "

@@ -156,7 +156,7 @@
 (defun compile-prototypes (program)
   (flet ((aux (name)
            (compile-prototype program name)))
-    (let ((prototypes (mapcar #'aux (program-function-names program))))
+    (let ((prototypes (mapcar #'aux (reverse (program-function-names program)))))
       (if (null prototypes)
           ""
           (format nil "/**
@@ -182,7 +182,7 @@
 (defun compile-definitions (program)
   (flet ((aux (name)
            (compile-definition program name)))
-    (let ((definitions (mapcar #'aux (program-function-names program))))
+    (let ((definitions (mapcar #'aux (reverse (program-function-names program)))))
       (if (null definitions)
           ""
           (format nil "/**
