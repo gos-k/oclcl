@@ -120,44 +120,64 @@
 ;;; test PROGRAM-FUNCTION-NAME function
 ;;;
 
+(deftest program-function-name
+  (let ((program (make-program)))
+    (program-define-function program 'alfa 'int '((x bool)) '((return x)))
+    (is (program-function-name program 'alfa) 'alfa)))
 
 ;;;
 ;;; test PROGRAM-FUNCTION-C-NAME function
 ;;;
 
+(deftest program-function-c-name
+  (let ((program (make-program)))
+    (program-define-function program 'alfa 'int '((x bool)) '((return x)))
+    (is (program-function-c-name program 'alfa) "oclcl_tests_lang_program_alfa")))
 
 ;;;
 ;;; test PROGRAM-FUNCTION-RETURN-TYPE function
 ;;;
 
+(deftest program-function-return-type
+  (let ((program (make-program)))
+    (program-define-function program 'alfa 'int '((x bool)) '((return x)))
+    (is (program-function-return-type program 'alfa) 'int)))
 
 ;;;
 ;;; test PROGRAM-FUNCTION-ARGUMENTS function
 ;;;
 
-
-
+(deftest program-function-arguments
+  (let ((program (make-program)))
+    (program-define-function program 'alfa 'int '((x bool)) '((return x)))
+    (is (program-function-arguments program 'alfa) '((x bool)))))
 
 ;;;
 ;;; test PROGRAM-FUNCTION-ARGUMENT-VARS function
 ;;;
 
-
-
+(deftest program-function-argument-vars
+  (let ((program (make-program)))
+    (program-define-function program 'alfa 'int '((x bool)) '((return x)))
+    (is (program-function-argument-vars program 'alfa) '(x))))
 
 ;;;
 ;;; test PROGRAM-FUNCTION-ARGUMENT-TYPES function
 ;;;
 
-
-
+(deftest program-function-argument-types
+  (let ((program (make-program)))
+    (program-define-function program 'alfa 'int '((x bool)) '((return x)))
+    (is (program-function-argument-types program 'alfa) '(bool))))
 
 ;;;
 ;;; test PROGRAM-FUNCTION-BODY function
 ;;;
 
-
-
+(deftest program-function-argument-body
+  (let ((program (make-program)))
+    (program-define-function program 'alfa 'int '((x bool)) '((return x)))
+    (is (program-function-body program 'alfa) '((return x)))))
 
 ;;;
 ;;; test PROGRAM-DEFINE-MACRO function
@@ -197,28 +217,37 @@
 ;;;
 
 
-
+(deftest program-macro-name
+  (let ((program (make-program)))
+    (program-define-macro program 'bravo '(x) '(`(return ,x)))
+    (is (program-macro-name program 'bravo) 'bravo)))
 
 ;;;
 ;;; test PROGRAM-MACRO-ARGUMENTS function
 ;;;
 
-
-
+(deftest program-macro-arguments
+  (let ((program (make-program)))
+    (program-define-macro program 'bravo '(x) '(`(return ,x)))
+    (is (program-macro-arguments program 'bravo) '(x))))
 
 ;;;
 ;;; test PROGRAM-MACRO-BODY function
 ;;;
 
-
-
+(deftest program-macro-body
+  (let ((program (make-program)))
+    (program-define-macro program 'bravo '(x) '(`(return ,x)))
+    (is (program-macro-body program 'bravo) '(`(return ,x)))))
 
 ;;;
 ;;; test PROGRAM-MACRO-EXPANDER function
 ;;;
 
-
-
+(deftest program-macro-body
+  (let ((program (make-program)))
+    (program-define-macro program 'bravo '(x) '(`(return ,x)))
+    (ok (equalp (program-macro-body program 'bravo) '(`(return ,x))))))
 
 ;;;
 ;;; test EXPAND-MACRO-1 function
