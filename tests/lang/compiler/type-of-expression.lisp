@@ -32,8 +32,7 @@
 ;;;
 
 (deftest type-of-expression
-  (let ((var-env (empty-variable-environment))
-        (func-env (empty-function-environment)))
+  (with-empty-env (var-env func-env)
     (is (type-of-expression 1 var-env func-env) 'int)))
 
 ;;;
@@ -41,9 +40,8 @@
 ;;;
 
 (deftest type-of-macro
-  (let ((var-env (empty-variable-environment))
-        (func-env (function-environment-add-macro 'alfa '(x) '(x)
-                                                  (empty-function-environment))))
+  (with-empty-env (var-env func-env)
+    (setf func-env (function-environment-add-macro 'alfa '(x) '(x) func-env))
     (is (type-of-macro '(alfa "bravo") var-env func-env) 'string)))
 
 ;;;
@@ -51,9 +49,8 @@
 ;;;
 
 (deftest type-of-symbol-macro
-  (let ((var-env (variable-environment-add-symbol-macro 'alfa "bravo"
-                                                        (empty-variable-environment)))
-        (func-env (empty-function-environment)))
+  (with-empty-env (var-env func-env)
+    (setf var-env (variable-environment-add-symbol-macro 'alfa "bravo" var-env))
     (is (type-of-symbol-macro 'alfa var-env func-env) 'string)))
 
 
@@ -84,12 +81,12 @@
 ;;;
 
 (deftest type-of-reference-variable
-  (let ((var-env (->> (empty-variable-environment)
-                   (variable-environment-add-variable 'x 'int)
-                   (variable-environment-add-symbol-macro 'y 'y-expansion)
-                   (variable-environment-add-variable 'y-expansion 'float)
-                   (variable-environment-add-memory 'z 'int 1)))
-        (func-env (empty-function-environment)))
+  (with-empty-env (var-env func-env)
+    (setf var-env (->> var-env
+                    (variable-environment-add-variable 'x 'int)
+                    (variable-environment-add-symbol-macro 'y 'y-expansion)
+                    (variable-environment-add-variable 'y-expansion 'float)
+                    (variable-environment-add-memory 'z 'int 1)))
     (is (type-of-reference 'x var-env func-env) 'int
         "basic case 1")
     (is (type-of-reference 'z var-env func-env) 'int
@@ -101,9 +98,8 @@
 
 
 (deftest type-of-reference-structure
-  (let ((var-env (variable-environment-add-variable 'x 'float3
-                                                    (empty-variable-environment)))
-        (func-env (empty-function-environment)))
+  (with-empty-env (var-env func-env)
+    (setf var-env (variable-environment-add-variable 'x 'float3 var-env))
     (is (type-of-reference '(float3-x x) var-env func-env) 'float)
     (is (type-of-reference '(float3-y x) var-env func-env) 'float)
     (ok (signals (type-of-reference '(float4-x x) var-env func-env)
@@ -111,21 +107,18 @@
 
 
 (deftest type-of-reference-array
-
-  (let ((var-env (variable-environment-add-variable 'x 'int
-                                                    (empty-variable-environment)))
-        (func-env (empty-function-environment)))
+  (with-empty-env (var-env func-env)
+    (setf var-env (variable-environment-add-variable 'x 'int var-env))
     (ok (signals (type-of-reference '(aref x) var-env func-env) 'simple-error)))
 
-  (let ((var-env (variable-environment-add-variable 'x 'int*
-                                                    (empty-variable-environment)))
-        (func-env (empty-function-environment)))
+  (with-empty-env (var-env func-env)
+    (setf var-env (variable-environment-add-variable 'x 'int* var-env))
     (is (type-of-reference '(aref x 0) var-env func-env) 'int)
     (ok (signals (type-of-reference '(aref x 0 0) var-env func-env)
                  'simple-error)))
-  (let ((var-env (variable-environment-add-variable 'x 'int**
-                                                    (empty-variable-environment)))
-        (func-env (empty-function-environment)))
+
+  (with-empty-env (var-env func-env)
+    (setf var-env (variable-environment-add-variable 'x 'int** var-env))
     (ok (signals (type-of-reference '(aref x 0) var-env func-env) 'simple-error))
     (is (type-of-reference '(aref x 0 0) var-env func-env) 'int)))
 
@@ -136,7 +129,7 @@
 
 (deftest type-of-inline-if
 
-  (multiple-value-bind (var-env func-env) (empty-environment)
+  (with-empty-env (var-env func-env)
     (ok (signals (type-of-inline-if '(if) var-env func-env)
                  'simple-error)
         "only if")
@@ -162,7 +155,7 @@
 ;;;
 
 (deftest type-of-arithmetic
-  (multiple-value-bind (var-env func-env) (empty-environment)
+  (with-empty-env (var-env func-env)
     (ok (type-of-arithmetic '(+ 1 2) var-env func-env) "arithmetic +")))
 
 
@@ -171,9 +164,8 @@
 ;;;
 
 (deftest type-of-function
-  (let ((var-env (empty-variable-environment))
-        (func-env (function-environment-add-function 'foo 'int '(int int)
-                                                     (empty-function-environment))))
+  (with-empty-env (var-env func-env)
+    (setf func-env (function-environment-add-function 'foo 'int '(int int) func-env))
     (is (type-of-function '(+ 1 1) var-env func-env) 'int)
     (is (type-of-function '(foo 1 1) var-env func-env) 'int)
     (is (type-of-function '(+ 1.0f0 1.0f0) var-env func-env) 'float)

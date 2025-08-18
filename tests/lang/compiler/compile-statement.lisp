@@ -28,7 +28,7 @@
 (in-package :oclcl.tests.lang.compiler.compile-statement)
 
 (defun %test-compile-statement (statement-func lisp-code c-code message)
-  (multiple-value-bind (var-env func-env) (empty-environment)
+  (with-empty-env (var-env func-env)
     (is (apply statement-func (list lisp-code var-env func-env)) c-code
         message)))
 
@@ -48,10 +48,10 @@
 ;;;
 
 (deftest compile-macro
-  (let ((var-env (empty-variable-environment))
-        (func-env (function-environment-add-macro 'alfa '(x) '(`(let ((,x 0))
-                                                                  (* ,x ,x)))
-                                                  (empty-function-environment))))
+  (with-empty-env (var-env func-env)
+    (setf func-env (function-environment-add-macro 'alfa '(x) '(`(let ((,x 0))
+                                                                   (* ,x ,x)))
+                                                   func-env))
     (flet ((test-statement (lisp-code c-code message)
              (is (compile-macro lisp-code var-env func-env) c-code message)))
       (test-statement '(alfa bravo) (unlines "{"
@@ -87,7 +87,7 @@
                     "}")
            "test if")
 
-  (multiple-value-bind (var-env func-env) (empty-environment)
+  (with-empty-env (var-env func-env)
     (let ((lisp-code '(if 1 (return))))
       (ok (signals (compile-if lisp-code var-env func-env) 'simple-error)) )))
 
@@ -108,7 +108,7 @@
                      "}")
             "basic case 1")
 
-  (multiple-value-bind (var-env func-env) (empty-environment)
+  (with-empty-env (var-env func-env)
     (ok (signals (compile-let '(let (i) (return)) var-env func-env)
                  'simple-error))
     (ok (signals (compile-let '(let ((i)) (return)) var-env func-env)
@@ -216,13 +216,13 @@
                               "}")
                      "load from local memory")
 
-  (multiple-value-bind (var-env func-env) (empty-environment)
+  (with-empty-env (var-env func-env)
     (let ((lisp-code '(with-local-memory (a float)
                        (return))))
       (ok (signals (compile-with-local-memory lisp-code var-env func-env)
                    'simple-error))))
 
-  (multiple-value-bind (var-env func-env) (empty-environment)
+  (with-empty-env (var-env func-env)
     (let ((lisp-code '(with-local-memory ((a float 16 16))
                        (set (aref a 0) 1.0f0))))
       (ok (signals (compile-with-local-memory lisp-code var-env func-env)
@@ -235,21 +235,21 @@
 
 (deftest compile-set
 
-  (multiple-valUe-bind (var-env func-env) (empty-environment)
+  (with-empty-env (var-env func-env)
     (setf var-env (variable-environment-add-variable 'x 'int var-env))
     (is (compile-set '(set x 1) var-env func-env)
         (unlines "x = 1;")
         "basic case 1")
     (ok (signals (compile-set '(set x 1.0f0) var-env func-env) 'simple-error)))
 
-  (multiple-value-bind (var-env func-env) (empty-environment)
+  (with-empty-env (var-env func-env)
     (setf var-env (variable-environment-add-variable 'x 'int* var-env))
     (is (compile-set '(set (aref x 0) 1) var-env func-env)
         (unlines "x[0] = 1;")
         "basic case 2")
     (ok (signals (compile-set '(set (aref x 0) 1.0f0) var-env func-env)
                  'simple-error)))
-  (multiple-value-bind (var-env func-env) (empty-environment)
+  (with-empty-env (var-env func-env)
     (setf var-env (variable-environment-add-variable 'x 'float3 var-env))
     (is (compile-set '(set (float3-x x) 1.0f0) var-env func-env)
         (unlines "x.x = 1.0f;")
@@ -264,7 +264,7 @@
 
 
 (deftest compile-progn
-  (multiple-valUe-bind (var-env func-env) (empty-environment)
+  (with-empty-env (var-env func-env)
     (is (compile-progn '(progn) var-env func-env) "")
     (is (compile-progn '(progn (return))  var-env func-env) (unlines "return;"))))
 
@@ -273,7 +273,7 @@
 ;;;
 
 (deftest compile-return
-  (multiple-valUe-bind (var-env func-env) (empty-environment)
+  (with-empty-env (var-env func-env)
     (is (compile-return '(return) var-env func-env) (unlines "return;"))))
 
 ;;;
@@ -281,7 +281,7 @@
 ;;;
 
 (deftest compile-function
-  (multiple-valUe-bind (var-env func-env) (empty-environment)
+  (with-empty-env (var-env func-env)
     (setf func-env (function-environment-add-function 'alfa 'int '(int) func-env))
     (is (compile-function '(alfa 1) var-env func-env)
         (unlines "oclcl_tests_lang_compiler_compile_statement_alfa(1);"))))

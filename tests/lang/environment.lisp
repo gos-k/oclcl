@@ -53,8 +53,8 @@
 
 (deftest variable-environment-symbol-macro
   (let ((var-env (->> (empty-variable-environment)
-                      (variable-environment-add-variable 'x 'int)
-                      (variable-environment-add-symbol-macro 'y 1.0))))
+                   (variable-environment-add-variable 'x 'int)
+                   (variable-environment-add-symbol-macro 'y 1.0))))
     (is (variable-environment-symbol-macro-exists-p var-env 'x) nil
         "basic case 1")
     (is (variable-environment-symbol-macro-exists-p var-env 'y) t
@@ -73,8 +73,8 @@
 
 (deftest function-environment-function
   (let ((func-env (->> (empty-function-environment)
-                       (function-environment-add-function 'foo 'int '(int))
-                       (function-environment-add-macro 'bar '(x) '(`(return ,x))))))
+                    (function-environment-add-function 'foo 'int '(int))
+                    (function-environment-add-macro 'bar '(x) '(`(return ,x))))))
     (is (function-environment-function-exists-p func-env 'foo) t
         "basic case 1")
     (is (function-environment-function-exists-p func-env 'bar) nil

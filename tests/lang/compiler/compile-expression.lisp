@@ -30,7 +30,7 @@
 ;;;
 
 (deftest compile-expression
-  (multiple-value-bind (var-env func-env) (empty-environment)
+  (with-empty-env (var-env func-env)
     (is (compile-expression 1 var-env func-env) "1")))
 
 
@@ -39,9 +39,8 @@
 ;;;
 
 (deftest compile-macro
-  (let ((var-env (empty-variable-environment))
-        (func-env (function-environment-add-macro 'foo '(x) '(`(+ ,x ,x))
-                                                  (empty-function-environment))))
+  (with-empty-env (var-env func-env)
+    (setf func-env (function-environment-add-macro 'foo '(x) '(`(+ ,x ,x)) func-env))
     (is (compile-macro '(foo 1) var-env func-env) "(1 + 1)"
         "basic case 1")))
 
@@ -51,9 +50,8 @@
 ;;;
 
 (deftest compile-symbol-macro
-  (let ((var-env (variable-environment-add-symbol-macro 'x 1
-                                                        (empty-variable-environment)))
-        (func-env (empty-function-environment)))
+  (with-empty-env (var-env func-env)
+    (setf var-env (variable-environment-add-symbol-macro 'x 1 var-env))
     (is (compile-symbol-macro 'x var-env func-env) "1"
         "basic case 1")))
 
@@ -136,7 +134,7 @@
 ;;;
 
 (deftest compile-inline-if
-  (multiple-value-bind (var-env func-env) (empty-environment)
+  (with-empty-env (var-env func-env)
     (is (compile-inline-if '(if (= 1 1) 1 2) var-env func-env)
         "((1 == 1) ? 1 : 2)"
         "basic case 1")))
@@ -147,7 +145,7 @@
 ;;;
 
 (deftest compile-arithmetic
-  (multiple-value-bind (var-env func-env) (empty-environment)
+  (with-empty-env (var-env func-env)
     (is (compile-arithmetic '(+ 1 1 1) var-env func-env) "((1 + 1) + 1)"
         "add integer")
     (is (compile-arithmetic '(- 1 1 1) var-env func-env) "((1 - 1) - 1)"
@@ -178,7 +176,7 @@
         "basic case 1")
     (ok (signals (compile-function '(foo 1 1 1) var-env func-env) 'simple-error)))
 
-  (multiple-value-bind (var-env func-env) (empty-environment)
+  (with-empty-env (var-env func-env)
     (is (compile-function '(+ 1 1) var-env func-env) "(1 + 1)"
         "basic case 2")
     (is (compile-function '(- 1) var-env func-env) "-(1)"
