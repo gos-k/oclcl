@@ -86,12 +86,12 @@ __global int oclcl_tests_api_defkernel_b = 0;
 (deftest defkernelmacro
   (with-stub-program
 
-    (defkernelmacro when (test &body forms)
+    (defkernelmacro alfa (test &body forms)
       `(if ,test
            (progn ,@forms)))
 
-    (defkernel test-when (void ())
-      (when t (return))
+    (defkernel test-alfa (void ())
+      (alfa t (return))
       (return))
 
     (is (compile-program *program*)
@@ -103,14 +103,14 @@ __global int oclcl_tests_api_defkernel_b = 0;
  *  Kernel function prototypes
  */
 
-__kernel void oclcl_tests_api_defkernel_test_when();
+__kernel void oclcl_tests_api_defkernel_test_alfa();
 
 
 /**
  *  Kernel function definitions
  */
 
-__kernel void oclcl_tests_api_defkernel_test_when()
+__kernel void oclcl_tests_api_defkernel_test_alfa()
 {
   if (true)
   {
