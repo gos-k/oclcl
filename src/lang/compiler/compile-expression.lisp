@@ -31,6 +31,7 @@
     ((opencl-literal-p form) (compile-opencl-literal form))
     ((reference-p form) (compile-reference form var-env func-env))
     ((inline-if-p form) (compile-inline-if form var-env func-env))
+    ((sizeof-p form) (compile-sizeof form var-env func-env))
     ((arithmetic-p form) (compile-arithmetic form var-env func-env))
     ((function-p form) (compile-function form var-env func-env))
     (t (error "The value ~S is an invalid expression." form))))
@@ -265,3 +266,13 @@
       (if operands1
           (format nil "~A(~{~A~^, ~})" operator1 operands1)
           (format nil "~A()" operator1))))
+
+;;;
+;;; Compile sizeof
+;;;
+
+(defun compile-sizeof (form var-env func-env)
+  (let ((operand (first (sizeof-operand form))))
+    (format nil "sizeof(~A)" (if (oclcl-type-p operand)
+                                 (opencl-type operand)
+                                 (compile-expression operand var-env func-env)))))

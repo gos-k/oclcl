@@ -93,7 +93,8 @@ APIs for manipulating those programs (e.g. compiling, lookup...) are not exporte
                :include '(:clk-local-mem-fence
                           :clk-global-mem-fence
                           :with-local-memory
-                          :set))
+                          :set
+                          :sizeof))
 
 ;; reexport symbols of oclcl built-in functions except the ones
 ;; exported from COMMON-LISP package

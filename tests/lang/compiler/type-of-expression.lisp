@@ -21,7 +21,8 @@
                 :type-of-reference
                 :type-of-inline-if
                 :type-of-arithmetic
-                :type-of-function)
+                :type-of-function
+                :type-of-sizeof)
   (:import-from :arrow-macros
                 :->>))
 
@@ -177,3 +178,13 @@
     (ok (signals (type-of-function '(native-divide 1.0) var-env func-env) 'simple-error))
     (is (type-of-function '(popcount 1) var-env func-env) 'int)
     (is (type-of-function '(degrees 1.0f0) var-env func-env) 'float)))
+
+;;;
+;;; test TYPE-OF-SIZEOF function
+;;;
+
+(deftest type-of-sizeof
+  (with-empty-env (var-env func-env)
+    (setf var-env (variable-environment-add-variable 'alfa 'int var-env))
+    (is (type-of-sizeof '(sizeof alfa) var-env func-env) 'size-t)
+    (is (type-of-sizeof '(sizeof double) var-env func-env) 'size-t)))

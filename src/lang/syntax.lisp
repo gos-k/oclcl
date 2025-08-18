@@ -110,7 +110,11 @@
            :argument-var
            :argument-type
            ;; Compiler directive
-           :declare-p))
+           :declare-p
+           ;; sizeof
+           :sizeof
+           :sizeof-p
+           :sizeof-operand))
 (in-package :oclcl.lang.syntax)
 
 
@@ -558,7 +562,6 @@
     (('set . _) (error "The statement ~S is malformed." form))
     (_ (error "The value ~S is an invalid statement." form))))
 
-
 ;;;
 ;;; Progn statement
 ;;;
@@ -624,3 +627,16 @@
     (('declare . _) t)
     (_ nil)))
 
+;;;
+;;; Compiler sizeof
+;;;
+
+(defun sizeof-p (form)
+  (cl-pattern:match form
+    (('sizeof . _) t)
+    (_ nil)))
+
+(defun sizeof-operand (form)
+  (unless (sizeof-p form)
+    (error "The form ~S is invalid." form))
+  (cdr form))

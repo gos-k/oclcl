@@ -22,7 +22,8 @@
                 :compile-reference
                 :compile-inline-if
                 :compile-arithmetic
-                :compile-function))
+                :compile-function
+                :compile-sizeof))
 (in-package :oclcl.tests.lang.compiler.compile-expression)
 
 ;;;
@@ -188,3 +189,13 @@
     (is (compile-function '(barrier :clk-local-mem-fence) var-env func-env)
         "barrier(CLK_LOCAL_MEM_FENCE)"
         "barrier")))
+
+;;;
+;;; test COMPILE-SIZEOF function
+;;;
+
+(deftest compile-sizoef
+  (with-empty-env (var-env func-env)
+    (setf var-env (variable-environment-add-variable 'alfa 'int var-env))
+    (is (compile-sizeof '(sizeof alfa) var-env func-env) "sizeof(alfa)" "sizeof variable")
+    (is (compile-sizeof '(sizeof float) var-env func-env) "sizeof(float)" "sizeof type")))

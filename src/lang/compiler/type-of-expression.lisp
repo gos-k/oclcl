@@ -28,6 +28,7 @@
     ((opencl-literal-p form) (type-of-opencl-literal form))
     ((reference-p form) (type-of-reference form var-env func-env))
     ((inline-if-p form) (type-of-inline-if form var-env func-env))
+    ((sizeof-p form) (type-of-sizeof form var-env func-env))
     ((arithmetic-p form) (type-of-arithmetic form var-env func-env))
     ((function-p form) (type-of-function form var-env func-env))
     (t (error "The value ~S is an invalid expression." form))))
@@ -208,3 +209,10 @@
         (operands (function-operands form)))
     (let ((argument-types (type-of-operands operands var-env func-env)))
       (built-in-function-return-type operator argument-types))))
+
+;;;
+;;; Arithmetic operations
+;;;
+
+(defun type-of-sizeof(form var-env func-env)
+  'size-t)
