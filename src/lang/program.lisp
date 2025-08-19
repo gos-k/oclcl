@@ -1,7 +1,7 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
-                2015 gos-k (mag4.elan@gmail.com)
+                2015-2025 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
@@ -143,12 +143,26 @@ May cause program-conflict."
     (push program-to-use (program-use-list program)))
   t)
 
+(defun program-function-namespace-names (program &key test)
+  (loop for (name object) on (program-function-namespace program) by #'cddr
+        when (if test
+                 (funcall test object)
+                 t)
+        collect name))
+
+(defun program-variable-namespace-names (program &key test)
+  (loop for (name object) on (program-variable-namespace program) by #'cddr
+        when (if test
+                 (funcall test object)
+                 t)
+        collect name))
+
 (defun program-fbound-names (program)
-  (append (loop for (name object) on (program-function-namespace program) by #'cddr collect name)
+  (append (program-function-namespace-names program)
           (mappend #'program-function-names (program-use-list program))))
 
 (defun program-bound-names (program)
-  (append (loop for (name object) on (program-variable-namespace program) by #'cddr collect name)
+  (append (program-variable-namespace-names program)
           (mappend #'program-bound-names (program-use-list program))))
 
 (define-condition oclcl-program-error (cell-error)
@@ -174,10 +188,9 @@ May cause program-conflict."
   (check-type name oclcl-symbol)
   (labels ((rec (p)
              (or (loop for (name2 . rest) on (program-variable-namespace program) by #'cddr
-                    when (eq name name2)
-                    do
-                      (progn (setf (car rest) newval)
-                             (return newval)))
+                       when (eq name name2)
+                       do (setf (car rest) newval)
+                          (return newval))
                  (some #'rec (program-use-list p)))))
     (or (rec program)
         (setf (program-variable-namespace program)
@@ -196,10 +209,9 @@ May cause program-conflict."
   (check-type name oclcl-symbol)
   (labels ((rec (p)
              (or (loop for (name2 . rest) on (program-function-namespace program) by #'cddr
-                    when (eq name name2)
-                    do
-                      (progn (setf (car rest) newval)
-                             (return newval)))
+                       when (eq name name2)
+                       do (setf (car rest) newval)
+                          (return newval))
                  (some #'rec (program-use-list p)))))
     (or (rec program)
         (setf (program-function-namespace program)
@@ -208,28 +220,19 @@ May cause program-conflict."
 ;;; 
 
 (defun program-memory-names (program)
-  (append (nreverse
-           (loop for (name object) on (program-variable-namespace program) by #'cddr
-              when (memory-p object)
-              collect name))
+  (append (nreverse (program-variable-namespace-names program :test #'memory-p))
           (mappend #'program-memory-names (program-use-list program))))
 
 (defun program-function-names (program)
-  (append (loop for (name object) on (program-function-namespace program) by #'cddr
-             when (function-p object)
-             collect name)
+  (append (program-function-namespace-names program :test #'function-p)
           (mappend #'program-function-names (program-use-list program))))
 
 (defun program-macro-names (program)
-  (append (loop for (name object) on (program-function-namespace program) by #'cddr
-             when (macro-p object)
-             collect name)
+  (append (program-function-namespace-names program :test #'macro-p)
           (mappend #'program-macro-names (program-use-list program))))
 
 (defun program-symbol-macro-names (program)
-  (append (loop for (name object) on (program-variable-namespace program) by #'cddr
-             when (symbol-macro-p object)
-             collect name)
+  (append (program-variable-namespace-names program :test #'symbol-macro-p)
           (mappend #'program-symbol-macro-names (program-use-list program))))
 
 ;;; Memory

@@ -26,6 +26,7 @@ oclcl requires following:
 
     (ql:quickload '(:oclcl-tests :rove))
     (rove:run :oclcl-tests)
+    (rove:run-test 'oclcl.tests.lang.program::make-program)
 
 or
 
