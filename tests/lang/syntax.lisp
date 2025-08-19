@@ -16,6 +16,8 @@
 ;;; test Symbol macro
 ;;;
 
+(deftest symbol-macro
+  (is (symbol-macro-p 'alfa) t))
 
 ;;;
 ;;; test Macro
@@ -59,7 +61,8 @@
 ;;; test OpenCL literal
 ;;;
 
-(deftest OpenCL-literal)
+(deftest opencl-literal
+  (is (opencl-literal-p :clk-global-mem-fence) t))
 
 
 ;;;
@@ -104,6 +107,10 @@
 ;;; test Arithmetic
 ;;;
 
+(deftest arithmetic
+  (is (arithmetic-p '(+ 1)) t)
+  (is (arithmetic-operator '(+ 1)) '+)
+  (is (arithmetic-operands '(* 1 2)) '(1 2)))
 
 ;;;
 ;;; test Function application
@@ -157,6 +164,9 @@
 ;;; test Let statement
 ;;;
 
+(deftest let-statement
+  (is (let-statements '(let ((alfa  0)))) nil)
+  (is (let-statements '(let ((alfa  0)) alfa bravo)) '(alfa bravo)))
 
 ;;;
 ;;; test Symbol-macrolet statement
@@ -250,11 +260,15 @@
 ;;; test Progn statement
 ;;;
 
+(deftest progn-statements
+  (is (progn-statements '(progn alfa bravo)) '(alfa bravo)))
 
 ;;;
-;;; test Return statement
+;;; test Return expr
 ;;;
 
+(deftest return-expr
+  (is (return-expr '(return alfa)) 'alfa))
 
 ;;;
 ;;; test Argument

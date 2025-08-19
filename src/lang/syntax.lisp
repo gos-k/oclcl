@@ -179,8 +179,9 @@
   (or (cl-mem-fence-flags-literal-p form)))
 
 (defun cl-mem-fence-flags-literal-p (form)
-  (find form '(:clk-local-mem-fence
-               :clk-global-mem-fence)))
+  (and (find form '(:clk-local-mem-fence
+                    :clk-global-mem-fence))
+       t))
 
 ;;;
 ;;; Reference
