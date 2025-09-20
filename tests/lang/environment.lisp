@@ -192,3 +192,61 @@
     (is (funcall (function-environment-macro-expander func-env 'bar) '(1))
         '(return 1)
         "basic case 5")))
+
+;;;
+;;; test Define environment - Define
+;;;
+
+(deftest define-environment-define
+  (let ((def-env (->> (empty-define-environment)
+                   (define-environment-add-define 'x 1)
+                   (define-environment-add-define 'y nil))))
+    (ok (define-environment-define-exists-p def-env 'x))
+    (ok (define-environment-define-exists-p def-env 'y))
+    (ng (define-environment-define-exists-p def-env 'z))
+    (is (define-environment-define-name def-env 'x) 'x)
+    (is (define-environment-define-c-name def-env 'x)
+        "oclcl_tests_lang_environment_x")
+    (is (define-environment-define-expression def-env 'x) 1)
+    (ng (define-environment-define-expression def-env 'y)))
+
+  (ok (signals (define-environment-add-define 1 1 (empty-define-environment))
+               'type-error)
+      "Invalid name.")
+
+  (ok (signals (define-environment-add-define 'x 1 :foo)
+               'type-error)
+      "Invalid define environment.")
+
+  (ok (signals (define-environment-define-exists-p :foo 'x)
+               'type-error)
+      "Invalid define environment.")
+
+  (ok (signals (define-environment-define-exists-p (empty-define-environment) 1)
+               'type-error)
+      "Invalid name.")
+
+  (ok (signals (define-environment-define-name :foo 'x)
+               'type-error)
+      "Invalid define environment.")
+
+  (ok (signals (define-environment-define-name (empty-define-environment) 1)
+               'type-error)
+      "Invalid name.")
+
+  (ok (signals (define-environment-define-c-name :foo 'x)
+               'type-error)
+      "Invalid define environment.")
+
+  (ok (signals (define-environment-define-c-name (empty-define-environment) 1)
+               'type-error)
+      "Invalid name.")
+
+  (ok (signals (define-environment-define-expression :foo 'x)
+               'type-error)
+      "Invalid define environment.")
+
+  (ok (signals (define-environment-define-expression (empty-define-environment) 1)
+               'type-error)
+      "Invalid name."))
+

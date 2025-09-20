@@ -13,7 +13,8 @@
   (:export :defkernel
            :defmemory
            :defkernelmacro
-           :defkernel-symbol-macro)
+           :defkernel-symbol-macro
+           :defkernel-define)
   (:import-from :alexandria
                 :format-symbol
                 :with-gensyms
@@ -71,3 +72,12 @@ eldoc works."
 (defmacro defkernel-symbol-macro (name expansion)
   "Register the kernel symbol macro to *PROGRAM*."
   `(program-define-symbol-macro *program* ',name ',expansion))
+
+;;; DEFMEMORY
+;;;
+
+(defmacro defkernel-define (name expression)
+  "Register the define to *PROGRAM* ."
+  `(program-define-define *program*
+                          ',name
+                          ',expression))

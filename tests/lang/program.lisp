@@ -473,3 +473,96 @@
     (ok (signals (program-memory-expression program "foo")
                  'type-error)
         "Invalid name.")))
+
+;;;
+;;; define
+;;;
+
+(deftest program-define-define
+  (let ((program (make-program)))
+    (program-define-define program 'foo 42)
+    (ok (program-define-exists-p program 'foo))
+    (is (program-define-name program 'foo) 'foo)
+    (is (program-define-c-name program 'foo) "FOO")
+    (is (program-define-expression program 'foo) 42))
+
+  (ok (signals (program-define-define :foo 'foo 42)
+               'type-error)
+      "Invalid program.")
+
+  (let ((program (make-program)))
+    (ok (signals (program-define-define program "foo" 42)
+                 'type-error)
+        "Invalid name.")))
+
+(deftest program-define-exists-p
+  (let ((program (make-program)))
+    (program-define-define program 'foo 42)
+    (ok (program-define-exists-p program 'foo))
+    (ng (program-define-exists-p program 'bar)))
+
+  (ok (signals (program-define-exists-p :foo 'foo)
+               'type-error)
+      "Invalid program.")
+
+  (let ((program (make-program)))
+    (ok (signals (program-define-exists-p program "foo")
+                 'type-error)
+        "Invalid name.")))
+
+(deftest program-define-name
+  (let ((program (make-program)))
+    (program-define-define program 'foo 42)
+    (is (program-define-name program 'foo) 'foo))
+
+  (let ((program (make-program)))
+    (ok (signals (program-define-name program 'foo)
+                 'undefined-program-define)
+        "Global define should not be found."))
+
+  (ok (signals (program-define-name :foo 'foo)
+               'type-error)
+      "Invalid program.")
+
+  (let ((program (make-program)))
+    (ok (signals (program-define-name program "foo")
+                 'type-error)
+        "Invalid name.")))
+
+(deftest program-define-c-name
+  (let ((program (make-program)))
+    (program-define-define program 'foo 42)
+    (is (program-define-c-name program 'foo) "FOO"))
+
+  (let ((program (make-program)))
+    (ok (signals (program-define-c-name program 'foo)
+                 'undefined-program-define)
+        "Global define should not be found."))
+
+  (ok (signals (program-define-c-name :foo 'foo)
+               'type-error)
+      "Invalid program.")
+
+  (let ((program (make-program)))
+    (ok (signals (program-define-c-name program "foo")
+                 'type-error)
+        "Invalid name.")))
+
+(deftest program-define-expression
+  (let ((program (make-program)))
+    (program-define-define program 'foo 42)
+    (is (program-define-expression program 'foo) 42))
+
+  (let ((program (make-program)))
+    (ok (signals (program-define-expression program 'foo)
+                 'undefined-program-define)
+        "Global define should not be found.."))
+
+  (ok (signals (program-define-expression :foo 'foo)
+               'type-error)
+      "Invalid program.")
+
+  (let ((program (make-program)))
+    (ok (signals (program-define-expression program "foo")
+                 'type-error)
+        "Invalid name.")))

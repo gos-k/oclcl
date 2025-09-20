@@ -18,7 +18,6 @@
 ;;;
 
 (deftest compile-program
-
   (let ((program (make-program)))
     (program-define-memory program 'a :constant 1)
     (program-define-memory program 'b :global 1.0f0)
@@ -27,8 +26,18 @@
                                (return)))
     (program-define-function program 'bar 'int '((x int)) '((return x)))
     (program-define-function program 'baz 'void '() '((return)))
+    (program-define-define program 'charlie-delta 1.0)
+    (program-define-define program 'echo-foxtrot '(+ 10 20))
     (is (compile-program program)
         "
+
+/**
+ *  Define
+ */
+
+#define CHARLIE_DELTA 1.0f
+#define ECHO_FOXTROT (10 + 20)
+
 
 /**
  *  Memory objects

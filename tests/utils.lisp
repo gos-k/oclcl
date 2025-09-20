@@ -13,8 +13,8 @@
            #:with-empty-env))
 (in-package :oclcl.tests.utils)
 
-(defun is (lhs rhs &optional desc)
-  (ok (equal lhs rhs) desc))
+(defmacro is (lhs rhs &optional desc)
+  `(ok (equal ,lhs ,rhs) ,desc))
 
 (defmacro is-values (lhs rhs &optional desc)
   `(ok (equalp (multiple-value-list ,lhs) ,rhs) ,desc))

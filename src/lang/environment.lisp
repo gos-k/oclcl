@@ -43,6 +43,14 @@
            :function-environment-macro-exists-p
            :function-environment-macro-name
            :function-environment-macro-expander
+           ;; Define environment
+           :empty-define-environment
+           ;; Define environment - Define
+           :define-environment-add-define
+           :define-environment-define-exists-p
+           :define-environment-define-name
+           :define-environment-define-c-name
+           :define-environment-define-expression
            ;; Other
            :empty-environment)
   (:shadow :variable)
@@ -295,6 +303,53 @@
                  (destructuring-bind ,arguments ,arguments1
                    ,@body))))))
 
+;;;
+;;; Define environment - Define
+;;;
+
+(defun empty-define-environment ())
+
+(defun define-environment-add-define (name expression def-env)
+  (check-type def-env list)
+  (let ((elem (make-define name expression)))
+    (acons name elem def-env)))
+
+(defun define-environment-define-exists-p (def-env name)
+  (check-type name oclcl-symbol)
+  (define-p (cdr (assoc name def-env))))
+
+(defun %lookup-define (def-env name)
+  (unless (define-environment-define-exists-p def-env name)
+    (error "The define ~S not found." name))
+  (cdr (assoc name def-env)))
+
+(defun define-environment-define-name (def-env name)
+  (define-name (%lookup-define def-env name)))
+
+(defun define-environment-define-c-name (def-env name)
+  (define-c-name (%lookup-define def-env name)))
+
+(defun define-environment-define-expression (def-env name)
+  (define-expression (%lookup-define def-env name)))
+
+;;; Define
+;;;
+
+(defstruct (define (:constructor %make-define))
+  (name :name :read-only t)
+  (expression :expression :read-only t))
+
+(defun make-define (name expression)
+  (check-type name oclcl-symbol)
+  (%make-define :name name :expression expression))
+
+(defun define-c-name (define)
+  (c-identifier (define-name define) t))
+
+;;; Empty environment
+;;;
+
 (defun empty-environment ()
   (values (empty-variable-environment)
-          (empty-function-environment)))
+          (empty-function-environment)
+          (empty-define-environment)))

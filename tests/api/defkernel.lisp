@@ -67,6 +67,8 @@
     (is (compile-program *program*)
 "
 
+
+
 /**
  *  Memory objects
  */
@@ -96,6 +98,8 @@ __global int oclcl_tests_api_defkernel_b = 0;
 
     (is (compile-program *program*)
 "
+
+
 
 
 
@@ -135,6 +139,8 @@ __kernel void oclcl_tests_api_defkernel_test_alfa()
 
     (is (compile-program *program*)
 "
+
+
 
 
 

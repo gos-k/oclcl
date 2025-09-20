@@ -27,6 +27,7 @@
            :program-macro-names
            :program-symbol-macro-names
            :program-memory-names
+           :program-define-names
            ;; Memory
            :program-define-memory
            :program-memory-exists-p
@@ -64,7 +65,14 @@
            :program-fbound-names
            :oclcl-program-error
            :undefined-program-function
-           :undefined-program-variable)
+           :undefined-program-variable
+           :undefined-program-define
+           ;; Define
+           :program-define-define
+           :program-define-exists-p
+           :program-define-name
+           :program-define-c-name
+           :program-define-expression)
   ;; Shadow symbols in oclcl.lang.syntax.
   (:shadow :macro-p
            :symbol-macro-p
@@ -86,6 +94,7 @@
   name
   (variable-namespace nil)
   (function-namespace nil)
+  (define-namespace nil)
   (use-list nil))
 
 (lispn:define-namespace program program nil "Namespace for OpenCL programs.
@@ -143,19 +152,21 @@ May cause program-conflict."
     (push program-to-use (program-use-list program)))
   t)
 
-(defun program-function-namespace-names (program &key test)
-  (loop for (name object) on (program-function-namespace program) by #'cddr
+(defun program-namespace-names (program accessor &key test)
+  (loop for (name object) on (funcall accessor program) by #'cddr
         when (if test
                  (funcall test object)
                  t)
         collect name))
 
+(defun program-function-namespace-names (program &key test)
+  (program-namespace-names program #'program-function-namespace :test test))
+
 (defun program-variable-namespace-names (program &key test)
-  (loop for (name object) on (program-variable-namespace program) by #'cddr
-        when (if test
-                 (funcall test object)
-                 t)
-        collect name))
+  (program-namespace-names program #'program-variable-namespace :test test))
+
+(defun program-define-namespace-names (program &key test)
+  (program-namespace-names program #'program-define-namespace :test test))
 
 (defun program-fbound-names (program)
   (append (program-function-namespace-names program)
@@ -174,6 +185,7 @@ May cause program-conflict."
 
 (define-condition undefined-program-variable (oclcl-program-error) ())
 (define-condition undefined-program-function (oclcl-program-error) ())
+(define-condition undefined-program-define (oclcl-program-error) ())
 
 (defun %lookup-bound (program name &optional (error t))
   (check-type name oclcl-symbol)
@@ -217,6 +229,27 @@ May cause program-conflict."
         (setf (program-function-namespace program)
               (list* name newval (program-function-namespace program))))))
 
+(defun %lookup-dbound (program name &optional (error t))
+  (check-type name oclcl-symbol)
+  (labels ((rec (p)
+             (or (getf (program-define-namespace p) name)
+                 (some #'rec (program-use-list p)))))
+    (or (rec program)
+        (when error
+          (error 'undefined-program-define :name name :program program)))))
+
+(defun (setf %lookup-dbound) (newval program name)
+  (check-type name oclcl-symbol)
+  (labels ((rec (p)
+             (or (loop for (name2 . rest) on (program-define-namespace program) by #'cddr
+                       when (eq name name2)
+                       do (setf (car rest) newval)
+                          (return newval))
+                 (some #'rec (program-use-list p)))))
+    (or (rec program)
+        (setf (program-define-namespace program)
+              (list* name newval (program-define-namespace program))))))
+
 ;;; 
 
 (defun program-memory-names (program)
@@ -234,6 +267,10 @@ May cause program-conflict."
 (defun program-symbol-macro-names (program)
   (append (program-variable-namespace-names program :test #'symbol-macro-p)
           (mappend #'program-symbol-macro-names (program-use-list program))))
+
+(defun program-define-names (program)
+  (append (nreverse (program-define-namespace-names program :test #'define-p))
+          (mappend #'program-define-names (program-use-list program))))
 
 ;;; Memory
 
@@ -519,3 +556,46 @@ May cause program-conflict."
     (error 'type-error :datum name :expected-type 'oclcl-symbol))
   (%make-symbol-macro :name name
                       :expansion expansion))
+
+;;; Define
+
+(defstruct (define (:constructor %make-define))
+  (name :name :read-only t)
+  (expression :expression :read-only t))
+
+(defun make-define (name expression)
+  (check-type name oclcl-symbol)
+  (%make-define :name name
+                :expression expression))
+
+(defun define-c-name (define)
+  (c-macro-name (define-name define)))
+
+(defun %lookup-define (program name)
+  (let ((o (%lookup-dbound program name)))
+    (and (define-p o) o)))
+
+(defun (setf %lookup-define) (newval program name)
+  (let ((o (%lookup-dbound program name nil)))
+    (typecase o
+      (symbol-macro
+       (warn "Redefining an oclcl define variable ~a which was previously an oclcl symbol-macro" name)))
+    (setf (%lookup-dbound program name) newval)))
+
+(defun program-define-define (program name expression)
+  (setf (%lookup-define program name) (make-define name expression))
+  name)
+
+(defun program-define-exists-p (program name)
+  (let ((o (%lookup-dbound program name nil)))
+    (and (define-p o) t)))
+
+(defun program-define-name (program name)
+  (define-name (%lookup-define program name)))
+
+(defun program-define-c-name (program name)
+  (define-c-name (%lookup-define program name)))
+
+(defun program-define-expression (program name)
+  (define-expression (%lookup-define program name)))
+

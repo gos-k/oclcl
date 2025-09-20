@@ -12,7 +12,7 @@
   :version "0.1"
   :author "gos-k"
   :license "LLGPL"
-  :depends-on ("cffi" "alexandria" "external-program" "osicat"
+  :depends-on ("cffi" "alexandria" "serapeum" "external-program" "osicat"
                       "cl-pattern" "split-sequence" "cl-reexport" "cl-ppcre"
                       "lisp-namespace")
   :components ((:module "src"

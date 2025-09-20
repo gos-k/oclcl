@@ -7,6 +7,7 @@
 (in-package :cl-user)
 (defpackage oclcl.lang.compiler.compile-program
   (:use :cl
+        :alexandria
         :oclcl.lang.util
         :oclcl.lang.type
         :oclcl.lang.syntax
@@ -17,6 +18,8 @@
         :oclcl.lang.compiler.compile-expression
         :oclcl.lang.compiler.compile-statement
         :oclcl.lang.compiler.type-of-expression)
+  (:import-from #:serapeum
+                #:fmt)
   (:export :compile-program))
 (in-package :oclcl.lang.compiler.compile-program)
 
@@ -191,12 +194,34 @@
 
 ~{~A~^~%~}" definitions)))))
 
+(defun compile-define (program name)
+  (let ((c-name (program-define-c-name program name))
+        (expression (program-define-expression program name)))
+    (let ((expression1 (compile-expression expression
+                                           (program->variable-environment program nil)
+                                           (program->function-environment program))))
+      (fmt "#define ~A ~A~%" c-name expression1))))
+
+(defun compile-defines (program)
+  (let ((defines (mapcar (curry #'compile-define program)
+                         (program-define-names program))))
+    (if (null defines)
+        ""
+        (fmt "/**
+ *  Define
+ */
+
+~{~A~}" defines))))
+
 (defun compile-program (program)
   (let ((includes (compile-includes))
         (memories (compile-memories program))
         (prototypes (compile-prototypes program))
-        (definitions (compile-definitions program)))
-    (format nil "~A~%~%~A~%~%~A~%~%~A" includes
-                                       memories
-                                       prototypes
-                                       definitions)))
+        (definitions (compile-definitions program))
+        (defines (compile-defines program)))
+    (fmt "~A~%~%~A~%~%~A~%~%~A~%~%~A"
+         includes
+         defines
+         memories
+         prototypes
+         definitions)))
