@@ -24,7 +24,9 @@
                 :compile-set
                 :compile-progn
                 :compile-return
-                :compile-function))
+                :compile-function)
+  (:import-from :serapeum
+                :fmt))
 (in-package :oclcl.tests.lang.compiler.compile-statement)
 
 (defun %test-compile-statement (statement-func lisp-code c-code message)
@@ -234,13 +236,29 @@
 ;;;
 
 (deftest compile-set
-
   (with-empty-env (var-env func-env)
     (setf var-env (variable-environment-add-variable 'x 'int var-env))
     (is (compile-set '(set x 1) var-env func-env)
         (unlines "x = 1;")
         "basic case 1")
     (ok (signals (compile-set '(set x 1.0f0) var-env func-env) 'simple-error)))
+
+  (testing "literal"
+    (dolist (type oclcl.lang.type::+scalar-float-types+)
+      (testing (fmt "type ~A" type)
+        (with-empty-env (var-env func-env)
+          (setf var-env (variable-environment-add-variable 'x type var-env))
+          (is (compile-set '(set x 1) var-env func-env) (unlines "x = 1;"))))))
+
+  (testing "variable"
+    (dolist (type oclcl.lang.type::+scalar-float-types+)
+      (dolist (right oclcl.lang.type::+scalar-integer-types+)
+        (testing (fmt "type ~A" type)
+          (with-empty-env (var-env func-env)
+            (setf var-env (variable-environment-add-variable 'x type var-env))
+            (testing (fmt "type ~A" right)
+              (setf var-env (variable-environment-add-variable 'y type var-env))
+              (is (compile-set '(set x y) var-env func-env) (unlines "x = y;"))))))))
 
   (with-empty-env (var-env func-env)
     (setf var-env (variable-environment-add-variable 'x 'int* var-env))
@@ -254,8 +272,7 @@
     (is (compile-set '(set (float3-x x) 1.0f0) var-env func-env)
         (unlines "x.x = 1.0f;")
         "basic case 3")
-    (ok (signals (compile-set '(set (float3-x x) 1) var-env func-env)
-                 'simple-error))))
+    (ok (compile-set '(set (float3-x x) 1) var-env func-env))))
 
 
 ;;;

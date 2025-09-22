@@ -44,6 +44,8 @@
            :opencl-type
            ;; Scalar type
            :scalar-type-p
+           :scalar-integer-type-p
+           :scalar-float-type-p
            ;; Structure type
            :structure-type-p
            ;; Structure accessor
@@ -115,8 +117,22 @@
     (size-t :size-t "size_t")
     (cl-mem-fence-flags :int "cl_mem_fence_flags")))
 
+(defparameter +scalar-integer-types+
+  '(bool char uchar short ushort int uint long ulong size-t))
+
+(defparameter +scalar-float-types+
+  '(oclcl.lang.type:float double))
+
 (defun scalar-type-p (object)
   (and (assoc object +scalar-types+)
+       t))
+
+(defun scalar-integer-type-p (object)
+  (and (member object +scalar-integer-types+)
+       t))
+
+(defun scalar-float-type-p (object)
+  (and (member object +scalar-float-types+)
        t))
 
 (defun scalar-cffi-type (type)

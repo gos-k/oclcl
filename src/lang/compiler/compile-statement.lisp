@@ -256,7 +256,9 @@
     ;; as the expression part of that
     (let ((ref-type (type-of-expression reference var-env func-env))
           (expr-type (type-of-expression expr var-env func-env)))
-      (unless (eq ref-type expr-type)
+      (unless (or (eq ref-type expr-type)
+                  (and (scalar-float-type-p ref-type)
+                       (scalar-integer-type-p expr-type)))
         (error "The type of statement ~S is type mismatch (~S and ~S)."
                form ref-type expr-type)))
     (let ((reference1 (compile-expression reference var-env func-env))
