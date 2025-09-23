@@ -1,7 +1,7 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
-                2015 gos-k (mag4.elan@gmail.com)
+                2015-2025 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
@@ -73,7 +73,7 @@ eldoc works."
   "Register the kernel symbol macro to *PROGRAM*."
   `(program-define-symbol-macro *program* ',name ',expansion))
 
-;;; DEFMEMORY
+;;; DEFKERNEL-DEFINE
 ;;;
 
 (defmacro defkernel-define (name expression)

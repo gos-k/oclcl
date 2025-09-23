@@ -65,20 +65,12 @@
     (defmemory a 42 :constant)
     (defmemory b 0 :global)
     (is (compile-program *program*)
-"
-
-
-
-/**
+"/**
  *  Memory objects
  */
 
 __constant int oclcl_tests_api_defkernel_a = 42;
 __global int oclcl_tests_api_defkernel_b = 0;
-
-
-
-
 " "work defmemory")))
 
 ;;;
@@ -97,13 +89,7 @@ __global int oclcl_tests_api_defkernel_b = 0;
       (return))
 
     (is (compile-program *program*)
-"
-
-
-
-
-
-/**
+"/**
  *  Kernel function prototypes
  */
 
@@ -138,13 +124,7 @@ __kernel void oclcl_tests_api_defkernel_test_alfa()
       (return))
 
     (is (compile-program *program*)
-"
-
-
-
-
-
-/**
+"/**
  *  Kernel function prototypes
  */
 

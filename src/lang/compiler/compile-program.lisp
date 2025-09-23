@@ -1,7 +1,7 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
-                2015 gos-k (mag4.elan@gmail.com)
+                2015-2025 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
@@ -90,7 +90,7 @@
 ;;;
 
 (defun compile-includes ()
-  "")
+  nil)
 
 (defun compile-function-qualifier (return-type)
   (unless (oclcl-type-p return-type)
@@ -101,7 +101,7 @@
       nil))
 
 (defun compile-address-space-qualifier (qualifier)
-  (format nil "__~A" (string-downcase (princ-to-string qualifier))))
+  (fmt "__~A" (string-downcase (princ-to-string qualifier))))
 
 (defun compile-memory (program name)
   (let ((c-name (program-memory-c-name program name))
@@ -113,16 +113,15 @@
           (expression1 (compile-expression expression
                         (program->variable-environment program nil)
                         (program->function-environment program))))
-      (format nil "~{~A~^ ~} ~A ~A~@[ = ~A~];~%"
+      (fmt "~{~A~^ ~} ~A ~A~@[ = ~A~];~%"
               qualifiers1 type1 c-name expression1))))
 
 (defun compile-memories (program)
   (flet ((aux (name)
            (compile-memory program name)))
     (let ((memories (mapcar #'aux (program-memory-names program))))
-      (if (null memories)
-          ""
-          (format nil "/**
+      (when memories
+        (fmt "/**
  *  Memory objects
  */
 
@@ -133,12 +132,12 @@
         (type (argument-type argument)))
     (let ((var1 (compile-symbol var))
           (type1 (compile-type type)))
-      (format nil "~A ~A" type1 var1))))
+      (fmt "~A ~A" type1 var1))))
 
 (defun compile-arguments (arguments)
   (let ((arguments1 (mapcar #'compile-argument arguments)))
     (if arguments1
-        (format nil "~{~A~^, ~}" arguments1)
+        (fmt "~{~A~^, ~}" arguments1)
         "")))
 
 (defun compile-declaration (program name)
@@ -149,20 +148,19 @@
           (return-type1 (compile-type return-type))
           (arguments1 (compile-arguments arguments)))
       (if function-qualifier
-          (format nil "~A ~A ~A(~A)" function-qualifier return-type1 c-name arguments1)
-          (format nil "~A ~A(~A)" return-type1 c-name arguments1)))))
+          (fmt "~A ~A ~A(~A)" function-qualifier return-type1 c-name arguments1)
+          (fmt "~A ~A(~A)" return-type1 c-name arguments1)))))
 
 (defun compile-prototype (program name)
   (let ((declaration (compile-declaration program name)))
-    (format nil "~A;~%" declaration)))
+    (fmt "~A;~%" declaration)))
 
 (defun compile-prototypes (program)
   (flet ((aux (name)
            (compile-prototype program name)))
     (let ((prototypes (mapcar #'aux (reverse (program-function-names program)))))
-      (if (null prototypes)
-          ""
-          (format nil "/**
+      (when prototypes
+        (fmt "/**
  *  Kernel function prototypes
  */
 
@@ -174,21 +172,20 @@
     (flet ((aux (statement)
              (compile-statement statement var-env func-env)))
       (let ((statements (program-function-body program name)))
-        (format nil "~{~A~}" (mapcar #'aux statements))))))
+        (fmt "~{~A~}" (mapcar #'aux statements))))))
 
 (defun compile-definition (program name)
   (let ((declaration (compile-declaration program name))
         (statements (compile-statements program name)))
     (let ((statements1 (indent 2 statements)))
-      (format nil "~A~%{~%~A}~%" declaration statements1))))
+      (fmt "~A~%{~%~A}~%" declaration statements1))))
 
 (defun compile-definitions (program)
   (flet ((aux (name)
            (compile-definition program name)))
     (let ((definitions (mapcar #'aux (reverse (program-function-names program)))))
-      (if (null definitions)
-          ""
-          (format nil "/**
+      (when definitions
+        (fmt "/**
  *  Kernel function definitions
  */
 
@@ -205,23 +202,22 @@
 (defun compile-defines (program)
   (let ((defines (mapcar (curry #'compile-define program)
                          (program-define-names program))))
-    (if (null defines)
-        ""
-        (fmt "/**
+    (when defines
+      (fmt "/**
  *  Define
  */
 
 ~{~A~}" defines))))
 
 (defun compile-program (program)
-  (let ((includes (compile-includes))
-        (memories (compile-memories program))
-        (prototypes (compile-prototypes program))
-        (definitions (compile-definitions program))
-        (defines (compile-defines program)))
-    (fmt "~A~%~%~A~%~%~A~%~%~A~%~%~A"
-         includes
-         defines
-         memories
-         prototypes
-         definitions)))
+  (let* (;(includes (compile-includes))
+         (defines (compile-defines program))
+         (memories (compile-memories program))
+         (prototypes (compile-prototypes program))
+         (definitions (compile-definitions program))
+         (program (append ;(and includes (list includes))
+                          (and defines (list defines))
+                          (and memories (list memories))
+                          (and prototypes (list prototypes))
+                          (and definitions (list definitions)))))
+    (fmt "~{~A~^~%~%~}" program)))

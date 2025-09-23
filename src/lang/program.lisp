@@ -598,4 +598,3 @@ May cause program-conflict."
 
 (defun program-define-expression (program name)
   (define-expression (%lookup-define program name)))
-
