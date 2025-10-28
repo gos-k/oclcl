@@ -15,6 +15,8 @@
         :oclcl.lang.compiler.compile-type
         :oclcl.lang.compiler.type-of-expression
         :oclcl.lang.compiler.compile-expression)
+  (:import-from #:serapeum
+                #:fmt)
   (:export :compile-statement))
 (in-package :oclcl.lang.compiler.compile-statement)
 
@@ -72,12 +74,12 @@
           (else-stmt1 (if else-stmt
                           (compile-statement else-stmt env))))
       (let ((test-expr2 (if (char/= #\( (char test-expr1 0))
-                            (setf test-expr1 (format nil "(~A)" test-expr1))
+                            (setf test-expr1 (fmt "(~A)" test-expr1))
                             test-expr1))
             (then-stmt2 (indent 2 then-stmt1))
             (else-stmt2 (if else-stmt1
                             (indent 2 else-stmt1))))
-        (format nil "if ~A~%{~%~A}~@[~%else~%{~%~A}~]~%" test-expr2 then-stmt2 else-stmt2)))))
+        (fmt "if ~A~%{~%~A}~@[~%else~%{~%~A}~]~%" test-expr2 then-stmt2 else-stmt2)))))
 
 
 ;;;
@@ -100,8 +102,8 @@
              (let ((var1 (compile-symbol var))
                    (expr1 (compile-expression expr env))
                    (type1 (compile-type type)))
-               (format nil "~A ~A = ~A;~%" type1 var1 expr1)))))
-    (format nil "~{~A~}" (mapcar #'aux bindings))))
+               (fmt "~A ~A = ~A;~%" type1 var1 expr1)))))
+    (fmt "~{~A~}" (mapcar #'aux bindings))))
 
 (defun compile-let-statements (statements env)
   (compile-statement `(progn ,@statements) env))
@@ -114,7 +116,7 @@
             (statements1 (compile-let-statements statements env1)))
         (let ((bindings2 (indent 2 bindings1))
               (statements2 (indent 2 statements1)))
-          (format nil "{~%~A~A}~%" bindings2 statements2))))))
+          (fmt "{~%~A~A}~%" bindings2 statements2))))))
 
 
 ;;;
@@ -137,7 +139,7 @@
         (statements (symbol-macrolet-statements form)))
     (let ((env1 (env-add-symbol-macrolet-bindings env bindings)))
       (let ((statements1 (compile-symbol-macrolet-statements statements env1)))
-        (format nil "~a" statements1)))))
+        (fmt "~a" statements1)))))
 
 
 ;;;
@@ -160,12 +162,12 @@
              (let ((var1 (compile-symbol var))
                    (init1 (compile-expression init env))
                    (type1 (compile-type type)))
-               (format nil "~A ~A = ~A" type1 var1 init1)))))
-    (format nil "~{~A~^, ~}" (mapcar #'aux bindings))))
+               (fmt "~A ~A = ~A" type1 var1 init1)))))
+    (fmt "~{~A~^, ~}" (mapcar #'aux bindings))))
 
 (defun compile-do-test-part (end-test env)
   (let ((end-test1 (compile-expression end-test env)))
-    (format nil "! ~A" end-test1)))
+    (fmt "! ~A" end-test1)))
 
 (defun compile-do-step-part (bindings env)
   (flet ((aux (binding)
@@ -173,8 +175,8 @@
                  (step (do-binding-step binding)))
              (let ((var1 (compile-symbol var))
                    (step1 (compile-expression step env)))
-               (format nil "~A = ~A" var1 step1)))))
-    (format nil "~{~A~^, ~}" (mapcar #'aux bindings))))
+               (fmt "~A = ~A" var1 step1)))))
+    (fmt "~{~A~^, ~}" (mapcar #'aux bindings))))
 
 (defun compile-do-statements (statements env)
   (compile-statement `(progn ,@statements) env))
@@ -189,7 +191,7 @@
             (step-part (compile-do-step-part bindings env1))
             (statements1 (compile-do-statements statements env1)))
         (let ((statements2 (indent 2 statements1)))
-          (format nil "for ( ~A; ~A; ~A )~%{~%~A}~%"
+          (fmt "for ( ~A; ~A; ~A )~%{~%~A}~%"
                       init-part test-part step-part statements2))))))
 
 
@@ -221,8 +223,8 @@
                    (dims1 (compile-with-local-memory-spec-dimensions
                             dims env)))
                ;; OpenCL v1.2 dr19: 6.5 Address Spece Qualifiers
-               (format nil "__local ~A ~A~{[~A]~};~%" type1 var1 dims1)))))
-    (format nil "~{~A~}" (mapcar #'aux specs))))
+               (fmt "__local ~A ~A~{[~A]~};~%" type1 var1 dims1)))))
+    (fmt "~{~A~}" (mapcar #'aux specs))))
 
 (defun compile-with-local-memory-statements (statements env)
   (compile-statement `(progn ,@statements) env))
@@ -236,7 +238,7 @@
                                                                 env1)))
         (let ((specs2 (indent 2 specs1))
               (statements2 (indent 2 statements1)))
-          (format nil "{~%~A~A}~%" specs2 statements2))))))
+          (fmt "{~%~A~A}~%" specs2 statements2))))))
 
 
 ;;;
@@ -257,7 +259,7 @@
                form ref-type expr-type)))
     (let ((reference1 (compile-expression reference env))
           (expr1 (compile-expression expr env)))
-      (format nil "~A = ~A;~%" reference1 expr1))))
+      (fmt "~A = ~A;~%" reference1 expr1))))
 
 
 ;;;
@@ -269,7 +271,7 @@
            (compile-statement statement env)))
     (let ((statements (progn-statements form)))
       (let ((statements1 (mapcar #'aux statements)))
-        (format nil "~{~A~}" statements1)))))
+        (fmt "~{~A~}" statements1)))))
 
 
 ;;;
@@ -280,8 +282,8 @@
   (let ((expr (return-expr form)))
     (if expr
         (let ((expr1 (compile-expression expr env)))
-          (format nil "return ~A;~%" expr1))
-        (format nil "return;~%"))))
+          (fmt "return ~A;~%" expr1))
+        (fmt "return;~%"))))
 
 
 ;;;
@@ -291,7 +293,7 @@
 (defun compile-function (form env)
   (let ((code (oclcl.lang.compiler.compile-expression::compile-function
                 form env)))
-    (format nil "~A;~%" code)))
+    (fmt "~A;~%" code)))
 
 
 ;;;
@@ -300,4 +302,4 @@
 
 (defun compile-declare (form env)
   (declare (ignore env))
-  (format nil "#~{~A~^ ~}~%" (cdr form)))
+  (fmt "#~{~A~^ ~}~%" (cdr form)))

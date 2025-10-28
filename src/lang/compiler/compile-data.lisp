@@ -9,6 +9,8 @@
   (:use :cl
         :oclcl.lang.data
         :oclcl.lang.util)
+  (:import-from #:serapeum
+                #:fmt)
   (:export :compile-symbol
            :compile-bool
            :compile-int
@@ -55,7 +57,7 @@
 (defun compile-float (expr)
   (unless (oclcl-float-p expr)
     (error "The value ~S is an invalid expression." expr))
-  (format nil "~Ff" expr))
+  (fmt "~Ff" expr))
 
 
 ;;;
@@ -65,11 +67,11 @@
 (defun compile-double (expr)
   (unless (oclcl-double-p expr)
     (error "The value ~S is an invalid expression." expr))
-  (format nil "~F" (float expr 0.0d0)))
+  (fmt "~F" (float expr 0.0d0)))
 
 ;;; String
 
 (defun compile-string (expr)
   (unless (oclcl-string-p expr)
     (error "The value ~S is an invalid expression." expr))
-  (format nil "~S" expr))
+  (fmt "~S" expr))

@@ -9,7 +9,9 @@
   (:use :cl :rove
         :oclcl.tests.utils
         :oclcl.lang.data
-        :oclcl.lang.type))
+        :oclcl.lang.type)
+  (:import-from #:serapeum
+                #:fmt))
 (in-package :oclcl.tests.lang.type)
 
 ;;;
@@ -18,9 +20,9 @@
 
 (deftest oclcl-type-p
   (dolist (type '(char uchar short ushort int uint long ulong))
-    (is (oclcl-type-p type) t (format nil "integer type : ~a" type)))
+    (is (oclcl-type-p type) t (fmt "integer type : ~a" type)))
   (dolist (type '(float double))
-    (is (oclcl-type-p type) t (format nil "float type : ~a" type)))
+    (is (oclcl-type-p type) t (fmt "float type : ~a" type)))
   (is (oclcl-type-p 'int) t "basic case 1")
   (is (oclcl-type-p 'float3) t "basic case 2")
   (is (oclcl-type-p 'float3*) t "basic case 3")

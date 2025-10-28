@@ -59,7 +59,9 @@
            :array-type-dimension
            :array-type)
   (:import-from :alexandria
-                :format-symbol))
+                :format-symbol)
+  (:import-from #:serapeum
+                #:fmt))
 (in-package :oclcl.lang.type)
 
 
@@ -271,7 +273,7 @@
 (defun array-opencl-type (type)
   (let ((base (array-type-base type))
         (stars (array-type-stars type)))
-    (format nil "__global ~A~A" (opencl-type base) stars)))
+    (fmt "__global ~A~A" (opencl-type base) stars)))
 
 (defun array-type (type dimension)
   (unless (and (oclcl-type-p type)

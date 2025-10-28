@@ -14,6 +14,8 @@
         :oclcl.lang.built-in
         :oclcl.lang.compiler.compile-data
         :oclcl.lang.compiler.type-of-expression)
+  (:import-from #:serapeum
+                #:fmt)
   (:export :compile-expression))
 (in-package :oclcl.lang.compiler.compile-expression)
 
@@ -141,7 +143,7 @@
         (error "The structure reference ~S is invalid." form)))
     (let ((accessor1 (structure-accessor-opencl-accessor accessor))
           (expr1 (compile-expression expr env)))
-      (format nil "~A.~A" expr1 accessor1))))
+      (fmt "~A.~A" expr1 accessor1))))
 
 
 ;;;
@@ -163,7 +165,7 @@
         (error "The dimension of array reference ~S is invalid." form)))
     (let ((expr1 (compile-expression expr env))
           (indices1 (compile-array-indices indices env)))
-      (format nil "~A~{[~A]~}" expr1 indices1))))
+      (fmt "~A~{[~A]~}" expr1 indices1))))
 
 
 ;;;
@@ -187,7 +189,7 @@
     (let ((test-expr1 (compile-expression test-expr env))
           (then-expr1 (compile-expression then-expr env))
           (else-expr1 (compile-expression else-expr env)))
-      (format nil "(~A ? ~A : ~A)" test-expr1 then-expr1 else-expr1))))
+      (fmt "(~A ? ~A : ~A)" test-expr1 then-expr1 else-expr1))))
 
 
 ;;;
@@ -238,8 +240,8 @@
                                                            operator))
           (operands1 (compile-operands operands env)))
       (if operands1
-          (format nil "~A(~{~A~^, ~})" operator1 operands1)
-          (format nil "~A()" operator1)))))
+          (fmt "~A(~{~A~^, ~})" operator1 operands1)
+          (fmt "~A()" operator1)))))
 
 (defun compile-built-in-function (form env)
   (let ((operator (function-operator form))
@@ -256,15 +258,15 @@
     (let ((op (built-in-function-c-name operator operand-types))
           (lhe (compile-expression (car operands) env))
           (rhe (compile-expression (cadr operands) env)))
-      (format nil "(~A ~A ~A)" lhe op rhe)))
+      (fmt "(~A ~A ~A)" lhe op rhe)))
 
 (defun compile-built-in-prefix-function (operator operands operand-types
                                          env)
     (let ((operator1 (built-in-function-c-name operator operand-types))
           (operands1 (compile-operands operands env)))
       (if operands1
-          (format nil "~A(~{~A~^, ~})" operator1 operands1)
-          (format nil "~A()" operator1))))
+          (fmt "~A(~{~A~^, ~})" operator1 operands1)
+          (fmt "~A()" operator1))))
 
 ;;;
 ;;; Compile sizeof
@@ -272,6 +274,6 @@
 
 (defun compile-sizeof (form env)
   (let ((operand (first (sizeof-operand form))))
-    (format nil "sizeof(~A)" (if (oclcl-type-p operand)
+    (fmt "sizeof(~A)" (if (oclcl-type-p operand)
                                  (opencl-type operand)
                                  (compile-expression operand env)))))

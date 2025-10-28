@@ -1,12 +1,14 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
-                2015 gos-k (mag4.elan@gmail.com)
+                2015-2025 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
 (defpackage oclcl.lang.util
   (:use :cl)
+  (:import-from #:serapeum
+                #:fmt)
   (:export :c-identifier
            :c-macro-name
            :lines
@@ -39,11 +41,11 @@
   (split-sequence:split-sequence #\LineFeed str :remove-empty-subseqs t))
 
 (defun unlines (&rest args)
-  (format nil "~{~A~%~}" args))
+  (fmt "~{~A~%~}" args))
 
 (defun indent (n str)
   (labels ((aux (x)
-             (format nil "~vT~A" n x)))
+             (fmt "~vT~A" n x)))
     (apply #'unlines (mapcar #'aux (lines str)))))
 
 

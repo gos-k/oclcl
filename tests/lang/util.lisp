@@ -8,7 +8,9 @@
 (defpackage oclcl.tests.lang.util
   (:use :cl :rove
         :oclcl.tests.utils
-        :oclcl.lang.util))
+        :oclcl.lang.util)
+  (:import-from #:serapeum
+                #:fmt))
 (in-package :oclcl.tests.lang.util)
 
 ;;;
@@ -39,9 +41,9 @@
 ;;;
 
 (deftest lines
-  (is (lines (format nil "1~%2~%3~%")) '("1" "2" "3")
+  (is (lines (fmt "1~%2~%3~%")) '("1" "2" "3")
       "basic case 1")
-  (is (lines (format nil "1~%2~%3")) '("1" "2" "3")
+  (is (lines (fmt "1~%2~%3")) '("1" "2" "3")
       "basic case 2"))
 
 
@@ -61,12 +63,12 @@
 ;;;
 
 (deftest indent
-  (is (indent 2 (format nil "1~%2~%3~%")) "  1
+  (is (indent 2 (fmt "1~%2~%3~%")) "  1
   2
   3
 " "basic case 1")
 
-  (is (indent 2 (format nil "1~%2~%3")) "  1
+  (is (indent 2 (fmt "1~%2~%3")) "  1
   2
   3
 " "basic case 2"))
