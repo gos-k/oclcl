@@ -30,8 +30,8 @@
 (in-package :oclcl.tests.lang.compiler.compile-statement)
 
 (defun %test-compile-statement (statement-func lisp-code c-code message)
-  (with-empty-env (var-env func-env)
-    (is (apply statement-func (list lisp-code var-env func-env)) c-code
+  (with-empty-env (env)
+    (is (apply statement-func (list lisp-code env)) c-code
         message)))
 
 ;;;
@@ -50,12 +50,12 @@
 ;;;
 
 (deftest compile-macro
-  (with-empty-env (var-env func-env)
-    (setf func-env (function-environment-add-macro 'alfa '(x) '(`(let ((,x 0))
+  (with-empty-env (env)
+    (setf env (function-environment-add-macro 'alfa '(x) '(`(let ((,x 0))
                                                                    (* ,x ,x)))
-                                                   func-env))
+                                                   env))
     (flet ((test-statement (lisp-code c-code message)
-             (is (compile-macro lisp-code var-env func-env) c-code message)))
+             (is (compile-macro lisp-code env) c-code message)))
       (test-statement '(alfa bravo) (unlines "{"
                                              "  int bravo = 0;"
                                              "  (bravo * bravo);"
@@ -89,9 +89,9 @@
                     "}")
            "test if")
 
-  (with-empty-env (var-env func-env)
+  (with-empty-env (env)
     (let ((lisp-code '(if 1 (return))))
-      (ok (signals (compile-if lisp-code var-env func-env) 'simple-error)) )))
+      (ok (signals (compile-if lisp-code env) 'simple-error)) )))
 
 
 ;;;
@@ -110,12 +110,12 @@
                      "}")
             "basic case 1")
 
-  (with-empty-env (var-env func-env)
-    (ok (signals (compile-let '(let (i) (return)) var-env func-env)
+  (with-empty-env (env)
+    (ok (signals (compile-let '(let (i) (return)) env)
                  'simple-error))
-    (ok (signals (compile-let '(let ((i)) (return)) var-env func-env)
+    (ok (signals (compile-let '(let ((i)) (return)) env)
                  'simple-error))
-    (ok (signals (compile-let '(let ((x 1) (y x)) (return y)) var-env func-env)
+    (ok (signals (compile-let '(let ((x 1) (y x)) (return y)) env)
                  'simple-error))))
 
 
@@ -218,16 +218,16 @@
                               "}")
                      "load from local memory")
 
-  (with-empty-env (var-env func-env)
+  (with-empty-env (env)
     (let ((lisp-code '(with-local-memory (a float)
                        (return))))
-      (ok (signals (compile-with-local-memory lisp-code var-env func-env)
+      (ok (signals (compile-with-local-memory lisp-code env)
                    'simple-error))))
 
-  (with-empty-env (var-env func-env)
+  (with-empty-env (env)
     (let ((lisp-code '(with-local-memory ((a float 16 16))
                        (set (aref a 0) 1.0f0))))
-      (ok (signals (compile-with-local-memory lisp-code var-env func-env)
+      (ok (signals (compile-with-local-memory lisp-code env)
                    'simple-error)))))
 
 
@@ -236,43 +236,43 @@
 ;;;
 
 (deftest compile-set
-  (with-empty-env (var-env func-env)
-    (setf var-env (variable-environment-add-variable 'x 'int var-env))
-    (is (compile-set '(set x 1) var-env func-env)
+  (with-empty-env (env)
+    (setf env (variable-environment-add-variable 'x 'int env))
+    (is (compile-set '(set x 1) env)
         (unlines "x = 1;")
         "basic case 1")
-    (ok (signals (compile-set '(set x 1.0f0) var-env func-env) 'simple-error)))
+    (ok (signals (compile-set '(set x 1.0f0) env) 'simple-error)))
 
   (testing "literal"
     (dolist (type oclcl.lang.type::+scalar-float-types+)
       (testing (fmt "type ~A" type)
-        (with-empty-env (var-env func-env)
-          (setf var-env (variable-environment-add-variable 'x type var-env))
-          (is (compile-set '(set x 1) var-env func-env) (unlines "x = 1;"))))))
+        (with-empty-env (env)
+          (setf env (variable-environment-add-variable 'x type env))
+          (is (compile-set '(set x 1) env) (unlines "x = 1;"))))))
 
   (testing "variable"
     (dolist (type oclcl.lang.type::+scalar-float-types+)
       (dolist (right oclcl.lang.type::+scalar-integer-types+)
         (testing (fmt "type ~A" type)
-          (with-empty-env (var-env func-env)
-            (setf var-env (variable-environment-add-variable 'x type var-env))
+          (with-empty-env (env)
+            (setf env (variable-environment-add-variable 'x type env))
             (testing (fmt "type ~A" right)
-              (setf var-env (variable-environment-add-variable 'y type var-env))
-              (is (compile-set '(set x y) var-env func-env) (unlines "x = y;"))))))))
+              (setf env (variable-environment-add-variable 'y type env))
+              (is (compile-set '(set x y) env) (unlines "x = y;"))))))))
 
-  (with-empty-env (var-env func-env)
-    (setf var-env (variable-environment-add-variable 'x 'int* var-env))
-    (is (compile-set '(set (aref x 0) 1) var-env func-env)
+  (with-empty-env (env)
+    (setf env (variable-environment-add-variable 'x 'int* env))
+    (is (compile-set '(set (aref x 0) 1) env)
         (unlines "x[0] = 1;")
         "basic case 2")
-    (ok (signals (compile-set '(set (aref x 0) 1.0f0) var-env func-env)
+    (ok (signals (compile-set '(set (aref x 0) 1.0f0) env)
                  'simple-error)))
-  (with-empty-env (var-env func-env)
-    (setf var-env (variable-environment-add-variable 'x 'float3 var-env))
-    (is (compile-set '(set (float3-x x) 1.0f0) var-env func-env)
+  (with-empty-env (env)
+    (setf env (variable-environment-add-variable 'x 'float3 env))
+    (is (compile-set '(set (float3-x x) 1.0f0) env)
         (unlines "x.x = 1.0f;")
         "basic case 3")
-    (ok (compile-set '(set (float3-x x) 1) var-env func-env))))
+    (ok (compile-set '(set (float3-x x) 1) env))))
 
 
 ;;;
@@ -281,25 +281,24 @@
 
 
 (deftest compile-progn
-  (with-empty-env (var-env func-env)
-    (is (compile-progn '(progn) var-env func-env) "")
-    (is (compile-progn '(progn (return))  var-env func-env) (unlines "return;"))))
+  (with-empty-env (env)
+    (is (compile-progn '(progn) env) "")
+    (is (compile-progn '(progn (return))  env) (unlines "return;"))))
 
 ;;;
 ;;; test COMPILE-RETURN function
 ;;;
 
 (deftest compile-return
-  (with-empty-env (var-env func-env)
-    (is (compile-return '(return) var-env func-env) (unlines "return;"))))
+  (with-empty-env (env)
+    (is (compile-return '(return) env) (unlines "return;"))))
 
 ;;;
 ;;; test COMPILE-FUNCTION function
 ;;;
 
 (deftest compile-function
-  (with-empty-env (var-env func-env)
-    (setf func-env (function-environment-add-function 'alfa 'int '(int) func-env))
-    (is (compile-function '(alfa 1) var-env func-env)
+  (with-empty-env (env)
+    (setf env (function-environment-add-function 'alfa 'int '(int) env))
+    (is (compile-function '(alfa 1) env)
         (unlines "oclcl_tests_lang_compiler_compile_statement_alfa(1);"))))
-

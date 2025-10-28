@@ -1,7 +1,7 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
-                2015 gos-k (mag4.elan@gmail.com)
+                2015-2025 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
@@ -10,8 +10,15 @@
         :oclcl.lang.util
         :oclcl.lang.data
         :oclcl.lang.type)
-  (:export ;; Variable environment
-           :empty-variable-environment
+  (:export ;; Environment
+           :environment
+           :make-environment
+           :copy-environment
+           :environment-p
+           :environment-var-env
+           :environment-func-env
+           :environment-def-env
+           :empty-environment
            ;; Variable environment - Variable
            :variable-environment-add-variable
            :variable-environment-variable-exists-p
@@ -22,8 +29,6 @@
            :variable-environment-symbol-macro-exists-p
            :variable-environment-symbol-macro-name
            :variable-environment-symbol-macro-expansion
-           ;; Function environment
-           :empty-function-environment
            ;; Function environment - Function
            :function-environment-add-function
            :function-environment-function-exists-p
@@ -43,16 +48,12 @@
            :function-environment-macro-exists-p
            :function-environment-macro-name
            :function-environment-macro-expander
-           ;; Define environment
-           :empty-define-environment
            ;; Define environment - Define
            :define-environment-add-define
            :define-environment-define-exists-p
            :define-environment-define-name
            :define-environment-define-c-name
-           :define-environment-define-expression
-           ;; Other
-           :empty-environment)
+           :define-environment-define-expression)
   (:shadow :variable)
   (:import-from :alexandria
                 :with-gensyms))
@@ -60,146 +61,162 @@
 
 
 ;;;
-;;; Variable environment
+;;; Environment
 ;;;
 
-(defun empty-variable-environment ()
-  nil)
+(defstruct environment
+  (var-env nil :type list)
+  (func-env nil :type list)
+  (def-env nil :type list))
+
+(defun empty-environment ()
+  (make-environment))
+
+(defun copy-env-with-var-env (env new-var-env)
+  (make-environment :var-env new-var-env
+                    :func-env (environment-func-env env)
+                    :def-env (environment-def-env env)))
+
+(defun copy-env-with-func-env (env new-func-env)
+  (make-environment :var-env (environment-var-env env)
+                    :func-env new-func-env
+                    :def-env (environment-def-env env)))
+
+(defun copy-env-with-def-env (env new-def-env)
+  (make-environment :var-env (environment-var-env env)
+                    :func-env (environment-func-env env)
+                    :def-env new-def-env))
 
 
 ;;;
 ;;; Variable environment - Variable
 ;;;
 
-(defun variable-environment-add-variable (name type var-env)
-  (let ((elem (make-variable name type)))
-    (acons name elem var-env)))
+(defun variable-environment-add-variable (name type env)
+  (copy-env-with-var-env
+   env
+   (acons name (make-variable name type) (environment-var-env env))))
 
-(defun variable-environment-variable-exists-p (var-env name)
-  (variable-p (cdr (assoc name var-env))))
+(defun variable-environment-variable-exists-p (env name)
+  (variable-p (cdr (assoc name (environment-var-env env)))))
 
-(defun %lookup-variable (var-env name)
-  (unless (variable-environment-variable-exists-p var-env name)
+(defun %lookup-variable (env name)
+  (unless (variable-environment-variable-exists-p env name)
     (error "The variable ~S not found." name))
-  (cdr (assoc name var-env)))
+  (cdr (assoc name (environment-var-env env))))
 
-(defun variable-environment-variable-name (var-env name)
-  (variable-name (%lookup-variable var-env name)))
+(defun variable-environment-variable-name (env name)
+  (variable-name (%lookup-variable env name)))
 
-(defun variable-environment-variable-type (var-env name)
-  (variable-type (%lookup-variable var-env name)))
+(defun variable-environment-variable-type (env name)
+  (variable-type (%lookup-variable env name)))
 
 
 ;;;
 ;;; Variable environment - Symbol macro
 ;;;
 
-(defun variable-environment-add-symbol-macro (name expansion var-env)
-  (let ((elem (make-symbol-macro name expansion)))
-    (acons name elem var-env)))
+(defun variable-environment-add-symbol-macro (name expansion env)
+  (copy-env-with-var-env
+   env
+   (acons name (make-symbol-macro name expansion) (environment-var-env env))))
 
-(defun variable-environment-symbol-macro-exists-p (var-env name)
-  (symbol-macro-p (cdr (assoc name var-env))))
+(defun variable-environment-symbol-macro-exists-p (env name)
+  (symbol-macro-p (cdr (assoc name (environment-var-env env)))))
 
-(defun %lookup-symbol-macro (var-env name)
-  (unless (variable-environment-symbol-macro-exists-p var-env name)
+(defun %lookup-symbol-macro (env name)
+  (unless (variable-environment-symbol-macro-exists-p env name)
     (error "The symbol macro ~S not found." name))
-  (cdr (assoc name var-env)))
+  (cdr (assoc name (environment-var-env env))))
 
-(defun variable-environment-symbol-macro-name (var-env name)
-  (symbol-macro-name (%lookup-symbol-macro var-env name)))
+(defun variable-environment-symbol-macro-name (env name)
+  (symbol-macro-name (%lookup-symbol-macro env name)))
 
-(defun variable-environment-symbol-macro-expansion (var-env name)
-  (symbol-macro-expansion (%lookup-symbol-macro var-env name)))
+(defun variable-environment-symbol-macro-expansion (env name)
+  (symbol-macro-expansion (%lookup-symbol-macro env name)))
 
 ;;; Variable environment - Memory
 ;;;
 
-(defun variable-environment-add-memory (name type expression var-env)
-  (check-type var-env list)
-  (let ((elem (make-memory name type expression)))
-    (acons name elem var-env)))
+(defun variable-environment-add-memory (name type expression env)
+  (copy-env-with-var-env
+   env
+   (acons name (make-memory name type expression) (environment-var-env env))))
 
-(defun variable-environment-memory-exists-p (var-env name)
+(defun variable-environment-memory-exists-p (env name)
   (check-type name oclcl-symbol)
-  (memory-p (cdr (assoc name var-env))))
+  (memory-p (cdr (assoc name (environment-var-env env)))))
 
-(defun %lookup-memory (var-env name)
-  (unless (variable-environment-memory-exists-p var-env name)
+(defun %lookup-memory (env name)
+  (unless (variable-environment-memory-exists-p env name)
     (error "The variable ~S not found." name))
-  (cdr (assoc name var-env)))
+  (cdr (assoc name (environment-var-env env))))
 
-(defun variable-environment-memory-name (var-env name)
-  (memory-name (%lookup-memory var-env name)))
+(defun variable-environment-memory-name (env name)
+  (memory-name (%lookup-memory env name)))
 
-(defun variable-environment-memory-c-name (var-env name)
-  (memory-c-name (%lookup-memory var-env name)))
+(defun variable-environment-memory-c-name (env name)
+  (memory-c-name (%lookup-memory env name)))
 
-(defun variable-environment-memory-type (var-env name)
-  (memory-type (%lookup-memory var-env name)))
+(defun variable-environment-memory-type (env name)
+  (memory-type (%lookup-memory env name)))
 
-(defun variable-environment-memory-expression (var-env name)
-  (memory-expression (%lookup-memory var-env name)))
-
-;;;
-;;; Function environment
-;;;
-
-(defun empty-function-environment ()
-  '())
+(defun variable-environment-memory-expression (env name)
+  (memory-expression (%lookup-memory env name)))
 
 
 ;;;
 ;;; Function environment - Function
 ;;;
 
-(defun function-environment-add-function (name return-type
-                                          argument-types func-env)
-  (let ((elem (make-function name return-type argument-types)))
-    (acons name elem func-env)))
+(defun function-environment-add-function (name return-type argument-types env)
+  (copy-env-with-func-env
+   env
+   (acons name (make-function name return-type argument-types) (environment-func-env env))))
 
-(defun function-environment-function-exists-p (func-env name)
-  (function-p (cdr (assoc name func-env))))
+(defun function-environment-function-exists-p (env name)
+  (function-p (cdr (assoc name (environment-func-env env)))))
 
-(defun %lookup-function (func-env name)
-  (unless (function-environment-function-exists-p func-env name)
+(defun %lookup-function (env name)
+  (unless (function-environment-function-exists-p env name)
     (error "The function ~S is undefined." name))
-  (cdr (assoc name func-env)))
+  (cdr (assoc name (environment-func-env env))))
 
-(defun function-environment-function-name (func-env name)
-  (function-name (%lookup-function func-env name)))
+(defun function-environment-function-name (env name)
+  (function-name (%lookup-function env name)))
 
-(defun function-environment-function-c-name (func-env name)
-  (function-c-name (%lookup-function func-env name)))
+(defun function-environment-function-c-name (env name)
+  (function-c-name (%lookup-function env name)))
 
-(defun function-environment-function-return-type (func-env name)
-  (function-return-type (%lookup-function func-env name)))
+(defun function-environment-function-return-type (env name)
+  (function-return-type (%lookup-function env name)))
 
-(defun function-environment-function-argument-types (func-env name)
-  (function-argument-types (%lookup-function func-env name)))
+(defun function-environment-function-argument-types (env name)
+  (function-argument-types (%lookup-function env name)))
 
 
 ;;;
 ;;; Function environment - Macro
 ;;;
 
-(defun function-environment-add-macro (name arguments body func-env)
-  (let ((elem (make-macro name arguments body)))
-    (acons name elem func-env)))
+(defun function-environment-add-macro (name arguments body env)
+  (copy-env-with-func-env
+   env
+   (acons name (make-macro name arguments body) (environment-func-env env))))
 
-(defun function-environment-macro-exists-p (func-env name)
-  (macro-p (cdr (assoc name func-env))))
+(defun function-environment-macro-exists-p (env name)
+  (macro-p (cdr (assoc name (environment-func-env env)))))
 
-(defun %lookup-macro (func-env name)
-  (unless (function-environment-macro-exists-p func-env name)
+(defun %lookup-macro (env name)
+  (unless (function-environment-macro-exists-p env name)
     (error "The macro ~S is undefined." name))
-  (cdr (assoc name func-env)))
+  (cdr (assoc name (environment-func-env env))))
 
-(defun function-environment-macro-name (func-env name)
-  (macro-name (%lookup-macro func-env name)))
+(defun function-environment-macro-name (env name)
+  (macro-name (%lookup-macro env name)))
 
-(defun function-environment-macro-expander (func-env name)
-  (macro-expander (%lookup-macro func-env name)))
+(defun function-environment-macro-expander (env name)
+  (macro-expander (%lookup-macro env name)))
 
 
 ;;;
@@ -307,30 +324,28 @@
 ;;; Define environment - Define
 ;;;
 
-(defun empty-define-environment ())
+(defun define-environment-add-define (name expression env)
+  (copy-env-with-def-env
+   env
+   (acons name (make-define name expression) (environment-def-env env))))
 
-(defun define-environment-add-define (name expression def-env)
-  (check-type def-env list)
-  (let ((elem (make-define name expression)))
-    (acons name elem def-env)))
-
-(defun define-environment-define-exists-p (def-env name)
+(defun define-environment-define-exists-p (env name)
   (check-type name oclcl-symbol)
-  (define-p (cdr (assoc name def-env))))
+  (define-p (cdr (assoc name (environment-def-env env)))))
 
-(defun %lookup-define (def-env name)
-  (unless (define-environment-define-exists-p def-env name)
+(defun %lookup-define (env name)
+  (unless (define-environment-define-exists-p env name)
     (error "The define ~S not found." name))
-  (cdr (assoc name def-env)))
+  (cdr (assoc name (environment-def-env env))))
 
-(defun define-environment-define-name (def-env name)
-  (define-name (%lookup-define def-env name)))
+(defun define-environment-define-name (env name)
+  (define-name (%lookup-define env name)))
 
-(defun define-environment-define-c-name (def-env name)
-  (define-c-name (%lookup-define def-env name)))
+(defun define-environment-define-c-name (env name)
+  (define-c-name (%lookup-define env name)))
 
-(defun define-environment-define-expression (def-env name)
-  (define-expression (%lookup-define def-env name)))
+(defun define-environment-define-expression (env name)
+  (define-expression (%lookup-define env name)))
 
 ;;; Define
 ;;;
@@ -345,11 +360,3 @@
 
 (defun define-c-name (define)
   (c-identifier (define-name define) t))
-
-;;; Empty environment
-;;;
-
-(defun empty-environment ()
-  (values (empty-variable-environment)
-          (empty-function-environment)
-          (empty-define-environment)))

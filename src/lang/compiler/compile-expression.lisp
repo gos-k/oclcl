@@ -1,7 +1,7 @@
 #|
   This file is a part of oclcl project.
   Copyright (c) 2012 Masayuki Takagi (kamonama@gmail.com)
-                2015 gos-k (mag4.elan@gmail.com)
+                2015-2025 gos-k (mag4.elan@gmail.com)
 |#
 
 (in-package :cl-user)
@@ -22,18 +22,18 @@
 ;;; Compile expression
 ;;;
 
-(defun compile-expression (form var-env func-env)
+(defun compile-expression (form env)
   (cond
-    ((%macro-p form func-env) (compile-macro form var-env func-env))
-    ((%symbol-macro-p form var-env)
-     (compile-symbol-macro form var-env func-env))
+    ((%macro-p form env) (compile-macro form env))
+    ((%symbol-macro-p form env)
+     (compile-symbol-macro form env))
     ((literal-p form) (compile-literal form))
     ((opencl-literal-p form) (compile-opencl-literal form))
-    ((reference-p form) (compile-reference form var-env func-env))
-    ((inline-if-p form) (compile-inline-if form var-env func-env))
-    ((sizeof-p form) (compile-sizeof form var-env func-env))
-    ((arithmetic-p form) (compile-arithmetic form var-env func-env))
-    ((function-p form) (compile-function form var-env func-env))
+    ((reference-p form) (compile-reference form env))
+    ((inline-if-p form) (compile-inline-if form env))
+    ((sizeof-p form) (compile-sizeof form env))
+    ((arithmetic-p form) (compile-arithmetic form env))
+    ((function-p form) (compile-function form env))
     (t (error "The value ~S is an invalid expression." form))))
 
 
@@ -41,27 +41,27 @@
 ;;; Macro
 ;;;
 
-(defun %macro-p (form func-env)
-  (oclcl.lang.compiler.type-of-expression::%macro-p form func-env))
+(defun %macro-p (form env)
+  (oclcl.lang.compiler.type-of-expression::%macro-p form env))
 
-(defun compile-macro (form var-env func-env)
+(defun compile-macro (form env)
   (let ((operator (macro-operator form))
         (operands (macro-operands form)))
-    (let ((expander (function-environment-macro-expander func-env operator)))
+    (let ((expander (function-environment-macro-expander env operator)))
       (let ((form1 (funcall expander operands)))
-        (compile-expression form1 var-env func-env)))))
+        (compile-expression form1 env)))))
 
 
 ;;;
 ;;; Symbol macro
 ;;;
 
-(defun %symbol-macro-p (form var-env)
-  (oclcl.lang.compiler.type-of-expression::%symbol-macro-p form var-env))
+(defun %symbol-macro-p (form env)
+  (oclcl.lang.compiler.type-of-expression::%symbol-macro-p form env))
 
-(defun compile-symbol-macro (form var-env func-env)
-  (let ((form1 (variable-environment-symbol-macro-expansion var-env form)))
-    (compile-expression form1 var-env func-env)))
+(defun compile-symbol-macro (form env)
+  (let ((form1 (variable-environment-symbol-macro-expansion env form)))
+    (compile-expression form1 env)))
 
 
 ;;;
@@ -102,14 +102,14 @@
 ;;; Reference
 ;;;
 
-(defun compile-reference (form var-env func-env)
+(defun compile-reference (form env)
   (cond
     ((variable-reference-p form)
-     (compile-variable-reference form var-env))
+     (compile-variable-reference form env))
     ((structure-reference-p form)
-     (compile-structure-reference form var-env func-env))
+     (compile-structure-reference form env))
     ((array-reference-p form)
-     (compile-array-reference form var-env func-env))
+     (compile-array-reference form env))
     (t (error "The value ~S is an invalid form." form))))
 
 
@@ -117,12 +117,12 @@
 ;;; Reference - Variable
 ;;;
 
-(defun compile-variable-reference (form var-env)
+(defun compile-variable-reference (form env)
   (cond
-    ((variable-environment-variable-exists-p var-env form)
+    ((variable-environment-variable-exists-p env form)
      (compile-symbol form))
-    ((variable-environment-memory-exists-p var-env form)
-     (variable-environment-memory-c-name var-env form))
+    ((variable-environment-memory-exists-p env form)
+     (variable-environment-memory-c-name env form))
     (t
      (error "The variable ~S not found." form))))
 
@@ -130,17 +130,17 @@
 ;;; Reference - Structure
 ;;;
 
-(defun compile-structure-reference (form var-env func-env)
+(defun compile-structure-reference (form env)
   (let ((accessor (structure-reference-accessor form))
         (expr (structure-reference-expr form)))
     ;; check if the expression part of structure reference has the
     ;; same type as accessor's structure
     (let ((structure (structure-from-accessor accessor))
-          (expr-type (type-of-expression expr var-env func-env)))
+          (expr-type (type-of-expression expr env)))
       (unless (eq structure expr-type)
         (error "The structure reference ~S is invalid." form)))
     (let ((accessor1 (structure-accessor-opencl-accessor accessor))
-          (expr1 (compile-expression expr var-env func-env)))
+          (expr1 (compile-expression expr env)))
       (format nil "~A.~A" expr1 accessor1))))
 
 
@@ -148,21 +148,21 @@
 ;;; Reference - Array
 ;;;
 
-(defun compile-array-indices (indices var-env func-env)
+(defun compile-array-indices (indices env)
   (mapcar #'(lambda (index)
-              (compile-expression index var-env func-env))
+              (compile-expression index env))
           indices))
 
-(defun compile-array-reference (form var-env func-env)
+(defun compile-array-reference (form env)
   (let ((expr (array-reference-expr form))
         (indices (array-reference-indices form)))
     ;; check if the expression part of array reference has the same
     ;; dimension as the array reference
-    (let ((expr-type (type-of-expression expr var-env func-env)))
+    (let ((expr-type (type-of-expression expr env)))
       (unless (= (array-type-dimension expr-type) (length indices))
         (error "The dimension of array reference ~S is invalid." form)))
-    (let ((expr1 (compile-expression expr var-env func-env))
-          (indices1 (compile-array-indices indices var-env func-env)))
+    (let ((expr1 (compile-expression expr env))
+          (indices1 (compile-array-indices indices env)))
       (format nil "~A~{[~A]~}" expr1 indices1))))
 
 
@@ -170,23 +170,23 @@
 ;;; Inline-if
 ;;;
 
-(defun compile-inline-if (form var-env func-env)
+(defun compile-inline-if (form env)
   (let ((test-expr (inline-if-test-expression form))
         (then-expr (inline-if-then-expression form))
         (else-expr (inline-if-else-expression form)))
     ;; check if the test part of inline-if expression has bool type
-    (let ((test-type (type-of-expression test-expr var-env func-env)))
+    (let ((test-type (type-of-expression test-expr env)))
       (unless (eq test-type 'bool)
         (error "The type of expression ~S is invalid." form)))
     ;; check if the then part of inline-of expression has the same
     ;; type as the else part of it
-    (let ((then-type (type-of-expression then-expr var-env func-env))
-          (else-type (type-of-expression else-expr var-env func-env)))
+    (let ((then-type (type-of-expression then-expr env))
+          (else-type (type-of-expression else-expr env)))
       (unless (eq then-type else-type)
         (error "The type of expression ~S is invalid." form)))
-    (let ((test-expr1 (compile-expression test-expr var-env func-env))
-          (then-expr1 (compile-expression then-expr var-env func-env))
-          (else-expr1 (compile-expression else-expr var-env func-env)))
+    (let ((test-expr1 (compile-expression test-expr env))
+          (then-expr1 (compile-expression then-expr env))
+          (else-expr1 (compile-expression else-expr env)))
       (format nil "(~A ? ~A : ~A)" test-expr1 then-expr1 else-expr1))))
 
 
@@ -194,75 +194,74 @@
 ;;; Arithmetic operations
 ;;;
 
-(defun compile-arithmetic (form var-env func-env)
+(defun compile-arithmetic (form env)
   (let ((operator (arithmetic-operator form))
         (operands (arithmetic-operands form)))
     (if (<= (length operands) 2)
-        (compile-function form var-env func-env)
+        (compile-function form env)
         (let ((operand-first (car operands))
               (operand-second (cadr operands))
               (operand-tail (cddr operands)))
           (let ((form1 `(,operator (,operator ,operand-first ,operand-second)
                                    ,@operand-tail)))
-            (compile-expression form1 var-env func-env))))))
+            (compile-expression form1 env))))))
 
 
 ;;;
 ;;; Function application
 ;;;
 
-(defun type-of-operands (operands var-env func-env)
-  (oclcl.lang.compiler.type-of-expression::type-of-operands operands var-env
-                                                              func-env))
+(defun type-of-operands (operands env)
+  (oclcl.lang.compiler.type-of-expression::type-of-operands operands env))
 
-(defun compile-operands (operands var-env func-env)
+(defun compile-operands (operands env)
   (mapcar #'(lambda (operand)
-              (compile-expression operand var-env func-env))
+              (compile-expression operand env))
           operands))
 
-(defun compile-function (form var-env func-env)
+(defun compile-function (form env)
   (let ((operator (function-operator form)))
-    (if (function-environment-function-exists-p func-env operator)
-        (compile-user-defined-function form var-env func-env)
-        (compile-built-in-function form var-env func-env))))
+    (if (function-environment-function-exists-p env operator)
+        (compile-user-defined-function form env)
+        (compile-built-in-function form env))))
 
-(defun compile-user-defined-function (form var-env func-env)
+(defun compile-user-defined-function (form env)
   (let ((operator (function-operator form))
         (operands (function-operands form)))
     ;; check if the operands have the same types as the operator expect
     (let ((expected (function-environment-function-argument-types
-                       func-env operator))
-          (actual (type-of-operands operands var-env func-env)))
+                       env operator))
+          (actual (type-of-operands operands env)))
       (unless (equal expected actual)
         (error "The function application ~S is invalid." form)))
-    (let ((operator1 (function-environment-function-c-name func-env
+    (let ((operator1 (function-environment-function-c-name env
                                                            operator))
-          (operands1 (compile-operands operands var-env func-env)))
+          (operands1 (compile-operands operands env)))
       (if operands1
           (format nil "~A(~{~A~^, ~})" operator1 operands1)
           (format nil "~A()" operator1)))))
 
-(defun compile-built-in-function (form var-env func-env)
+(defun compile-built-in-function (form env)
   (let ((operator (function-operator form))
         (operands (function-operands form)))
-    (let ((operand-types (type-of-operands operands var-env func-env)))
+    (let ((operand-types (type-of-operands operands env)))
       (if (built-in-function-infix-p operator operand-types)
           (compile-built-in-infix-function operator operands operand-types
-                                           var-env func-env)
+                                           env)
           (compile-built-in-prefix-function operator operands operand-types
-                                            var-env func-env)))))
+                                            env)))))
 
 (defun compile-built-in-infix-function (operator operands operand-types
-                                        var-env func-env)
+                                        env)
     (let ((op (built-in-function-c-name operator operand-types))
-          (lhe (compile-expression (car operands) var-env func-env))
-          (rhe (compile-expression (cadr operands) var-env func-env)))
+          (lhe (compile-expression (car operands) env))
+          (rhe (compile-expression (cadr operands) env)))
       (format nil "(~A ~A ~A)" lhe op rhe)))
 
 (defun compile-built-in-prefix-function (operator operands operand-types
-                                         var-env func-env)
+                                         env)
     (let ((operator1 (built-in-function-c-name operator operand-types))
-          (operands1 (compile-operands operands var-env func-env)))
+          (operands1 (compile-operands operands env)))
       (if operands1
           (format nil "~A(~{~A~^, ~})" operator1 operands1)
           (format nil "~A()" operator1))))
@@ -271,8 +270,8 @@
 ;;; Compile sizeof
 ;;;
 
-(defun compile-sizeof (form var-env func-env)
+(defun compile-sizeof (form env)
   (let ((operand (first (sizeof-operand form))))
     (format nil "sizeof(~A)" (if (oclcl-type-p operand)
                                  (opencl-type operand)
-                                 (compile-expression operand var-env func-env)))))
+                                 (compile-expression operand env)))))

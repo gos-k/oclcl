@@ -33,26 +33,26 @@
 ;;;
 
 (deftest type-of-expression
-  (with-empty-env (var-env func-env)
-    (is (type-of-expression 1 var-env func-env) 'int)))
+  (with-empty-env (env)
+    (is (type-of-expression 1 env) 'int)))
 
 ;;;
 ;;; test TYPE-OF-MACRO function
 ;;;
 
 (deftest type-of-macro
-  (with-empty-env (var-env func-env)
-    (setf func-env (function-environment-add-macro 'alfa '(x) '(x) func-env))
-    (is (type-of-macro '(alfa "bravo") var-env func-env) 'string)))
+  (with-empty-env (env)
+    (setf env (function-environment-add-macro 'alfa '(x) '(x) env))
+    (is (type-of-macro '(alfa "bravo") env) 'string)))
 
 ;;;
 ;;; test TYPE-OF-SYMBOL-MACRO function
 ;;;
 
 (deftest type-of-symbol-macro
-  (with-empty-env (var-env func-env)
-    (setf var-env (variable-environment-add-symbol-macro 'alfa "bravo" var-env))
-    (is (type-of-symbol-macro 'alfa var-env func-env) 'string)))
+  (with-empty-env (env)
+    (setf env (variable-environment-add-symbol-macro 'alfa "bravo" env))
+    (is (type-of-symbol-macro 'alfa env) 'string)))
 
 
 ;;;
@@ -82,46 +82,46 @@
 ;;;
 
 (deftest type-of-reference-variable
-  (with-empty-env (var-env func-env)
-    (setf var-env (->> var-env
+  (with-empty-env (env)
+    (setf env (->> env
                     (variable-environment-add-variable 'x 'int)
                     (variable-environment-add-symbol-macro 'y 'y-expansion)
                     (variable-environment-add-variable 'y-expansion 'float)
                     (variable-environment-add-memory 'z 'int 1)))
-    (is (type-of-reference 'x var-env func-env) 'int
+    (is (type-of-reference 'x env) 'int
         "basic case 1")
-    (is (type-of-reference 'z var-env func-env) 'int
+    (is (type-of-reference 'z env) 'int
         "basic caase 2")
-    (ok (signals (type-of-reference 'y var-env func-env) 'simple-error)
+    (ok (signals (type-of-reference 'y env) 'simple-error)
         "FORM which is a variable not found.")
-    (ok (signals (type-of-reference 'a var-env func-env) 'simple-error)
+    (ok (signals (type-of-reference 'a env) 'simple-error)
         "FORM which is a variable not found.")))
 
 
 (deftest type-of-reference-structure
-  (with-empty-env (var-env func-env)
-    (setf var-env (variable-environment-add-variable 'x 'float3 var-env))
-    (is (type-of-reference '(float3-x x) var-env func-env) 'float)
-    (is (type-of-reference '(float3-y x) var-env func-env) 'float)
-    (ok (signals (type-of-reference '(float4-x x) var-env func-env)
+  (with-empty-env (env)
+    (setf env (variable-environment-add-variable 'x 'float3 env))
+    (is (type-of-reference '(float3-x x) env) 'float)
+    (is (type-of-reference '(float3-y x) env) 'float)
+    (ok (signals (type-of-reference '(float4-x x) env)
                  'simple-error))))
 
 
 (deftest type-of-reference-array
-  (with-empty-env (var-env func-env)
-    (setf var-env (variable-environment-add-variable 'x 'int var-env))
-    (ok (signals (type-of-reference '(aref x) var-env func-env) 'simple-error)))
+  (with-empty-env (env)
+    (setf env (variable-environment-add-variable 'x 'int env))
+    (ok (signals (type-of-reference '(aref x) env) 'simple-error)))
 
-  (with-empty-env (var-env func-env)
-    (setf var-env (variable-environment-add-variable 'x 'int* var-env))
-    (is (type-of-reference '(aref x 0) var-env func-env) 'int)
-    (ok (signals (type-of-reference '(aref x 0 0) var-env func-env)
+  (with-empty-env (env)
+    (setf env (variable-environment-add-variable 'x 'int* env))
+    (is (type-of-reference '(aref x 0) env) 'int)
+    (ok (signals (type-of-reference '(aref x 0 0) env)
                  'simple-error)))
 
-  (with-empty-env (var-env func-env)
-    (setf var-env (variable-environment-add-variable 'x 'int** var-env))
-    (ok (signals (type-of-reference '(aref x 0) var-env func-env) 'simple-error))
-    (is (type-of-reference '(aref x 0 0) var-env func-env) 'int)))
+  (with-empty-env (env)
+    (setf env (variable-environment-add-variable 'x 'int** env))
+    (ok (signals (type-of-reference '(aref x 0) env) 'simple-error))
+    (is (type-of-reference '(aref x 0 0) env) 'int)))
 
 
 ;;;
@@ -130,23 +130,23 @@
 
 (deftest type-of-inline-if
 
-  (with-empty-env (var-env func-env)
-    (ok (signals (type-of-inline-if '(if) var-env func-env)
+  (with-empty-env (env)
+    (ok (signals (type-of-inline-if '(if) env)
                  'simple-error)
         "only if")
-    (ok (signals (type-of-inline-if '(if (= 1 1)) var-env func-env)
+    (ok (signals (type-of-inline-if '(if (= 1 1)) env)
                  'simple-error)
         "test")
-    (ok (signals (type-of-inline-if '(if (= 1 1) 1) var-env func-env)
+    (ok (signals (type-of-inline-if '(if (= 1 1) 1) env)
                  'simple-error)
         "test and then")
-    (is (type-of-inline-if '(if (= 1 1) 1 2) var-env func-env)
+    (is (type-of-inline-if '(if (= 1 1) 1 2) env)
         'int
         "valid if expression")
-    (ok (signals (type-of-inline-if '(if 1 2 3) var-env func-env)
+    (ok (signals (type-of-inline-if '(if 1 2 3) env)
                  'simple-error)
         "test is not bool")
-    (ok (signals (type-of-inline-if '(if (= 1 1) 1 2.0) var-env func-env)
+    (ok (signals (type-of-inline-if '(if (= 1 1) 1 2.0) env)
                  'simple-error)
         "different type")))
 
@@ -156,8 +156,8 @@
 ;;;
 
 (deftest type-of-arithmetic
-  (with-empty-env (var-env func-env)
-    (ok (type-of-arithmetic '(+ 1 2) var-env func-env) "arithmetic +")))
+  (with-empty-env (env)
+    (ok (type-of-arithmetic '(+ 1 2) env) "arithmetic +")))
 
 
 ;;;
@@ -165,26 +165,26 @@
 ;;;
 
 (deftest type-of-function
-  (with-empty-env (var-env func-env)
-    (setf func-env (function-environment-add-function 'foo 'int '(int int) func-env))
-    (is (type-of-function '(+ 1 1) var-env func-env) 'int)
-    (is (type-of-function '(foo 1 1) var-env func-env) 'int)
-    (is (type-of-function '(+ 1.0f0 1.0f0) var-env func-env) 'float)
-    (ok (signals (type-of-function '(+ 1 1.0f0) var-env func-env) 'simple-error))
-    (is (type-of-function '(pow 1.0f0 1.0f0) var-env func-env) 'float)
-    (is (type-of-function '(half-cos 1.0f0) var-env func-env) 'float)
-    (ok (signals (type-of-function '(half-divide 1.0) var-env func-env) 'simple-error))
-    (is (type-of-function '(native-cos 1.0f0) var-env func-env) 'float)
-    (ok (signals (type-of-function '(native-divide 1.0) var-env func-env) 'simple-error))
-    (is (type-of-function '(popcount 1) var-env func-env) 'int)
-    (is (type-of-function '(degrees 1.0f0) var-env func-env) 'float)))
+  (with-empty-env (env)
+    (setf env (function-environment-add-function 'foo 'int '(int int) env))
+    (is (type-of-function '(+ 1 1) env) 'int)
+    (is (type-of-function '(foo 1 1) env) 'int)
+    (is (type-of-function '(+ 1.0f0 1.0f0) env) 'float)
+    (ok (signals (type-of-function '(+ 1 1.0f0) env) 'simple-error))
+    (is (type-of-function '(pow 1.0f0 1.0f0) env) 'float)
+    (is (type-of-function '(half-cos 1.0f0) env) 'float)
+    (ok (signals (type-of-function '(half-divide 1.0) env) 'simple-error))
+    (is (type-of-function '(native-cos 1.0f0) env) 'float)
+    (ok (signals (type-of-function '(native-divide 1.0) env) 'simple-error))
+    (is (type-of-function '(popcount 1) env) 'int)
+    (is (type-of-function '(degrees 1.0f0) env) 'float)))
 
 ;;;
 ;;; test TYPE-OF-SIZEOF function
 ;;;
 
 (deftest type-of-sizeof
-  (with-empty-env (var-env func-env)
-    (setf var-env (variable-environment-add-variable 'alfa 'int var-env))
-    (is (type-of-sizeof '(sizeof alfa) var-env func-env) 'size-t)
-    (is (type-of-sizeof '(sizeof double) var-env func-env) 'size-t)))
+  (with-empty-env (env)
+    (setf env (variable-environment-add-variable 'alfa 'int env))
+    (is (type-of-sizeof '(sizeof alfa) env) 'size-t)
+    (is (type-of-sizeof '(sizeof double) env) 'size-t)))

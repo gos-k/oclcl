@@ -28,62 +28,57 @@
 ;;; Program to Environment
 ;;;
 
-(defun %add-function-arguments (program name var-env)
-  (flet ((aux (var-env0 argument)
+(defun %add-function-arguments (program name env)
+  (flet ((aux (env0 argument)
            (let ((var (argument-var argument))
                  (type (argument-type argument)))
-             (variable-environment-add-variable var type var-env0))))
+             (variable-environment-add-variable var type env0))))
     (reduce #'aux (program-function-arguments program name)
-            :initial-value var-env)))
+            :initial-value env)))
 
-(defun %add-symbol-macros (program var-env)
-  (flet ((aux (var-env0 name)
+(defun %add-symbol-macros (program env)
+  (flet ((aux (env0 name)
            (let ((expansion (program-symbol-macro-expansion program name)))
-             (variable-environment-add-symbol-macro name expansion
-                                                    var-env0))))
+             (variable-environment-add-symbol-macro name expansion env0))))
     (reduce #'aux (program-symbol-macro-names program)
-            :initial-value var-env)))
+            :initial-value env)))
 
-(defun %add-memories (program var-env)
-  (flet ((aux (var-env0 name)
+(defun %add-memories (program env)
+  (flet ((aux (env0 name)
            (let* ((expression (program-memory-expression program name))
-                  (type (type-of-expression expression nil nil)))
-             (variable-environment-add-memory name type expression var-env0))))
+                  (type (type-of-expression expression (empty-environment))))
+             (variable-environment-add-memory name type expression env0))))
     (reduce #'aux (program-memory-names program)
-            :initial-value var-env)))
+            :initial-value env)))
 
-(defun program->variable-environment (program name)
-  (if name
-      (%add-function-arguments program name
-                               (%add-symbol-macros program
-                                                   (%add-memories program
-                                                                 (empty-variable-environment))))
-      (%add-symbol-macros program
-                          (%add-memories program
-                                        (empty-variable-environment)))))
-
-(defun %add-functions (program func-env)
-  (flet ((aux (func-env0 name)
+(defun %add-functions (program env)
+  (flet ((aux (env0 name)
            (let ((return-type (program-function-return-type program name))
                  (argument-types (program-function-argument-types program
                                                                  name)))
              (function-environment-add-function name return-type
-                                               argument-types func-env0))))
+                                               argument-types env0))))
     (reduce #'aux (program-function-names program)
-            :initial-value func-env)))
+            :initial-value env)))
 
-(defun %add-macros (program func-env)
-  (flet ((aux (func-env0 name)
+(defun %add-macros (program env)
+  (flet ((aux (env0 name)
            (let ((arguments (program-macro-arguments program name))
                  (body (program-macro-body program name)))
-             (function-environment-add-macro name arguments body func-env0))))
+             (function-environment-add-macro name arguments body env0))))
     (reduce #'aux (program-macro-names program)
-            :initial-value func-env)))
+            :initial-value env)))
 
-(defun program->function-environment (program)
-  (%add-functions program
-    (%add-macros program
-      (empty-function-environment))))
+(defun program->environment (program &optional name)
+  (let* ((env (empty-environment))
+         (env (%add-macros program env))
+         (env (%add-functions program env))
+         (env (%add-memories program env))
+         (env (%add-symbol-macros program env)))
+    (if name
+        (%add-function-arguments program name env)
+        env)))
+
 
 ;;;
 ;;; Compile program
@@ -107,12 +102,11 @@
   (let ((c-name (program-memory-c-name program name))
         (qualifiers (program-address-space-qualifiers program name))
         (expression (program-memory-expression program name)))
-    (let ((type1 (compile-type
-                  (type-of-expression expression nil nil)))
-          (qualifiers1 (mapcar #'compile-address-space-qualifier qualifiers))
-          (expression1 (compile-expression expression
-                        (program->variable-environment program nil)
-                        (program->function-environment program))))
+    (let* ((env (program->environment program))
+           (type1 (compile-type
+                   (type-of-expression expression (empty-environment))))
+           (qualifiers1 (mapcar #'compile-address-space-qualifier qualifiers))
+           (expression1 (compile-expression expression env)))
       (fmt "~{~A~^ ~} ~A ~A~@[ = ~A~];~%"
               qualifiers1 type1 c-name expression1))))
 
@@ -167,10 +161,9 @@
 ~{~A~}" prototypes)))))
 
 (defun compile-statements (program name)
-  (let ((var-env (program->variable-environment program name))
-        (func-env (program->function-environment program)))
+  (let ((env (program->environment program name)))
     (flet ((aux (statement)
-             (compile-statement statement var-env func-env)))
+             (compile-statement statement env)))
       (let ((statements (program-function-body program name)))
         (fmt "~{~A~}" (mapcar #'aux statements))))))
 
@@ -195,8 +188,7 @@
   (let ((c-name (program-define-c-name program name))
         (expression (program-define-expression program name)))
     (let ((expression1 (compile-expression expression
-                                           (program->variable-environment program nil)
-                                           (program->function-environment program))))
+                                           (program->environment program))))
       (fmt "#define ~A ~A~%" c-name expression1))))
 
 (defun compile-defines (program)

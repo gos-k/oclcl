@@ -20,8 +20,7 @@
   `(ok (equalp (multiple-value-list ,lhs) ,rhs) ,desc))
 
 (defun call-with-empty-env (fun)
-  (multiple-value-bind (var-env fun-env) (empty-environment)
-    (funcall fun var-env fun-env)))
+  (funcall fun (empty-environment)))
 
-(defmacro with-empty-env ((var-env fun-env) &body body)
-  `(call-with-empty-env (lambda (,var-env ,fun-env) ,@body)))
+(defmacro with-empty-env ((env) &body body)
+  `(call-with-empty-env (lambda (,env) ,@body)))
