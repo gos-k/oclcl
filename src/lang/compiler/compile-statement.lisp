@@ -105,7 +105,7 @@
                (fmt "~A ~A = ~A;~%" type1 var1 expr1)))))
     (fmt "~{~A~}" (mapcar #'aux bindings))))
 
-(defun compile-let-statements (statements env)
+(defun compile-statements-in-block (statements env)
   (compile-statement `(progn ,@statements) env))
 
 (defun compile-let (form env)
@@ -113,7 +113,7 @@
         (statements (let-statements form)))
     (let ((env1 (env-add-let-bindings env bindings)))
       (let ((bindings1 (compile-let-bindings bindings env))
-            (statements1 (compile-let-statements statements env1)))
+            (statements1 (compile-statements-in-block statements env1)))
         (let ((bindings2 (indent 2 bindings1))
               (statements2 (indent 2 statements1)))
           (fmt "{~%~A~A}~%" bindings2 statements2))))))
@@ -131,14 +131,11 @@
                                                     env0))))
     (reduce #'aux bindings :initial-value env)))
 
-(defun compile-symbol-macrolet-statements (statements env)
-  (compile-statement `(progn ,@statements) env))
-
 (defun compile-symbol-macrolet (form env)
   (let ((bindings (symbol-macrolet-bindings form))
         (statements (symbol-macrolet-statements form)))
     (let ((env1 (env-add-symbol-macrolet-bindings env bindings)))
-      (let ((statements1 (compile-symbol-macrolet-statements statements env1)))
+      (let ((statements1 (compile-statements-in-block statements env1)))
         (fmt "~a" statements1)))))
 
 
@@ -178,9 +175,6 @@
                (fmt "~A = ~A" var1 step1)))))
     (fmt "~{~A~^, ~}" (mapcar #'aux bindings))))
 
-(defun compile-do-statements (statements env)
-  (compile-statement `(progn ,@statements) env))
-
 (defun compile-do (form env)
   (let ((bindings (do-bindings form))
         (end-test (do-end-test form))
@@ -189,7 +183,7 @@
       (let ((init-part (compile-do-init-part bindings env))
             (test-part (compile-do-test-part end-test env1))
             (step-part (compile-do-step-part bindings env1))
-            (statements1 (compile-do-statements statements env1)))
+            (statements1 (compile-statements-in-block statements env1)))
         (let ((statements2 (indent 2 statements1)))
           (fmt "for ( ~A; ~A; ~A )~%{~%~A}~%"
                       init-part test-part step-part statements2))))))
@@ -226,16 +220,12 @@
                (fmt "__local ~A ~A~{[~A]~};~%" type1 var1 dims1)))))
     (fmt "~{~A~}" (mapcar #'aux specs))))
 
-(defun compile-with-local-memory-statements (statements env)
-  (compile-statement `(progn ,@statements) env))
-
 (defun compile-with-local-memory (form env)
   (let ((specs (with-local-memory-specs form))
         (statements (with-local-memory-statements form)))
     (let ((env1 (env-add-with-local-memory-specs env specs)))
       (let ((specs1 (compile-with-local-memory-specs specs env))
-            (statements1 (compile-with-local-memory-statements statements
-                                                                env1)))
+            (statements1 (compile-statements-in-block statements env1)))
         (let ((specs2 (indent 2 specs1))
               (statements2 (indent 2 statements1)))
           (fmt "{~%~A~A}~%" specs2 statements2))))))
