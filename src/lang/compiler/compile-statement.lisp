@@ -69,17 +69,21 @@
     (let ((test-type (type-of-expression test-expr env)))
       (unless (eq test-type 'bool)
         (error "The type of statement ~S is invalid." form)))
-    (let ((test-expr1 (compile-expression test-expr env))
-          (then-stmt1 (compile-statement then-stmt env))
-          (else-stmt1 (if else-stmt
-                          (compile-statement else-stmt env))))
-      (let ((test-expr2 (if (char/= #\( (char test-expr1 0))
-                            (setf test-expr1 (fmt "(~A)" test-expr1))
-                            test-expr1))
-            (then-stmt2 (indent 2 then-stmt1))
-            (else-stmt2 (if else-stmt1
-                            (indent 2 else-stmt1))))
-        (fmt "if ~A~%{~%~A}~@[~%else~%{~%~A}~]~%" test-expr2 then-stmt2 else-stmt2)))))
+    (let* ((compiled-test (compile-expression test-expr env))
+           (compiled-then (compile-statement then-stmt env))
+           (compiled-else (when else-stmt
+                            (compile-statement else-stmt env)))
+           (final-test (if (and (plusp (length compiled-test))
+                                (char/= #\( (char compiled-test 0)))
+                           (fmt "(~A)" compiled-test)
+                           compiled-test))
+           (indented-then (indent 2 compiled-then))
+           (indented-else (when compiled-else
+                            (indent 2 compiled-else))))
+      (fmt "if ~A~%{~%~A}~@[~%else~%{~%~A}~]~%"
+           final-test
+           indented-then
+           indented-else))))
 
 
 ;;;
@@ -109,14 +113,14 @@
   (compile-statement `(progn ,@statements) env))
 
 (defun compile-let (form env)
-  (let ((bindings (let-bindings form))
-        (statements (let-statements form)))
-    (let ((env1 (env-add-let-bindings env bindings)))
-      (let ((bindings1 (compile-let-bindings bindings env))
-            (statements1 (compile-statements-in-block statements env1)))
-        (let ((bindings2 (indent 2 bindings1))
-              (statements2 (indent 2 statements1)))
-          (fmt "{~%~A~A}~%" bindings2 statements2))))))
+  (let* ((bindings (let-bindings form))
+         (statements (let-statements form))
+         (env1 (env-add-let-bindings env bindings))
+         (bindings1 (compile-let-bindings bindings env))
+         (statements1 (compile-statements-in-block statements env1))
+         (bindings2 (indent 2 bindings1))
+         (statements2 (indent 2 statements1)))
+    (fmt "{~%~A~A}~%" bindings2 statements2)))
 
 
 ;;;
@@ -176,17 +180,17 @@
     (fmt "~{~A~^, ~}" (mapcar #'aux bindings))))
 
 (defun compile-do (form env)
-  (let ((bindings (do-bindings form))
-        (end-test (do-end-test form))
-        (statements (do-statements form)))
-    (let ((env1 (env-add-do-bindings env bindings)))
-      (let ((init-part (compile-do-init-part bindings env))
-            (test-part (compile-do-test-part end-test env1))
-            (step-part (compile-do-step-part bindings env1))
-            (statements1 (compile-statements-in-block statements env1)))
-        (let ((statements2 (indent 2 statements1)))
-          (fmt "for ( ~A; ~A; ~A )~%{~%~A}~%"
-                      init-part test-part step-part statements2))))))
+  (let* ((bindings (do-bindings form))
+         (end-test (do-end-test form))
+         (statements (do-statements form))
+         (env1 (env-add-do-bindings env bindings))
+         (init-part (compile-do-init-part bindings env))
+         (test-part (compile-do-test-part end-test env1))
+         (step-part (compile-do-step-part bindings env1))
+         (statements1 (compile-statements-in-block statements env1))
+         (statements2 (indent 2 statements1)))
+    (fmt "for ( ~A; ~A; ~A )~%{~%~A}~%"
+         init-part test-part step-part statements2)))
 
 
 ;;;
